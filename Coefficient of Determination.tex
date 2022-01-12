@@ -142,55 +142,46 @@
 
 
 \section{Stochastic Process Estimates}\label{sec:SPEst}
-    Define noiseless mean predictors (functions of $\tte[\mi{m}]{\rv{u}}$) and their error SPs as
-    \begin{equation}\label{def:SPEst:fmem}
-        \begin{aligned}
-            \te[\mi{L}]{f_{\mi{m}}} &\deq \evt{\te[\mi{L}]{\rv{y_m}}}{\mi{M+1-m}} \\
-            \te[\mi{L}]{\rv{e_m}} &\deq \te[\mi{L}]{\rv{y_m}} - \te[\mi{L}]{f_{\mi{m}}} \\
-        \end{aligned}
+    Adopt as design matrix a triad of inputs to condition $\te[\mi{M+1\x 3}]{\rv{u}}$, eliciting the response
+    \begin{equation}\label{def:SPEst:y}
+        \te[\mi{L\x 3}]{\rv{y}} \deq 
+        \evt{\;\evt{\;\ev{y(\tte[\mi{M+1\x 3}]{\rv{u}}) 
+            \big\vert \te[]{\te[\mi{0}]{u}, \te[\mi{m^{\prime}}]{u}, \te[\mi{M^{\prime\prime}}]{u}}}{\mi{0^{\prime\prime}}}}
+        {\mi{M^{\prime}-m^{\prime}}}}{\mi{M}}
     \end{equation}
-    Adopt as design matrix a triad of inputs, their mutual dependence a function of conditioning, labelled according to how they will be marginalized
-    \begin{equation*}
-            \te[\mi{M+1\x 3}]{\rv{u}} \deq \left\lbrack \rv{u_0},\rv{u_m},\rv{u_M} \right\rbrack
-    \end{equation*}
-    The triad elicits the response
-    \begin{equation}\label{def:SPEst:e}
-        \te[\mi{L\x 3}]{\rv{e}} \deq y(\tte[\mi{M+1\x 3}]{\rv{u}}) - \evt{\;\evt{\;\ev{y(\tte[\mi{M+1\x 3}]{\rv{u}})}{M^{\prime\prime}}}{\mi{M^{\prime}+1^{\prime}-m^{\prime}}}}{\mi{M+1}}
-    \end{equation}
-    Primes mark independent input axes, otherwise each expectation applies to all three members of $\tte[\mi{M+1}]{\rv{u}}^3$. It is not always obvious whether axes are independent or shared by the triad, but this can be mechanically checked against the measure of integration behind an expectation. Repeated expectations over the same axis are rare here, usually indicating that apparent repetitions must be ``primed''.
-
-    This purpose of the triad is to interrogate its response for moments in respect of shared noise
+    Primes mark independent input axes, expectations are shared by all three members of the triad. It is not always obvious whether axes are independent or shared by the triad, but this can be mechanically checked against the measure of integration behind an expectation. Repeated expectations over the same axis are rare here, usually indicating that apparent repetitions must be ``primed''. The purpose of the triad is to interrogate its response for moments in respect of ungovernable noise (which is shared)
     \begin{equation}\label{def:SPEst:mu}
-        \begin{aligned}
-            \te[(\mi{L\x 3})^{n}]{\mu_{n}} &\deq \ev{\tte[\mi{L\x 3}]{\rv{e}}^{n}}{M} \\
-            \te[\mi{L\x 3}]{\mu_{1}} &\phantom{:}= \te[\mi{L\x 3}]{0}
-        \end{aligned}
+            \te[(\mi{L\x 3})^{n}]{\mu_{n}} \deq \ev{\tte[\mi{L\x 3}]{\rv{y}}^{n}}{M} \ \ \forall n \in \st{Z}^{+}
     \end{equation}
     for these embody
     \begin{equation*}
-        \te[\mi{L}^{n}]{\mu_{\mi{m^{\prime}\ldots m}^{n\prime}}} \deq \te[(\mi{L\x}i)^{n}]{\mu_{n}} = \ev{\tte[\mi{L}]{\rv{e}_{\mi{m}^{\prime}}}\otimes\cdots\otimes\tte[\mi{L}]{\rv{e}_{\mi{m}^{n\prime}}}}{M}
+        \te[\mi{L}^{n}]{\mu_{\mi{m^{\prime}\ldots m}^{n\prime}}} \deq \te[(\mi{L\x}i)^{n}]{\mu_{n}} = \ev{\tte[\mi{L}]{\rv{y}_{\mi{m}^{\prime}}}\otimes\cdots\otimes\tte[\mi{L}]{\rv{y}_{\mi{m}^{n\prime}}}}{M}
     \end{equation*}
-    where $\mi{m}^{i\prime} \in \set{\mi{0},\mi{m},\mi{M}}$. This expression, along with $f_{\mi{m}}$, underpins both quantities we seek. The reduction which follows repeatedly realizes
+    where $\mi{m}^{i\prime} \in \set{\mi{0},\mi{m},\mi{M}}$. This expression underpins both quantities we seek. The reduction which follows repeatedly realizes
     \begin{equation}\label{eq:SPEstimates:reduction}
         \te[\mi{L}^{n}]{\mu_{\mi{0\ldots 0}\mi{m}^{j\prime}\mi{\ldots m}^{n\prime}}} \deq 
         \evt{\te[\mi{L}^{n}]{\mu_{\mi{M\ldots M}\mi{m}^{j\prime}\mi{\ldots m}^{n\prime}}}}{\mi{M}} = 
         \evt{\te[\mi{L}^{n}]{\mu_{\mi{m\ldots m}\mi{m}^{j\prime}\mi{\ldots m}^{n\prime}}}}{\mi{m}}
     \end{equation}
 
-    The expected conditional variance in \cref{def:COD:mean} amounts to
-    \begin{equation}
+    Defining
+    \begin{equation}\label{def:SPEst:e}
+        \te[\mi{L\x 3}]{\rv{e}} \deq \rv{y} - \mu_{1}
+    \end{equation}
+    the expected conditional variance in \cref{def:COD:mean} amounts to
+    \begin{equation}\label{eq:SPEst:V}
         \begin{aligned}
             \te[\mi{L}]{V_{\mi{m}}} 
-            &= \evt{\;\ev{\te[\mi{L}]{\rv{e_m} + f_{\mi{m}}}^{2}}{M}}{\mi{m}}
-            - \ev{\te[\mi{L}]{\rv{e_0} + f_{\mi{0}}}^{2}}{M} \\
-            &= \ev{\te[\mi{L}]{f_{\mi{m}}}^{2}}{\mi{m}} - \te[\mi{L}]{f_{\mi{0}}}^{2} + 
+            &= \evt{\;\ev{\te[\mi{L}]{\rv{e_m} + \mu_{\mi{m}}}^{2}}{M}}{\mi{m}}
+            - \ev{\te[\mi{L}]{\rv{e_0} + \mu_{\mi{0}}}^{2}}{M} \\
+            &= \ev{\te[\mi{L}]{\mu_{\mi{m}}}^{2}}{\mi{m}} - \te[\mi{L}]{\mu_{\mi{0}}}^{2} + 
             \evt{\te[\mi{L}^2]{\mu_{\mi{mm}}}}{\mi{m}} - \te[\mi{L}^2]{\mu_{\mi{00}}} \\
-            &= \ev{\te[\mi{L}]{f_{\mi{m}}}^{2}}{\mi{m}} - \te[\mi{L}]{f_{\mi{0}}}^{2}
+            &= \ev{\te[\mi{L}]{\mu_{\mi{m}}}^{2}}{\mi{m}} - \te[\mi{L}]{\mu_{\mi{0}}}^{2}
         \end{aligned}
     \end{equation}
 
-    The covariance between conditional variances in \cref{def:COD:variance} is
-    \begin{equation*}
+    and the covariance between conditional variances in \cref{def:COD:variance} is
+    \begin{equation}\label{eq:SPEst:W}
         \begin{aligned}
             \te[\mi{L}^4]{W_{\mi{mm^{\prime}}}} &\deq \cov[\cov{\rv{y_{m^{\prime}}}}{\mi{m^{\prime}}}]{\cov{\rv{y_{m}}}{\mi{m}}}{M} \\
             &\phantom{:}=
@@ -200,37 +191,37 @@
             &\phantom{\deq}\  - \te[\mi{L}^2]{V_{\mi{m}}}\otimes \te[\mi{L}^2]{V_{\mi{m^{\prime}}}} \\       
             &\phantom{:}= \te[\mi{L}^4]{A_{\mi{mm^{\prime}}}-A_{\mi{0m^{\prime}}}-A_{\mi{m0}}+A_{\mi{00}}}
         \end{aligned}
-    \end{equation*}
+    \end{equation}
     Here, for any $\mi{m},\mi{m^{\prime}}\subseteq\mi{M}$
     \begin{equation*}
         \begin{aligned}
             \te[\mi{L}^4]{A_{\mi{mm^{\prime}}}}
             &\deq \evt{\;\evt{\;\ev{\te[\mi{L}]{\rv{y_{m}}}^{2} \otimes \te[\mi{L}]{\rv{y_{m^{\prime}}}}^{2}}{M}}{\mi{m^{\prime}}}}{\mi{m}} - \te[\mi{L}^2]{V_{\mi{m}}}\otimes \te[\mi{L}^2]{V_{\mi{m^{\prime}}}} \\
-            &\phantom{:}= \evt{\;\evt{\;\ev{\te[\mi{L}]{\rv{e_{m}}+f_{\mi{m}}}^{2} \otimes \te[\mi{L}]{\rv{e_{m^{\prime}}}+ f_{\mi{m^{\prime}}}}^{2}}{M}}{\mi{m^{\prime}}}}{\mi{m}}
+            &\phantom{:}= \evt{\;\evt{\;\ev{\te[\mi{L}]{\rv{e_{m}}+\mu_{\mi{m}}}^{2} \otimes \te[\mi{L}]{\rv{e_{m^{\prime}}}+ \mu_{\mi{m^{\prime}}}}^{2}}{M}}{\mi{m^{\prime}}}}{\mi{m}}
             - \te[\mi{L}^2]{V_{\mi{m}}}\otimes \te[\mi{L}^2]{V_{\mi{m^{\prime}}}}
         \end{aligned}
     \end{equation*}
-    exploiting the fact that $V_{\mi{0}} = \te[\mi{L}^2]{0}$. \Cref{eq:SPEstimates:reduction} cancels all terms beginning with $\te[\mi{L}]{\rv{e_{m}}}^{2}$, first across $A_{\mi{m,m^{\prime}}}-A_{\mi{0,m^{\prime}}}$ then across $A_{\mi{m,0}}-A_{\mi{0,0}}$. All remaining terms ending in $\te[\mi{L}]{f_\mi{m^{\prime}}}^{2}$ are eliminated by error centralization $\mu_{1} = 0$ and
+    exploiting the fact that $V_{\mi{0}} = \te[\mi{L}^2]{0}$. \Cref{eq:SPEstimates:reduction} cancels all terms beginning with $\te[\mi{L}]{\rv{e_{m}}}^{2}$, first across $A_{\mi{m,m^{\prime}}}-A_{\mi{0,m^{\prime}}}$ then across $A_{\mi{m,0}}-A_{\mi{0,0}}$. All remaining terms ending in $\te[\mi{L}]{\mu_{\mi{m^{\prime}}}}^{2}$ are eliminated by error centralization $\mu_{1} = 0$ and
     \begin{multline*}
-        \evt{\;\ev{\te[\mi{L}]{f_{\mi{m}}}^{2} \otimes \te[\mi{L}]{f_{\mi{m^{\prime}}}}^{2}}{\mi{m^{\prime}}}}{\mi{m}}
+        \evt{\;\ev{\te[\mi{L}]{\mu_{\mi{m}}}^{2} \otimes \te[\mi{L}]{\mu_{\mi{m^{\prime}}}}^{2}}{\mi{m^{\prime}}}}{\mi{m}}
         - \te[\mi{L}^2]{V_{\mi{m}}}\otimes \te[\mi{L}^2]{V_{\mi{m^{\prime}}}} \\
-        = \te[\mi{L}^2]{V_{\mi{m}}}\otimes \te[\mi{L}]{f_{\mi{0}}}^{2}
-        + \te[\mi{L}]{f_{\mi{0}}}^{2}\otimes \te[\mi{L}^2]{V_{\mi{m^{\prime}}}}
-        + \te[\mi{L}]{f_{\mi{0}}}^{4}
+        = \te[\mi{L}^2]{V_{\mi{m}}}\otimes \te[\mi{L}]{\mu_{\mi{0}}}^{2}
+        + \te[\mi{L}]{\mu_{\mi{0}}}^{2}\otimes \te[\mi{L}^2]{V_{\mi{m^{\prime}}}}
+        + \te[\mi{L}]{\mu_{\mi{0}}}^{4}
     \end{multline*}
     cancelling across $A_{\mi{m,m^{\prime}}}-A_{\mi{0,m^{\prime}}} - A_{\mi{m,0}}+A_{\mi{0,0}}$.
-    Similar arguments eliminate $\te[\mi{L}]{\rv{e_{m^{\prime}}}}^{2}$ and $\te[\mi{L}]{f_\mi{m}}^{2}$.
+    Similar arguments eliminate $\te[\mi{L}]{\rv{e_{m^{\prime}}}}^{2}$ and $\te[\mi{L}]{\mu_{\mi{m}}}^{2}$.
     Effectively then
     \begin{equation}
         \te[\mi{L}^4]{A_{\mi{mm^{\prime}}}} = \sum_{\pi(\mi{L}^{2})} \sum_{\pi(\mi{L^{\prime}}^{2})}
-        \evt{\;\evt{\te[\mi{L}^{2} \x \mi{L^{\prime}}^{2}]{f_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes f_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}}
+        \evt{\;\evt{\te[\mi{L}^{2} \x \mi{L^{\prime}}^{2}]{\mu_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}}
     \end{equation}
     where each summation is over permutations of tensor axes
     \begin{equation*}
         \pi(\mi{L}^{2}) \deq \set{(\mi{L}\x\mi{L^{\prime\prime}}), (\mi{L^{\prime\prime}}\x\mi{L})} \QT{;} \pi(\mi{L^{\prime}}^{2}) \deq \set{(\mi{L^{\prime}}\x\mi{L^{\prime\prime\prime}}), (\mi{L^{\prime\prime\prime}}\x\mi{L^{\prime}})}
     \end{equation*}
     Primes on constants are for bookeeping purposes only ($\mi{L}^{i\prime} = \mi{L}$ always), they do not change the value of the constant -- unlike primes on variables ($\mi{m}^{i\prime}$ need not equal $\mi{m}$ in general).
-    In order to further elucidate these estimates, we must fill in the details of the underlying stochastic processes, sufficiently identifying the regression $y$ by its first two moments $f, \mu_{2}$.
+    In order to further elucidate these estimates, we must fill in the details of the underlying stochastic processes, sufficiently identifying the regression $y$ by its first two moments $\mu_{1}, \mu_{2}$.
 
 
 \section{Interlude: Gaussian Process (GP) Regression} \label{sec:GPR}
@@ -387,67 +378,277 @@
         From this starting point, $E,F$ may be optimized (off-diagonal elements in particular) in the full multi-output GP \cref{eq:GPR:hyperparameters}. One may then attempt to re-optimize lengthscales according to \cref{eq:GPR:hyperparameters}, and iterate, although this may be gilding the lily.
 
 
-    \section{Gaussian Process Estimates}\label{sec:GPEst}
-        This Section fills out the stochastic process estimates for the coefficient of determination in the case of Gaussian Process Regression. 
-        Let $c\colon \st{R} \to [0,1]$ be the (bijective) CDF of the standard, univariate normal distribution, and define the triads
-        \begin{equation*}
-            \begin{aligned}
-                \te[\mi{M\x 3}]{\rv{z}} &\deq c^{-1}\!\left(\te[\mi{M\x 3}]
-                {\rv{u}}\right) \sim \gauss{\te[\mi{M+1\x 3}]{0}}{\diag[(\mi{M+1})^{2}]{1}} \\
-                \te[\mi{M^{\prime}\x 3}]{\rv{x}} &\deq \te[\mi{M\x M^{\prime}}]{\Theta}^{\intercal} \te[\mi{M\x 3}]{\rv{z}}
-            \end{aligned}
-        \end{equation*}
-        Here, the rotation matrix $\te[\mi{M\x M^{\prime}}]{\Theta}^{\intercal} = \te[\mi{M\x M^{\prime}}]{\Theta}^{-1}$ is broadcast to multiply the triad $\tte[\mi{M\x 3}]{\rv{z}}$. Throughout the remainder of this paper, primed ordinal subscripts are used to specify einstein summed (contracted) products of tensors.
-        The purpose of ths arbitrary rotation is to allow GPs whose input basis $\rv{x}$ is not aligned with the fundamental basis $\rv{u}$ of model reduction and coefficient of determination. The latter is aligned with $\rv{z}$ which is the input we must condition.
-
-        Adding shared gaussian noise $\te[\mi{L}]{\rv{e}_M\vert E}$ to \cref{def:GPR:Predictive} yields
-        \begin{multline}\label{eq:GPEst:yDist}
-            \te[\mi{L\x 3}]{y(\te[\mi{M+1\x 3}]{\rv{u}}) \big\vert \te[\mi{M\x 3}]{u}}^{\dagger} 
-            = \te[\mi{L\x 3}]{\te{\rv{y_M} \vert Y \vert E,F,\Lambda} \big\vert \tte[\mi{M\x 3}]{z}}^{\dagger} \sim \\
-            \gauss{k(x,X) K_{Y}^{-1} Y^{\dagger}}{\ k(x,x) - k(x,X) K_{Y}^{-1} k(X,x) + E^{\dagger}}
-        \end{multline}
-        using broadcast $\tte[\mi{L3\x L3}]{E^{\dagger}} \deq \tte[(\mi{L\x 3})^{2}]{\tte[(\mi{L}\x 1)^{2}]{E} \circ \tte[(1\x\mi{3})^{2}]{1}}^{\dagger}$. 
-        From the development in \cref{sec:SPEst}, especially \crefrange{def:SPEst:fmem}{def:SPEst:mu}, the triad response has mean $f$ and variance $\mu{2}$ and this is all the information we need to compute the coefficient of determination and its variance. 
-        Obviously these can be read straight off \cref{eq:GPEst:yDist}.
-
-        For the sake of completeness, and elucidation we bring the GP estimate fully under the umbrella of the SP estimate by identifying ungovernable noise, ultimately ascribable to $\tte[M]{\rv{u}}$.
-        let $d_{\mi{L}}\colon (0,1) \to (0,1)^{L}$ concatenate every $L^{\mathrm{th}}$ decimal place starting at $l$, for each dimension $l\leq L$ of $(0,1)^{L}$, then \cref{eq:GPEst:yDist} can be rewritten
-        \begin{equation}\label{eq:GPEst:yReveal}
-            y(\te[\mi{M+1\x 3}]{\rv{u}}) \big\vert \te[\mi{M\x 3}]{u} = \te[\mi{L\x 3}]{f} + \te[(\mi{L\x 3})^{2}]{\mu_{2}}^{/\intercal} \te[\mi{L}\x 3]{c^{-1}\!\left(d_{\mi{L}}\left(\te[M]{\rv{u}}\right)\right)}
-        \end{equation}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Gaussian Process Estimates}\label{sec:GPEstimates}
-    This Section fills out the stochastic process estimates for the coefficient of determination in the case of Gaussian Process Regression. 
-    Let $c\colon \st{R}^{Mo} \to [0,1]^{Mo}$ be the (bijective) CDF of the standard, univariate normal distribution, and let $d_{\mi{L}}\colon (0,1) \to (0,1)^{L}$ concatenate every $L^{\mathrm{th}}$ decimal place starting at $l$, for each dimension $l\leq L$ of $(0,1)^{L}$. Then
+\section{Gaussian Process Moments}\label{sec:GPMom}
+    This Section calculates the stochastic process moments of Gaussian Process Regression, absorbing \cref{sec:GPR} into the perspective of \cref{sec:SPEst}
+    Let $c\colon \st{R} \to [0,1]$ be the (bijective) CDF of the standard, univariate normal distribution, and define the triads
     \begin{equation*}
         \begin{aligned}
-            \te[\mi{M}]{\rv{z}} \deq c^{-1}\!\left(\te[\mi{M}]{\rv{u}}\right) &\sim \gauss{\te[\mi{M}]{0}}{\diag[\mi{M}^2]{1}} \\
-            \te[L]{e_{M}} \deq c^{-1}\!\left(d_{\mi{L}}\left(\te[M]{\rv{u}}\right)\right) &\sim \gauss{\te[\mi{L}]{0}}{\diag[\mi{L}^2]{1}}
+            \te[\mi{M\x 3}]{\rv{z}} &\deq c^{-1}\!\left(\te[\mi{M\x 3}]
+            {\rv{u}}\right) \sim \gauss{\te[\mi{M\x 3}]{0}}{\diag[\mi{M}^{2}]{1}} \\
+            \te[\mi{M^{\prime}\x 3}]{\rv{x}} &\deq \te[\mi{M\x M^{\prime}}]{\Theta}^{\intercal} \te[\mi{M\x 3}]{\rv{z}}
         \end{aligned}
     \end{equation*}
-
-    Algebraic developments rely exclusively on trivial normal marginalization and scaling
-    \begin{equation} \label{eq:Notation:marginalization}
+    Here, the rotation matrix $\te[\mi{M\x M^{\prime}}]{\Theta}^{\intercal} = \te[\mi{M\x M^{\prime}}]{\Theta}^{-1}$ is broadcast to multiply the triad $\tte[\mi{M\x 3}]{\rv{z}}$. 
+    The purpose of ths arbitrary rotation is to allow GPs whose input basis $\rv{x}$ is not aligned with the fundamental basis $\rv{u}$ of model reduction and coefficient of determination. The latter is aligned with $\rv{z}$ which is the input we must condition.
+    
+    Throughout the remainder of this paper, primed ordinal subscripts are used to specify Einstein sum (einsum) contraction of tensors. Whenever a subscript primed in a specific fashion appears in adjacent tensors (those not separated by algebraic operations $+,-,\circ,\,\otimes$), it is einsummed over and does not subscript the result.
+    
+    Adding shared gaussian noise $\te[\mi{L}]{\rv{e}_M\vert E}$ to \cref{def:GPR:Predictive} yields
+    \begin{multline}\label{eq:GPMom:yDist}
+        \te[\mi{L\x 3}]{y(\te[\mi{M+1\x 3}]{\rv{u}}) \big\vert \te[\mi{M\x 3}]{u}}^{\dagger} 
+        = \te[\mi{L\x 3}]{\te{\rv{y_M} \vert Y \vert E,F,\Lambda} \big\vert \tte[\mi{M\x 3}]{z}}^{\dagger} \sim \\
+        \gauss{k(x,X) K_{Y}^{-1} Y^{\dagger}}{\ k(x,x) - k(x,X) K_{Y}^{-1} k(X,x) + E^{\dagger}}
+    \end{multline}
+    using broadcast $\tte[\mi{L3\x L3}]{E^{\dagger}} \deq \tte[(\mi{L\x 3})^{2}]{\tte[(\mi{L}\x 1)^{2}]{E} \circ \tte[(1\x\mi{3})^{2}]{1}}^{\dagger}$. 
+    To bring the GP estimate fully under the umbrella of the SP estimate we should identify its ungovernable noise, and ascribe it to $\tte[M]{\rv{u}}$ of the SP.
+    Let $d\colon (0,1) \to (0,1)^{L}$ concatenate every $L^{\mathrm{th}}$ decimal place starting at $l$, for each output dimension $l\leq L$ of $(0,1)^{L}$, then \cref{eq:GPMom:yDist} can be written as
+    \begin{multline}\label{eq:GPMom:yReveal}
+        \te[\mi{L\x 3}]{y(\te[\mi{M+1\x 3}]{\rv{u}}) \big\vert \te[\mi{M\x 3}]{u}}^{\dagger} \\
+        = \te[\mi{L\x 3}]{\mu_{1}}^{\dagger}
+        + \te[\mi{L\x 3\x L^{\prime}\x 3^{\prime}}]{\mu_{2}}^{\dagger/2} \te[\mi{L^{\prime}\x 3^{\prime}}]{\te[\mi{L}\x 1]{c^{-1}\!\left(d\left(\te[M]{\rv{u}}\right)\right)} \circ \te[1\x\mi{3}]{1}}^{\dagger}
+    \end{multline}
+    where $\tte[(\mi{L\x 3})^{2}]{\mu_{2}}^{\dagger/2}$ denotes the Cholesky decomposition of the matrix $\tte[(\mi{L\x 3})^{2}]{\mu_{2}}^{\dagger}$.
+    From the development in \cref{sec:SPEst}, the first two moments $\mu_{1},\mu_{2}$ are sufficient to compute the coefficient of determination and its variance. 
+    
+    The crucial moments $\mu_{1},\mu_{2}$ can be read straight off \cref{eq:GPMom:yDist,eq:GPMom:yReveal}, but still need conditioning. This is entirely a matter of repeatedly applying product formula \cref{eq:GPR:product}, together with the familiar Gaussian identities
+    \begin{equation*}
         \begin{aligned}
             \te[\mi{M}]{\rv{z}} \sim \gauss{\te[\mi{M}]{Z}}{\te[\mi{M}\x\mi{M}]{\Sigma}} &\Rightarrow
             \te[\mi{m}]{\rv{z}} \sim \gauss{\te[\mi{m}]{Z}}{\te[\mi{m}\x\mi{m}]{\Sigma}} \\
-            \te[\mi{M}]{\rv{z}} \sim \gauss{\te[\mi{M}]{Z}}{\te[\mi{M}\x\mi{M}]{\Sigma}} &\Rightarrow
-            \te[\mi{M}\x\mi{M}]{\Theta}^{\intercal}\te[\mi{M}]{\rv{z}} \sim \gauss{\Theta^{\intercal}Z}{\Theta^{\intercal}\Sigma\Theta}                        
+            \te[\mi{m}]{\rv{z}} \sim \gauss{\te[\mi{m}]{Z}}{\te[\mi{m}\x\mi{m}]{\Sigma}} &\Rightarrow
+            \te[\mi{m}\x\mi{m}]{\Theta}^{\intercal}\te[\mi{m}]{\rv{z}} \sim 
+            \modulus{\Theta}^{-1}
+            \gauss{\Theta^{\intercal}Z}{\Theta^{\intercal}\Sigma\Theta}                        
         \end{aligned}
-    \end{equation}
-    \begin{equation} \label{eq:Notation:scaling}
-    \end{equation}
-        \begin{equation}
-            \te[\mi{L}]{f_{\mi{m}}} = \ev{k(\rv{x},X) K_{Y}^{-1} Y^{\dagger} \big\vert \tte[\mi{m}]{\rv{z}}}{\mi{M+1-m}}
-        \end{equation}
+    \end{equation*}
+
+    \subsection{First Moments} \label{sub:GPMom:First}
+        The first moment of the GP for any $\mi{m}\subseteq\mi{M}$ is given by
+        \begin{equation*}
+            \te[\mi{L}]{\mu_{\mi{m}}}
+            = \ev{k\!\left(\te[\mi{M}]{\rv{x}},X\right) K_{Y}^{-1} Y^{\dagger} \big\vert \te[\mi{m}]{z}}{\mi{M-m}}
+            = \te[\mi{L}\x\mi{L^{\prime}}\x\mi{N^{\prime}}]{g_{\mi{m}}}^{\dagger}
+            \te[\mi{L^{\prime}N^{\prime}}]{K_{Y}^{-1} Y^{\dagger}}
+        \end{equation*}
+        where
+        \begin{equation*}
+            \begin{aligned}
+                \te[l\x l^{\prime}\x\mi{N^{\prime}}]{g_{\mi{m}}} 
+                &\deq \te[l\x l^{\prime}]{\pm F} \circ 
+                \prob{\te[\mi{M}]{0}}{\te[\mi{M}\x\mi{N^{\prime}}]{X}}
+                {\diag[l\x l^{\prime}]{\Lambda^{2}+1}} \\
+                & \phantom{\deq\ } \circ \frac
+                {\prob{\te[\mi{m}]{z}}{\te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G}}{\te[l\x l^{\prime}]{\Gamma}}}
+                {\prob{\te[\mi{m}]{z}}{\te[\mi{m}]{0}}{\diag[\mi{m}^{2}]{1}}} \\
+                &\phantom{:}= \te[l\x l^{\prime}]{\pm F} \circ 
+                \frac
+                {\prob{\te[\mi{M}]{0}}{\te[\mi{M}\x\mi{N^{\prime}}]{X}}
+                {\diag[l\x l^{\prime}]{\Lambda^{2}+1}}} 
+                {\prob{\te[\mi{m}]{0}}{\te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G}}
+                {\te[l\x l^{\prime}]{\Phi}}} \\
+                & \phantom{\deq\ } \circ
+                {\prob{\te[l\x l^{\prime}\x\mi{m\x m^{\prime}}]{\Phi}\te[\mi{m^{\prime}}]{z}}{\te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G}}
+                {\te[l\x l^{\prime}]{\Gamma}\te[l\x l^{\prime}\x \mi{m^{\prime}\x m}]{\Phi}}}
+            \end{aligned}                    
+        \end{equation*}
         and
-        \begin{multline}
-            \te[(\mi{L\x 3})^{2}]{\mu_{2}} = \\
-            \evt{\;\evt{\;\ev{k(\rv{x},\rv{x}) - k(\rv{x},X) K_{Y}^{-1} k(X,\rv{x}) + E^{\dagger} \big\vert \tte[\mi{M\x 3}]{\rv{z}}}{M^{\prime\prime}}}{\mi{M+1-m}}}{\mi{M+1}}
-        \end{multline}
-    
+        \begin{equation*}
+            \begin{aligned}
+                \te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G} &\deq 
+                \te[\mi{m}\x\mi{M}]{\Theta} \diag[l\x l^{\prime}\x\mi{M}\x\mi{M^{\prime}}]{\Lambda^{2}+1}^{-1} \te[\mi{M^{\prime}}\x\mi{N^{\prime}}]{X} \\
+                \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Phi} &\deq 
+                \te[\mi{m}\x\mi{M}]{\Theta}
+                \diag[l\x l^{\prime}\x\mi{M}\x\mi{M^{\prime}}]{\Lambda^{2}+1}^{-1} \te[\mi{m^{\prime}}\x\mi{M^{\prime}}]{\Theta}^{\intercal} \\
+                \te[l\x l^{\prime}\x\mi{m}^{2}]{\Gamma} &\deq 
+                \diag[\mi{m}^{2}]{1} -
+                \te[l\x l^{\prime}\x\mi{m}^{2}]{\Phi}
+            \end{aligned}
+        \end{equation*}
+        In particular, when $\mi{m} = \mi{M}$, $\Theta$ factors out entirely. On the other hand
+        \begin{equation*}
+                \te[\mi{L}^{2}\x\mi{N^{\prime}}]{g_{\mi{0}}} =
+                \te[\mi{L}^{2}]{\pm F} \circ 
+                \prob{\te[\mi{M}]{0}}{\te[\mi{M}\x\mi{N^{\prime}}]{X}}
+                {\diag[\mi{L}^{2}\x\mi{M}^{2}]{\Lambda^{2}+1}}                  
+        \end{equation*}
+        Standardization of $X$ and $Y$ instills a totally marginal expectation of $\mu_{\mi{0}} \approx \te[\mi{L}]{0}$, but this is usually inexact.
+
+        \subsection{Second Moments} \label{sub:GPMom:Second}
+        The second moment of the GP for any $\mi{m,m^{\prime}}\subseteq\mi{M}$ is given by
+            \begin{equation} \label{eq:GPMom:Second}
+                \te[\mi{L}^2]{\mu_{\mi{mm^{\prime}}}} = 
+                \te[\mi{L}^2]{F} \circ \te[\mi{L}^2]{\phi_{\mi{mm^{\prime}}}} - \te[\mi{L}^2]{\psi_{\mi{mm^{\prime}}}} + \te[\mi{L}^2]{E}                        
+            \end{equation}
+            where
+            \begin{multline*}
+                \te[l\x l^{\prime}]{\phi_{\mi{mm^{\prime}}}}
+                \deq \frac{\evt{\;\evt{\te[l\x l^{\prime}]{k\!\left(\te[\mi{M}]{\rv{x}},\te[\mi{M^{\prime}}]{\rv{x}}\right) \big\vert \te[\mi{m}]{z},\te[\mi{m^{\prime}}]{z}}}{\mi{M^{\prime}-m^{\prime}}}}{\mi{M-m}}}{\te[l\x l^{\prime}]{F}} \\
+                = \frac
+                {\modulus{\diag[l\x l^{\prime}\x\mi{M}^{2}]{\Lambda^{2}}}^{1/2} \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\te[l\x l^{\prime}\x\mi{m}^2]{\Upsilon}}\prob{\te[\mi{m^{\prime}}]{\rv{z}}}{\te[l\x l^{\prime}\x \mi{m^{\prime}}]{Z}}{\te[l\x l^{\prime}\x\mi{m^{\prime}}^{2}]{\Pi}}}
+                {\modulus{\diag[l\x l^{\prime}\x\mi{M}^2]{\Lambda^{2}+2}}^{1/2}
+                \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\diag[\mi{m}^{2}]{1}}\prob{\te[\mi{m^{\prime}}]{\rv{z}}}{\te[\mi{m^{\prime}}]{0}}{\diag[\mi{m^{\prime}}^{2}]{1}}}
+            \end{multline*}
+            \begin{multline*}
+                \te[l\x l^{\prime}]{\psi_{\mi{mm^{\prime}}}}
+                \deq \frac{\evt{\;\evt{\te[l\x l^{\prime}]{k\!\left(\te[\mi{M}]{\rv{x}},X\right) K_{Y}^{-1} k\!\left(X,\te[\mi{M^{\prime}}]{\rv{x}}\right) \big\vert \te[\mi{m}]{z},\te[\mi{m^{\prime}}]{z}}}{\mi{M^{\prime}-m^{\prime}}}}{\mi{M-m}}}{\te[l\x l^{\prime}]{F}} \\
+                 = \te[l\x\mi{L^{\prime\prime}}\x\mi{N^{\prime\prime}}]{g_{\mi{m}}}^{\dagger}
+                \te[\mi{L^{\prime\prime}N^{\prime\prime}}\x\mi{L^{\prime\prime\prime}N^{\prime\prime\prime}}]{K_{Y}^{-1}} 
+                \te[l^{\prime}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{g_{\mi{m^{\prime}}}}^{\dagger} \qquad\qquad\qquad
+            \end{multline*}
+            and
+            \begin{equation*}
+                \begin{aligned}
+                    \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Upsilon} &\deq \te[\mi{m}\x\mi{M}]{\Theta}
+                    \diag[\mi{M}\x\mi{M^{\prime}}]{\diag[l\x l^{\prime}]{\Lambda^{2}+1}\diag[l\x l^{\prime}]{\Lambda^{2}+2}^{-1}} \te[\mi{m^{\prime\prime}}\x\mi{M^{\prime}}]{\Theta}^{\intercal} \\
+                    \te[l\x l^{\prime}\x \mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{\Pi}^{-1} &\deq \te[l\x l^{\prime}\x\mi{M^{\prime}\x\mi{m}}]{\Phi}
+                    \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Gamma}^{-1} \te[l\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{M^{\prime\prime\prime}}]{\Phi} \\
+                    &\phantom{\deq}\ + \te[l\x l^{\prime}\x \mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{\Upsilon}^{-1} \\
+                    \te[l\x l^{\prime}\x \mi{m^{\prime}}]{Z} &\deq 
+                    \te[l\x l^{\prime}\x \mi{m^{\prime}}\x\mi{M}]{\Pi}
+                    \te[l\x l^{\prime}\x\mi{M}\x\mi{m^{\prime\prime}}]{\Phi}
+                    \te[l\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{m}]{\Gamma}^{-1}
+                    \te[\mi{m}]{\rv{z}}
+                \end{aligned}
+            \end{equation*}
+
+
+\section{Gaussian Process Estimates}\label{sec:GPEst}
+    \subsection{Expected Value}\label{sub:GPEst:Expectation}
+    Using the shorthand
+    \begin{equation*}
+        \te[l\x\mi{L^{\prime}}\mi{N^{\prime}}]{KY\!g_{\mi{0}}} \deq \te[l\x \mi{L^{\prime}}\mi{N^{\prime}}]{K_{Y}^{-1} Y^{\dagger}} \circ \te[l\x\mi{L^{\prime}}\x\mi{N^{\prime}}]{g_{\mi{0}}}^{\dagger}
+    \end{equation*}
+    to write
+    \begin{equation*}                
+        \evt{\te[l\x l^{\prime}]{\te[\mi{L}]{\mu_{\mi{m}}}^{2}}}{\mi{m}} 
+        = \te[l\x\mi{L^{\prime\prime}}\mi{N^{\prime\prime}}]{KY\!g_{\mi{0}}}
+        \te[l\x\mi{L^{\prime\prime}}\x\mi{N^{\prime\prime}} \x l^{\prime}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{H_{\mi{m}}}^{\dagger}
+        \te[l^{\prime}\x\mi{L^{\prime\prime\prime}}\mi{N^{\prime\prime\prime}}]{KY\!g_{\mi{0}}}
+    \end{equation*}
+    results in
+    \begin{align*}
+        &\te[l\x\mi{L^{\prime\prime}}\x\mi{N^{\prime\prime}} \x l^{\prime}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{H_{\mi{m}}} \\
+        &\deq \ev{\frac{
+            \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}\x l\x \mi{L^{\prime\prime}\x N^{\prime\prime}}]{G}}{\te[l\x \mi{L^{\prime\prime}}]{\Gamma}} \otimes
+            \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}\x l^{\prime}\x \mi{L^{\prime\prime\prime}\x N^{\prime\prime\prime}}]{G}}{\te[l^{\prime}\x\mi{L^{\prime\prime\prime}}]{\Gamma}}}
+        {\prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\diag[\mi{m\x m}]{1}}
+        \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\diag[\mi{m\x m}]{1}}}}{\mi{m}} \\
+        &\phantom{:}=
+        \te[l\x \mi{L^{\prime\prime}}\x l^{\prime}\x \mi{L^{\prime\prime\prime}}]{\modulus{\Psi}^{-1}} \circ
+        \frac{
+            \prob{\te[\mi{m}\x l\x\mi{L^{\prime\prime}}\x\mi{N^{\prime\prime}}]{G}}
+            {\te[\mi{m}\x l^{\prime}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{G}}
+            {\te[l \x\mi{L^{\prime\prime}}\x l^{\prime}\x\mi{L^{\prime\prime\prime}}]{\Sigma}}
+            }
+        {\prob{\te[\mi{m}]{0}}
+        {\te[\mi{m}\x l\x\mi{L^{\prime\prime}}\x\mi{N^{\prime\prime}}\x l^{\prime}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{\Sigma G}}{\te[l \x\mi{L^{\prime\prime}}\x l^{\prime}\x\mi{L^{\prime\prime\prime}}]{\Sigma\Psi}}}
+    \end{align*}
+    where
+    \begin{equation*}
+        \begin{aligned}
+            \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}^{2}]{\Sigma} &\deq 
+            \te[l\x l^{\prime\prime}\x\mi{m}^{2}]{\Gamma} + \te[l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}^{2}]{\Gamma} \\
+            \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Psi} &\deq 
+            \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Sigma} \\
+            &\phantom{:}- \te[l\x l^{\prime\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Gamma} \te[l^{\prime}\x l^{\prime\prime\prime}\x\mi{m^{\prime\prime}}\x\mi{m^{\prime}}]{\Gamma} \\
+            \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}]{\modulus{\Psi}^{-1}} &\deq 
+            \modulus{\te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}^{2}]{\Psi}}^{-1} \\
+            \te[\mi{m}\x l\x l^{\prime\prime}\x\mi{N^{\prime\prime}}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{N^{\prime\prime\prime}}]{\Sigma G} &\deq 
+            \te[l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Gamma}
+            \te[\mi{m^{\prime}}\x l\x l^{\prime\prime}\x\mi{N^{\prime\prime}}]{G}\\
+            &\phantom{\deq}+
+            \te[l\x l^{\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Gamma}
+            \te[\mi{m^{\prime}}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{N^{\prime\prime\prime}}]{G}\\
+            \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Sigma\Psi} &\deq 
+            \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Sigma}
+            \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m^{\prime\prime}}\x\mi{m^{\prime}}]{\Psi}
+        \end{aligned}                    
+    \end{equation*}
+
+    \subsection{Variance}\label{sub:GPEst:Variance}
+        In calculating
+        \begin{equation*}
+            \evt{\;\evt{\te[\mi{L}^{2} \x \mi{L^{\prime}}^{2}]{\mu_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}}
+        \end{equation*}
+        from \cref{eq:GPMom:Second} the terms containing $E$ reduce to squares of $g_{\mi{0}}$ by iterated expectations, and these will obviously cancel across \cref{eq:SPEst:W}. 
+        We may therefore assume $E=0$ in \cref{eq:GPMom:Second}. The remaining terms are given by
+        \begin{multline*}
+            \evt{\;\evt{\te[]{\te[l]{\mu_{\mi{m}}} \otimes \te[l^{\prime\prime}\x l^{\prime}]{\phi_{\mi{mm^{\prime}}}} \otimes \te[l^{\prime\prime\prime}]{\mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}}{\mi{m}} = \\
+            \frac
+            {\modulus{\diag[l^{\prime\prime}\x l^{\prime}\x\mi{M}^{2}]{\Lambda^{2}}}^{1/2}(2\pi)^{m/2}}
+            {\modulus{\diag[l^{\prime\prime}\x l^{\prime}\x\mi{M}^2]{\Lambda^{2}+2}}^{1/2}}
+            \te[\mi{L^{*}N^{*}}]{K_{Y}^{-1} Y^{\dagger}} \otimes
+            \te[\mi{L^{*\prime}N^{*\prime}}]{K_{Y}^{-1} Y^{\dagger}} \\
+            \left\lbrack\frac{
+            \te[l\x\mi{L^{*}}\x\mi{N^{*}}]{g_{\mi{0}}} \otimes
+            \te[l^{\prime\prime\prime}\x\mi{L^{*\prime}}\x\mi{N^{*\prime}}]{g_{\mi{0}}}}
+            {\prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}{\te[l^{\prime\prime\prime}\x \mi{L^{*\prime}}]{\Phi}}} \circ \right.\\
+            \prob{\te[\mi{m}]{0}}{\te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}} 
+            {\diag[]{1} +
+            \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[l\x \mi{L^{*}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{\intercal/2}} \circ \\
+            \left. \prob{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}
+            {\te[]{\Omega} \te[]{C} \te[l\x \mi{L^{*}}]{\Gamma}^{-1} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}{\te[]{B}+\te[]{\Omega} \te[]{C} \te[]{\Omega}^{\intercal}}
+            \phantom{\frac{_{\vert}^{\vert}}{_{\vert}^{\vert}}}\right\rbrack^{\dagger}
+        \end{multline*}
+        using the Cholesky decomposition
+        \begin{equation*}
+            \diag[\mi{m}^{2}]{1} - \te[l^{\prime\prime}\x l^{\prime}\x\mi{m}^{2}]{\Upsilon}
+            = \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{\intercal/2}
+        \end{equation*}
+        and
+        \begin{equation*}
+            \begin{aligned}
+                \te[\mi{m^{\prime}\x m}]{\Omega} &\deq 
+                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}
+                \te[l^{\prime\prime}\x l^{\prime}\x\mi{m^{\prime\prime\prime}}\x\mi{M}]{\Pi}
+                \te[l^{\prime\prime}\x l^{\prime}\x\mi{M}\x\mi{m^{\prime\prime}}]{\Phi}
+                \te[l^{\prime\prime}\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{m}]{\Gamma}^{-1} \\
+                \te[\mi{m^{\prime}}^{2}]{B} &\deq 
+                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime}}]{\Gamma}
+                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} + \\
+                &\phantom{\deq\ }\te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi}
+                \te[l^{\prime\prime}\x l^{\prime}\x\mi{m^{*\prime\prime\prime}}\x\mi{m^{*\prime}}]{\Pi}
+                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} \\
+                \te[\mi{m}^{2}]{C} &\deq 
+                \te[l^{\prime\prime}\x l^{\prime}\x\mi{m}\x\mi{m^{*}}]{\Upsilon} \\
+                &\phantom{\deq\ }
+                \te[\mi{m^{*}}\x\mi{m^{*\prime\prime}}]{\te[]{\te[l\x l^{*}\x\mi{m^{**}}^{2}]{\Gamma}
+                + \te[l\x l^{*}\x\mi{m^{**}}\x\mi{m^{**\prime\prime}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime}\x\mi{m^{**\prime\prime}}\x\mi{m^{***}}]{\Upsilon}}^{-1}} \\
+                &\phantom{\deq\ }\te[l\x l^{*}\x\mi{m^{*\prime\prime}}\x\mi{m^{\prime\prime}}]{\Gamma}
+            \end{aligned}
+        \end{equation*}
+        and
+        \begin{multline*}
+            \evt{\;\evt{\te[]{\te[l]{\mu_{\mi{m}}} \otimes \te[l^{\prime\prime}\x l^{\prime}]{\psi_{\mi{mm^{\prime}}}} \otimes \te[l^{\prime\prime\prime}]{\mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}}{\mi{m}} = \\
+            \te[\mi{L^{*}N^{*}}]{K_{Y}^{-1} Y^{\dagger}} \otimes
+            \te[\mi{L^{*\prime\prime}N^{*\prime\prime}}\x\mi{L^{*\prime}N^{*\prime}}]{K_{Y}^{-1}} \otimes
+            \te[\mi{L^{*\prime\prime\prime}N^{*\prime\prime\prime}}]{K_{Y}^{-1} Y^{\dagger}} \\
+            \left\lbrack\frac{
+            \te[l\x\mi{L^{*}}\x\mi{N^{*}}]{g_{\mi{0}}} \otimes
+            \te[l^{\prime\prime}\x\mi{L^{*\prime\prime}}\x\mi{N^{*\prime\prime}}]{g_{\mi{0}}} \otimes
+            \te[l^{\prime}\x\mi{L^{*\prime}}\x\mi{N^{*\prime}}]{g_{\mi{0}}} \otimes
+            \te[l^{\prime\prime\prime}\x\mi{L^{*\prime\prime\prime}}\x\mi{N^{*\prime\prime\prime}}]{g_{\mi{0}}}}
+            {\prob{\te[\mi{m}]{0}}{\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}{\te[l\x \mi{L^{*}}]{\Phi}} \otimes
+            \prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}{\te[l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}}]{\Phi}}} \circ \right.\\
+            \prob{\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}
+            {\te[\mi{m}\x l^{\prime\prime}\x \mi{L^{*\prime\prime}\x N^{*\prime\prime}}]{G}}{\te[l\x\mi{L^{*}}\x l^{\prime\prime}\x\mi{L^{*\prime\prime}}]{D}} \circ \phantom{\frac{_{\vert}^{\vert}}{}}\\
+            \left. \prob{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}
+            {\te[\mi{m^{\prime}}\x l^{\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}{\te[l^{\prime\prime\prime}\x\mi{L^{*\prime\prime\prime}}\x l^{\prime}\x\mi{L^{*\prime}}]{D}}
+            \phantom{\frac{_{\vert}^{\vert}}{_{\vert}^{\vert}}}\right\rbrack^{\dagger}
+        \end{multline*}
+        where
+        \begin{equation*}
+            \begin{aligned}
+                \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x l^{\prime}\x l^{*\prime}\x\mi{m^{\prime}}^{2}]{D} &\deq 
+                \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime}}]{\Gamma}
+                \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} + \\
+                &\phantom{\deq\ }\te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi}
+                \te[l^{\prime}\x l^{*\prime}\x\mi{m^{*\prime\prime\prime}}\x\mi{m^{*\prime}}]{\Gamma}
+                \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} \\
+            \end{aligned}
+        \end{equation*}
+        and similarly for $\te[l\x\mi{L^{*}}\x l^{\prime\prime}\x\mi{L^{*\prime\prime}\x m}^{2}]{D}$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \bibliographystyle{elsarticle-num} 
