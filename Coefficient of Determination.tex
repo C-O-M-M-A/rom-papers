@@ -93,9 +93,9 @@
     \end{equation*}
     with void $\mi{0}$ voiding any tensor it subscripts. Ordinals are concatenated by Cartesian $\times$ and may be subtracted like sets, as in $\mi{M-m} \deq (m,\ldots,M-1)$. 
     Subscripts refer to the tensor prior to any superscript operation, so $\te[\mi{L}]{y(\rv{u})}^{2}$ is an $\mi{L}^{2} \deq \mi{L\x L}$ tensor, for example.
-    The preference throughout this work is for uppercase constants and lowercase variables, in case of ordinals the lowercase ranging over the uppercase. We prefer $o$ for an unbounded positive integer, to avoid O.
+    The preference throughout this work is for uppercase constants and lowercase variables, in case of ordinals the lowercase ranging over the uppercase. We prefer $o$ for an unbounded positive integer, avoiding O.
 
-    Expectations and variances will be subscripted by the dimensions of $\rv{u}$ marginalized (integrated over). Conditioning on the remaining dimensions is left implicit after \cref{def:Theory:y_m}, to lighten notation.
+    Expectations and variances will be subscripted by the dimensions of $\rv{u}$ marginalized. Conditioning on the remaining dimensions is left implicit after \cref{def:Theory:y_m}, to lighten notation.
     Now, Construct $M+1$ stochastic processes (SPs)
     \begin{equation}\label{def:Theory:y_m}
         \te[\mi{L}]{\rv{y_m}} \deq \ev{y(\rv{u})}{\mi{M-m}} \deq \ev{y(\rv{u}) \big\vert \te[\mi{m}]{u}}{\mi{M-m}}
@@ -149,7 +149,7 @@
             \big\vert \te[]{\te[\mi{0}]{u}, \te[\mi{m^{\prime}}]{u}, \te[\mi{M^{\prime\prime}}]{u}}}{\mi{0^{\prime\prime}}}}
         {\mi{M^{\prime}-m^{\prime}}}}{\mi{M}}
     \end{equation}
-    Primes mark independent input axes, expectations are shared by all three members of the triad. It is not always obvious whether axes are independent or shared by the triad, but this can be mechanically checked against the measure of integration behind an expectation. Repeated expectations over the same axis are rare here, usually indicating that apparent repetitions must be ``primed''. The purpose of the triad is to interrogate its response for moments in respect of ungovernable noise (which is shared)
+    Primes mark independent input axes, otherwise expectations are shared by all three members of the triad. It is not always obvious whether axes are independent or shared by the triad, but this can be mechanically checked against the measure of integration behind an expectation. Repeated expectations over the same axis are rare here, usually indicating that apparent repetitions must be ``primed''. The purpose of the triad is to interrogate its response for moments in respect of ungovernable noise (which is shared)
     \begin{equation}\label{def:SPEst:mu}
             \te[(\mi{L\x 3})^{n}]{\mu_{n}} \deq \ev{\tte[\mi{L\x 3}]{\rv{y}}^{n}}{M} \ \ \forall n \in \st{Z}^{+}
     \end{equation}
@@ -212,15 +212,20 @@
     cancelling across $A_{\mi{m,m^{\prime}}}-A_{\mi{0,m^{\prime}}} - A_{\mi{m,0}}+A_{\mi{0,0}}$.
     Similar arguments eliminate $\te[\mi{L}]{\rv{e_{m^{\prime}}}}^{2}$ and $\te[\mi{L}]{\mu_{\mi{m}}}^{2}$.
     Effectively then
-    \begin{equation}
-        \te[\mi{L}^4]{A_{\mi{mm^{\prime}}}} = \sum_{\pi(\mi{L}^{2})} \sum_{\pi(\mi{L^{\prime}}^{2})}
-        \evt{\;\evt{\te[\mi{L}^{2} \x \mi{L^{\prime}}^{2}]{\mu_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}}
+    \begin{equation}\label{eq:SPEst:A}
+        \begin{aligned}
+            \te[\mi{L}^4]{A_{\mi{mm^{\prime}}}} &= \sum_{\pi(\mi{L}^{2})} \sum_{\pi(\mi{L^{\prime}}^{2})}
+            \evt{\;\evt{\te[\mi{L}^{2} \x \mi{L^{\prime}}^{2}]{\mu_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}} \\
+            &= 4 \;
+            \evt{\;\evt{\te[\mi{L}^{4}]{\mu_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}}
+        \end{aligned}
     \end{equation}
     where each summation is over permutations of tensor axes
     \begin{equation*}
         \pi(\mi{L}^{2}) \deq \set{(\mi{L}\x\mi{L^{\prime\prime}}), (\mi{L^{\prime\prime}}\x\mi{L})} \QT{;} \pi(\mi{L^{\prime}}^{2}) \deq \set{(\mi{L^{\prime}}\x\mi{L^{\prime\prime\prime}}), (\mi{L^{\prime\prime\prime}}\x\mi{L^{\prime}})}
     \end{equation*}
-    Primes on constants are for bookeeping purposes only ($\mi{L}^{i\prime} = \mi{L}$ always), they do not change the value of the constant -- unlike primes on variables ($\mi{m}^{i\prime}$ need not equal $\mi{m}$ in general).
+    Primes on constants are for bookeeping purposes only ($\mi{L}^{i\prime} = \mi{L}$ always), they do not change the value of the constant -- unlike primes on variables ($\mi{m}^{i\prime}$ need not equal $\mi{m}$ in general). In this case the four permutations all give the same result, by symmetry of covariances, hence the last equality
+
     In order to further elucidate these estimates, we must fill in the details of the underlying stochastic processes, sufficiently identifying the regression $y$ by its first two moments $\mu_{1}, \mu_{2}$.
 
 
@@ -516,7 +521,7 @@
     \subsection{Expected Value}\label{sub:GPEst:Expectation}
     Using the shorthand
     \begin{equation*}
-        \te[l\x\mi{L^{\prime}}\mi{N^{\prime}}]{KY\!g_{\mi{0}}} \deq \te[l\x \mi{L^{\prime}}\mi{N^{\prime}}]{K_{Y}^{-1} Y^{\dagger}} \circ \te[l\x\mi{L^{\prime}}\x\mi{N^{\prime}}]{g_{\mi{0}}}^{\dagger}
+        \te[l\x\mi{L^{\prime}}\mi{N^{\prime}}]{KY\!g_{\mi{0}}} \deq \te[\mi{L^{\prime}}\mi{N^{\prime}}]{K_{Y}^{-1} Y^{\dagger}} \circ \te[l\x\mi{L^{\prime}}\x\mi{N^{\prime}}]{g_{\mi{0}}}^{\dagger}
     \end{equation*}
     to write
     \begin{equation*}                
@@ -629,8 +634,8 @@
             \te[l^{\prime}\x\mi{L^{*\prime}}\x\mi{N^{*\prime}}]{g_{\mi{0}}} \otimes
             \te[l^{\prime\prime\prime}\x\mi{L^{*\prime\prime\prime}}\x\mi{N^{*\prime\prime\prime}}]{g_{\mi{0}}}}
             {\prob{\te[\mi{m}]{0}}{\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}{\te[l\x \mi{L^{*}}]{\Phi}} \otimes
-            \prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}{\te[l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}}]{\Phi}}} \circ \right.\\
-            \prob{\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}
+            \prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}{\te[l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}}]{\Phi}}} \right.\\
+            \circ \prob{\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}
             {\te[\mi{m}\x l^{\prime\prime}\x \mi{L^{*\prime\prime}\x N^{*\prime\prime}}]{G}}{\te[l\x\mi{L^{*}}\x l^{\prime\prime}\x\mi{L^{*\prime\prime}}]{D}} \circ \phantom{\frac{_{\vert}^{\vert}}{}}\\
             \left. \prob{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}
             {\te[\mi{m^{\prime}}\x l^{\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}{\te[l^{\prime\prime\prime}\x\mi{L^{*\prime\prime\prime}}\x l^{\prime}\x\mi{L^{*\prime}}]{D}}
