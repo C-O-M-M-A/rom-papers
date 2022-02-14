@@ -224,7 +224,7 @@
     \begin{equation*}
         \pi(\mi{L}^{2}) \deq \set{(\mi{L}\x\mi{L^{\prime\prime}}), (\mi{L^{\prime\prime}}\x\mi{L})} \QT{;} \pi(\mi{L^{\prime}}^{2}) \deq \set{(\mi{L^{\prime}}\x\mi{L^{\prime\prime\prime}}), (\mi{L^{\prime\prime\prime}}\x\mi{L^{\prime}})}
     \end{equation*}
-    Primes on constants are for bookeeping purposes only ($\mi{L}^{i\prime} = \mi{L}$ always), they do not change the value of the constant -- unlike primes on variables ($\mi{m}^{i\prime}$ need not equal $\mi{m}$ in general). In this case the four permutations all give the same result, by symmetry of covariances, hence the last equality
+    Primes on constants are for bookeeping purposes only ($\mi{L}^{i\prime} = \mi{L}$ always), they do not change the value of the constant -- unlike primes on variables ($\mi{m}^{i\prime}$ need not equal $\mi{m}$ in general). In this case the four permutations all give the same result, by symmetry of covariances, hence the last equality.
 
     In order to further elucidate these estimates, we must fill in the details of the underlying stochastic processes, sufficiently identifying the regression $y$ by its first two moments $\mu_{1}, \mu_{2}$.
 
@@ -452,8 +452,8 @@
                 {\prob{\te[\mi{m}]{0}}{\te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G}}
                 {\te[l\x l^{\prime}]{\Phi}}} \\
                 & \phantom{\deq\ } \circ
-                {\prob{\te[l\x l^{\prime}\x\mi{m\x m^{\prime}}]{\Phi}\te[\mi{m^{\prime}}]{z}}{\te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G}}
-                {\te[l\x l^{\prime}]{\Gamma}\te[l\x l^{\prime}\x \mi{m^{\prime}\x m}]{\Phi}}}
+                {\prob{\te[l\x l^{\prime}\x\mi{m\x m^{\prime\prime}}]{\Phi}\te[\mi{m^{\prime\prime}}]{z}}{\te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G}}
+                {\te[l\x l^{\prime}]{\Gamma}\te[l\x l^{\prime}\x \mi{m^{\prime\prime}\x m}]{\Phi}}}
             \end{aligned}                    
         \end{equation*}
         and
@@ -461,9 +461,9 @@
             \begin{aligned}
                 \te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G} &\deq 
                 \te[\mi{m}\x\mi{M}]{\Theta} \diag[l\x l^{\prime}\x\mi{M}\x\mi{M^{\prime}}]{\Lambda^{2}+1}^{-1} \te[\mi{M^{\prime}}\x\mi{N^{\prime}}]{X} \\
-                \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Phi} &\deq 
+                \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Phi} &\deq 
                 \te[\mi{m}\x\mi{M}]{\Theta}
-                \diag[l\x l^{\prime}\x\mi{M}\x\mi{M^{\prime}}]{\Lambda^{2}+1}^{-1} \te[\mi{m^{\prime}}\x\mi{M^{\prime}}]{\Theta}^{\intercal} \\
+                \diag[l\x l^{\prime}\x\mi{M}\x\mi{M^{\prime}}]{\Lambda^{2}+1}^{-1} \te[\mi{m^{\prime\prime}}\x\mi{M^{\prime}}]{\Theta}^{\intercal} \\
                 \te[l\x l^{\prime}\x\mi{m}^{2}]{\Gamma} &\deq 
                 \diag[\mi{m}^{2}]{1} -
                 \te[l\x l^{\prime}\x\mi{m}^{2}]{\Phi}
@@ -478,44 +478,43 @@
         \end{equation*}
         Standardization of $X$ and $Y$ instills a totally marginal expectation of $\mu_{\mi{0}} \approx \te[\mi{L}]{0}$, but this is usually inexact.
 
-        \subsection{Second Moments} \label{sub:GPMom:Second}
+    \subsection{Second Moments} \label{sub:GPMom:Second}
         The second moment of the GP for any $\mi{m,m^{\prime}}\subseteq\mi{M}$ is given by
-            \begin{equation} \label{eq:GPMom:Second}
-                \te[\mi{L}^2]{\mu_{\mi{mm^{\prime}}}} = 
-                \te[\mi{L}^2]{F} \circ \te[\mi{L}^2]{\phi_{\mi{mm^{\prime}}}} - \te[\mi{L}^2]{\psi_{\mi{mm^{\prime}}}} + \te[\mi{L}^2]{E}                        
-            \end{equation}
-            where
-            \begin{multline*}
-                \te[l\x l^{\prime}]{\phi_{\mi{mm^{\prime}}}}
-                \deq \frac{\evt{\;\evt{\te[l\x l^{\prime}]{k\!\left(\te[\mi{M}]{\rv{x}},\te[\mi{M^{\prime}}]{\rv{x}}\right) \big\vert \te[\mi{m}]{z},\te[\mi{m^{\prime}}]{z}}}{\mi{M^{\prime}-m^{\prime}}}}{\mi{M-m}}}{\te[l\x l^{\prime}]{F}} \\
-                = \frac
-                {\modulus{\diag[l\x l^{\prime}\x\mi{M}^{2}]{\Lambda^{2}}}^{1/2} \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\te[l\x l^{\prime}\x\mi{m}^2]{\Upsilon}}\prob{\te[\mi{m^{\prime}}]{\rv{z}}}{\te[l\x l^{\prime}\x \mi{m^{\prime}}]{Z}}{\te[l\x l^{\prime}\x\mi{m^{\prime}}^{2}]{\Pi}}}
-                {\modulus{\diag[l\x l^{\prime}\x\mi{M}^2]{\Lambda^{2}+2}}^{1/2}
-                \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\diag[\mi{m}^{2}]{1}}\prob{\te[\mi{m^{\prime}}]{\rv{z}}}{\te[\mi{m^{\prime}}]{0}}{\diag[\mi{m^{\prime}}^{2}]{1}}}
-            \end{multline*}
-            \begin{multline*}
-                \te[l\x l^{\prime}]{\psi_{\mi{mm^{\prime}}}}
-                \deq \frac{\evt{\;\evt{\te[l\x l^{\prime}]{k\!\left(\te[\mi{M}]{\rv{x}},X\right) K_{Y}^{-1} k\!\left(X,\te[\mi{M^{\prime}}]{\rv{x}}\right) \big\vert \te[\mi{m}]{z},\te[\mi{m^{\prime}}]{z}}}{\mi{M^{\prime}-m^{\prime}}}}{\mi{M-m}}}{\te[l\x l^{\prime}]{F}} \\
-                 = \te[l\x\mi{L^{\prime\prime}}\x\mi{N^{\prime\prime}}]{g_{\mi{m}}}^{\dagger}
-                \te[\mi{L^{\prime\prime}N^{\prime\prime}}\x\mi{L^{\prime\prime\prime}N^{\prime\prime\prime}}]{K_{Y}^{-1}} 
-                \te[l^{\prime}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{g_{\mi{m^{\prime}}}}^{\dagger} \qquad\qquad\qquad
-            \end{multline*}
-            and
-            \begin{equation*}
-                \begin{aligned}
-                    \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Upsilon} &\deq \te[\mi{m}\x\mi{M}]{\Theta}
-                    \diag[\mi{M}\x\mi{M^{\prime}}]{\diag[l\x l^{\prime}]{\Lambda^{2}+1}\diag[l\x l^{\prime}]{\Lambda^{2}+2}^{-1}} \te[\mi{m^{\prime\prime}}\x\mi{M^{\prime}}]{\Theta}^{\intercal} \\
-                    \te[l\x l^{\prime}\x \mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{\Pi}^{-1} &\deq 
-                    \diag[\mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{1} + \te[l\x l^{\prime}\x \mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{\Phi} + \\
-                    &\phantom{\deq}\ \te[l\x l^{\prime}\x\mi{M^{\prime}\x\mi{m}}]{\Phi}
-                    \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Gamma}^{-1} \te[l\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{M^{\prime\prime\prime}}]{\Phi} \\
-                    \te[l\x l^{\prime}\x \mi{m^{\prime}}]{Z} &\deq 
-                    \te[l\x l^{\prime}\x \mi{m^{\prime}}\x\mi{M}]{\Pi}
-                    \te[l\x l^{\prime}\x\mi{M}\x\mi{m^{\prime\prime}}]{\Phi}
-                    \te[l\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{m}]{\Gamma}^{-1}
-                    \te[\mi{m}]{\rv{z}}
-                \end{aligned}
-            \end{equation*}
+        \begin{equation} \label{eq:GPMom:Second}
+            \te[\mi{L}^2]{\mu_{\mi{mm^{\prime}}}} = 
+            \te[\mi{L}^2]{F} \circ \te[\mi{L}^2]{\phi_{\mi{mm^{\prime}}}} - \te[\mi{L}^2]{\psi_{\mi{mm^{\prime}}}} + \te[\mi{L}^2]{E}                        
+        \end{equation}
+        where
+        \begin{multline*}
+            \te[l\x l^{\prime}]{\phi_{\mi{mm^{\prime}}}}
+            \deq \frac{\evt{\;\evt{\te[l\x l^{\prime}]{k\!\left(\te[\mi{M}]{\rv{x}},\te[\mi{M^{\prime}}]{\rv{x}}\right) \big\vert \te[\mi{m}]{z},\te[\mi{m^{\prime}}]{z}}}{\mi{M^{\prime}-m^{\prime}}}}{\mi{M-m}}}{\te[l\x l^{\prime}]{F}} \\
+            = \frac
+            {\modulus{\diag[l\x l^{\prime}\x\mi{M}^{2}]{\Lambda^{2}}}^{1/2} \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\te[l\x l^{\prime}\x\mi{m}^2]{\Upsilon}}\prob{\te[\mi{m^{\prime}}]{\rv{z}}}{\te[l\x l^{\prime}\x \mi{m^{\prime}}]{Z}}{\te[l\x l^{\prime}\x\mi{m^{\prime}}^{2}]{\Pi}}}
+            {\modulus{\diag[l\x l^{\prime}\x\mi{M}^2]{\Lambda^{2}+2}}^{1/2}
+            \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\diag[\mi{m}^{2}]{1}}\prob{\te[\mi{m^{\prime}}]{\rv{z}}}{\te[\mi{m^{\prime}}]{0}}{\diag[\mi{m^{\prime}}^{2}]{1}}}
+        \end{multline*}
+        \begin{multline*}
+            \te[l\x l^{\prime}]{\psi_{\mi{mm^{\prime}}}}
+            \deq \frac{\evt{\;\evt{\te[l\x l^{\prime}]{k\!\left(\te[\mi{M}]{\rv{x}},X\right) K_{Y}^{-1} k\!\left(X,\te[\mi{M^{\prime}}]{\rv{x}}\right) \big\vert \te[\mi{m}]{z},\te[\mi{m^{\prime}}]{z}}}{\mi{M^{\prime}-m^{\prime}}}}{\mi{M-m}}}{\te[l\x l^{\prime}]{F}} \\
+                = \te[l\x\mi{L^{\prime\prime}}\x\mi{N^{\prime\prime}}]{g_{\mi{m}}}^{\dagger}
+            \te[\mi{L^{\prime\prime}N^{\prime\prime}}\x\mi{L^{\prime\prime\prime}N^{\prime\prime\prime}}]{K_{Y}^{-1}} 
+            \te[l^{\prime}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{g_{\mi{m^{\prime}}}}^{\dagger} \qquad\qquad\qquad
+        \end{multline*}
+        and
+        \begin{equation*}
+            \begin{aligned}
+                \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Upsilon} &\deq \te[\mi{m}\x\mi{M}]{\Theta}
+                \diag[\mi{M}\x\mi{M^{\prime}}]{\diag[l\x l^{\prime}]{\Lambda^{2}+1}\diag[l\x l^{\prime}]{\Lambda^{2}+2}^{-1}} \te[\mi{m^{\prime\prime}}\x\mi{M^{\prime}}]{\Theta}^{\intercal} \\
+                \te[l\x l^{\prime}\x \mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{\Pi}^{-1} &\deq \te[l\x l^{\prime}\x\mi{M^{\prime}\x\mi{m}}]{\Phi}
+                \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Gamma}^{-1} \te[l\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{M^{\prime\prime\prime}}]{\Phi} \\
+                &\phantom{\deq}\ + \te[l\x l^{\prime}\x \mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{\Upsilon}^{-1} \\
+                \te[l\x l^{\prime}\x \mi{m^{\prime}}]{Z} &\deq 
+                \te[l\x l^{\prime}\x \mi{m^{\prime}}\x\mi{M^{\prime}}]{\Pi}
+                \te[l\x l^{\prime}\x\mi{M^{\prime}}\x\mi{m^{\prime\prime}}]{\Phi}
+                \te[l\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{m}]{\Gamma}^{-1}
+                \te[\mi{m}]{\rv{z}}
+            \end{aligned}
+        \end{equation*}
 
 
 \section{Gaussian Process Estimates}\label{sec:GPEst}
@@ -554,9 +553,9 @@
         \begin{aligned}
             \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}^{2}]{\Sigma} &\deq 
             \te[l\x l^{\prime\prime}\x\mi{m}^{2}]{\Gamma} + \te[l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}^{2}]{\Gamma} \\
-            \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Psi} &\deq 
-            \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Sigma} \\
-            &\phantom{:}- \te[l\x l^{\prime\prime}\x\mi{m}\x\mi{m^{*\prime}}]{\Gamma} \te[l^{\prime}\x l^{\prime\prime\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime}}]{\Gamma} \\
+            \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Psi} &\deq 
+            \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Sigma} \\
+            &\phantom{:}- \te[l\x l^{\prime\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Gamma} \te[l^{\prime}\x l^{\prime\prime\prime}\x\mi{m^{\prime\prime}}\x\mi{m^{\prime}}]{\Gamma} \\
             \te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}]{\modulus{\Psi}^{-1}} &\deq 
             \modulus{\te[l\x l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}^{2}]{\Psi}}^{-1} \\
             \te[\mi{m}\x l\x l^{\prime\prime}\x\mi{N^{\prime\prime}}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{N^{\prime\prime\prime}}]{\Sigma G} &\deq 
@@ -588,34 +587,41 @@
             \left\lbrack\frac{
             \te[l\x\mi{L^{*}}\x\mi{N^{*}}]{g_{\mi{0}}} \otimes
             \te[l^{\prime\prime\prime}\x\mi{L^{*\prime}}\x\mi{N^{*\prime}}]{g_{\mi{0}}}}
-            {\prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}{\te[l^{\prime\prime\prime}\x \mi{L^{*\prime}}]{\Phi}}} \circ \right.\\
+            {\prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{\Phi G}}{\diag[\mi{m^{\prime}}^2]{1}}} \circ \right.\\
             \prob{\te[\mi{m}]{0}}{\te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}} 
-            {\diag[]{1} +
+            {\diag[]{1} -
             \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[l\x \mi{L^{*}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{\intercal/2}} \circ \\
-            \left. \prob{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}
+            \left. \prob{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{\Phi G}}
             {\te[]{\Omega} \te[]{C} \te[l\x \mi{L^{*}}]{\Gamma}^{-1} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}{\te[]{B}+\te[]{\Omega} \te[]{C} \te[]{\Omega}^{\intercal}}
             \phantom{\frac{_{\vert}^{\vert}}{_{\vert}^{\vert}}}\right\rbrack^{\dagger}
         \end{multline*}
-        using the Cholesky decomposition
+        using the Cholesky decompositions
         \begin{equation*}
-            \diag[\mi{m}^{2}]{1} - \te[l^{\prime\prime}\x l^{\prime}\x\mi{m}^{2}]{\Upsilon}
-            = \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{\intercal/2}
+            \begin{aligned}
+                \diag[\mi{m}^{2}]{1} - \te[l^{\prime\prime}\x l^{\prime}\x\mi{m}^{2}]{\Upsilon}
+                &\deqr \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{\intercal/2} \\
+                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^\prime}^{2}]{\Phi}
+                &\deqr \te[l^{\prime\prime\prime}\x l^{*\prime}]{\Phi}^{1/2}                    
+                \te[l^{\prime\prime\prime}\x l^{*\prime}]{\Phi}^{\intercal/2}                    
+            \end{aligned}
         \end{equation*}
         and
         \begin{equation*}
             \begin{aligned}
-                \te[\mi{m^{\prime}\x m}]{\Omega} &\deq 
-                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}
-                \te[l^{\prime\prime}\x l^{\prime}\x\mi{m^{\prime\prime\prime}}\x\mi{M}]{\Pi}
-                \te[l^{\prime\prime}\x l^{\prime}\x\mi{M}\x\mi{m^{\prime\prime}}]{\Phi}
+                \te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x l^{*\prime}\x \mi{N^{*\prime}}]{\Phi G} &\deq 
+                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}^{-1/2}
+                \te[\mi{m^{\prime\prime\prime}}\x l^{\prime\prime\prime}\x l^{*\prime}\x \mi{N^{*\prime}}]{G}\\
+                \te[l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}\x m}]{\Omega} &\deq 
+                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}^{\intercal/2}
+                \te[l^{\prime\prime}\x l^{\prime}\x\mi{m^{\prime\prime\prime}}\x\mi{M}]{\Pi} \\
+                &\phantom{\deq\ }\te[l^{\prime\prime}\x l^{\prime}\x\mi{M}\x\mi{m^{\prime\prime}}]{\Phi}
                 \te[l^{\prime\prime}\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{m}]{\Gamma}^{-1} \\
-                \te[\mi{m^{\prime}}^{2}]{B} &\deq 
-                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime}}]{\Gamma}
-                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} + \\
-                &\phantom{\deq\ }\te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi}
+                \te[l^{\prime\prime}\x l^{\prime}\x l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}^{2}]{B} &\deq 
+                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime}}]{\Gamma} + \\
+                &\phantom{\deq\ }\te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi}^{\intercal/2}
                 \te[l^{\prime\prime}\x l^{\prime}\x\mi{m^{*\prime\prime\prime}}\x\mi{m^{*\prime}}]{\Pi}
-                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} \\
-                \te[\mi{m}^{2}]{C} &\deq 
+                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}^{1/2} \\
+                \te[l\x l^{\prime\prime}\x l^{*}\x l^{\prime}\x\mi{m}^{2}]{C} &\deq 
                 \te[l^{\prime\prime}\x l^{\prime}\x\mi{m}\x\mi{m^{*}}]{\Upsilon} \\
                 &\phantom{\deq\ }
                 \te[\mi{m^{*}}\x\mi{m^{*\prime\prime}}]{\te[]{\te[l\x l^{*}\x\mi{m^{**}}^{2}]{\Gamma}
@@ -634,22 +640,42 @@
             \te[l^{\prime\prime}\x\mi{L^{*\prime\prime}}\x\mi{N^{*\prime\prime}}]{g_{\mi{0}}} \otimes
             \te[l^{\prime}\x\mi{L^{*\prime}}\x\mi{N^{*\prime}}]{g_{\mi{0}}} \otimes
             \te[l^{\prime\prime\prime}\x\mi{L^{*\prime\prime\prime}}\x\mi{N^{*\prime\prime\prime}}]{g_{\mi{0}}}}
-            {\prob{\te[\mi{m}]{0}}{\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}{\te[l\x \mi{L^{*}}]{\Phi}} \otimes
-            \prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}{\te[l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}}]{\Phi}}} \right.\\
-            \circ \prob{\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}
-            {\te[\mi{m}\x l^{\prime\prime}\x \mi{L^{*\prime\prime}\x N^{*\prime\prime}}]{G}}{\te[l\x\mi{L^{*}}\x l^{\prime\prime}\x\mi{L^{*\prime\prime}}]{D}} \circ \phantom{\frac{_{\vert}^{\vert}}{}}\\
-            \left. \prob{\te[\mi{m^{\prime}}\x l^{\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}
-            {\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}{\te[l^{\prime}\x\mi{L^{*\prime}}\x l^{\prime\prime\prime}\x\mi{L^{*\prime\prime\prime}}]{D}}
+            {\prob{\te[\mi{m}]{0}}{\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{\Phi G}}{\diag[\mi{m}^2]{1}} \otimes
+            \prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{\Phi G}}{\diag[\mi{m^{\prime}}^2]{1}}} \right.\\
+            \circ \prob{\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}\x l^{\prime\prime}\x \mi{L^{*\prime\prime}}]{\Phi G}}
+            {\te[\mi{m}\x l^{\prime\prime}\x \mi{L^{*\prime\prime}\x N^{*\prime\prime}}]{\Phi G}}{\te[l\x\mi{L^{*}}\x l^{\prime\prime}\x\mi{L^{*\prime\prime}}]{D}} \circ \phantom{\frac{_{\vert}^{\vert}}{}}\\
+            \left. \prob{\te[\mi{m^{\prime}}\x l^{\prime}\x \mi{L^{*\prime}\x N^{*\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}}]{\Phi G}}
+            {\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{\Phi G}}
+            {\te[l^{\prime}\x\mi{L^{*\prime}}\x l^{\prime\prime\prime}\x\mi{L^{*\prime\prime\prime}}]{D}}
             \phantom{\frac{_{\vert}^{\vert}}{_{\vert}^{\vert}}}\right\rbrack^{\dagger}
         \end{multline*}
         where
+        \begin{equation*}
+            \begin{aligned}
+                \te[\mi{m^{\prime}}\x l^{\prime}\x \mi{L^{*\prime}\x N^{*\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}}]{\Phi G} &\deq
+                \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}^{-1/2}
+                \te[\mi{m^{\prime\prime\prime}}\x l^{\prime}\x l^{*\prime}\x \mi{N^{*\prime}}]{G}
+            \end{aligned}
+        \end{equation*}
         \begin{multline*}
-            \te[l^{\prime}\x l^{*\prime}\x l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}^{2}]{D} \deq \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi} -  \\ 
-            \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi}
+            \te[l^{\prime}\x l^{*\prime}\x l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}^{2}]{D} \deq \\
+            \diag[\mi{m^{\prime}}^2]{1} - 
+            \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi}^{\intercal/2}
             \te[l^{\prime}\x l^{*\prime}\x\mi{m^{*\prime\prime\prime}}\x\mi{m^{*\prime}}]{\Phi}
-            \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}
+            \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}^{1/2}
         \end{multline*}
-        and similarly for $\te[l\x\mi{L^{*}}\x l^{\prime\prime}\x\mi{L^{*\prime\prime}\x m}^{2}]{D}$.
+        and similarly for $\te[\mi{m^{\prime}}\x l\x \mi{L^{*}\x N^{*}}\x l^{\prime\prime}\x \mi{L^{*\prime\prime}}]{\Phi G}, \te[l\x\mi{L^{*}}\x l^{\prime\prime}\x\mi{L^{*\prime\prime}\x m}^{2}]{D}$.
+
+
+\section{Comments}\label{sec:Comments}
+From \cref{eq:GPMom:Second} the terms containing $E$ reduce to squares of $g_{\mi{0}}$ by iterated expectations, and these will obviously cancel across \cref{eq:SPEst:W}. Neither the Sobol' indices nor their errors depend in any way on homoskedastic additive noise.
+
+From \cref{eq:GPMom:Second} it is clear that
+\begin{equation*}
+    W_{\mi{m0}} \deq \cov[\cov{\rv{y_{0}}}{\mi{0}}]{\cov{\rv{y_{m}}}{\mi{m}}}{M} = 0
+    \quad \forall \mi{m}\subseteq\mi{M}
+\end{equation*}
+and $W$ is of course symmetric in its subscripts. Conditional output variances are not correlated with the total output variance.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
