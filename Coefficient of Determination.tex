@@ -201,7 +201,7 @@
             - \te[\mi{L}^2]{V_{\mi{m}}}\otimes \te[\mi{L}^2]{V_{\mi{m^{\prime}}}}
         \end{aligned}
     \end{equation*}
-    exploiting the fact that $V_{\mi{0}} = \te[\mi{L}^2]{0}$. \Cref{eq:SPEstimates:reduction} cancels all terms beginning with $\te[\mi{L}]{\rv{e_{m}}}^{2}$, first across $A_{\mi{m,m^{\prime}}}-A_{\mi{0,m^{\prime}}}$ then across $A_{\mi{m,0}}-A_{\mi{0,0}}$. All remaining terms ending in $\te[\mi{L}]{\mu_{\mi{m^{\prime}}}}^{2}$ are eliminated by error centralization $\mu_{1} = 0$ and
+    exploiting the fact that $V_{\mi{0}} = \te[\mi{L}^2]{0}$. \Cref{eq:SPEstimates:reduction} cancels all terms beginning with $\te[\mi{L}]{\rv{e_{m}}}^{2}$, first across $A_{\mi{m,m^{\prime}}}-A_{\mi{0,m^{\prime}}}$ then across $A_{\mi{m,0}}-A_{\mi{0,0}}$. All remaining terms ending in $\te[\mi{L}]{\mu_{\mi{m^{\prime}}}}^{2}$ are eliminated by centralization $\evt{\,\tte[]{\rv{e_{m}}}}{M} = 0$ and
     \begin{multline*}
         \evt{\;\ev{\te[\mi{L}]{\mu_{\mi{m}}}^{2} \otimes \te[\mi{L}]{\mu_{\mi{m^{\prime}}}}^{2}}{\mi{m^{\prime}}}}{\mi{m}}
         - \te[\mi{L}^2]{V_{\mi{m}}}\otimes \te[\mi{L}^2]{V_{\mi{m^{\prime}}}} \\
@@ -213,18 +213,14 @@
     Similar arguments eliminate $\te[\mi{L}]{\rv{e_{m^{\prime}}}}^{2}$ and $\te[\mi{L}]{\mu_{\mi{m}}}^{2}$.
     Effectively then
     \begin{equation}\label{eq:SPEst:A}
-        \begin{aligned}
-            \te[\mi{L}^4]{A_{\mi{mm^{\prime}}}} &= \sum_{\pi(\mi{L}^{2})} \sum_{\pi(\mi{L^{\prime}}^{2})}
-            \evt{\;\evt{\te[\mi{L}^{2} \x \mi{L^{\prime}}^{2}]{\mu_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}} \\
-            &= 4 \;
-            \evt{\;\evt{\te[\mi{L}^{4}]{\mu_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}}
-        \end{aligned}
+        \te[\mi{L}^4]{A_{\mi{mm^{\prime}}}} = \sum_{\pi(\mi{L}^{2})} \sum_{\pi(\mi{L^{\prime}}^{2})}
+        \evt{\;\evt{\te[\mi{L}^{2} \x \mi{L^{\prime}}^{2}]{\mu_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}}
     \end{equation}
     where each summation is over permutations of tensor axes
     \begin{equation*}
         \pi(\mi{L}^{2}) \deq \set{(\mi{L}\x\mi{L^{\prime\prime}}), (\mi{L^{\prime\prime}}\x\mi{L})} \QT{;} \pi(\mi{L^{\prime}}^{2}) \deq \set{(\mi{L^{\prime}}\x\mi{L^{\prime\prime\prime}}), (\mi{L^{\prime\prime\prime}}\x\mi{L^{\prime}})}
     \end{equation*}
-    Primes on constants are for bookeeping purposes only ($\mi{L}^{i\prime} = \mi{L}$ always), they do not change the value of the constant -- unlike primes on variables ($\mi{m}^{i\prime}$ need not equal $\mi{m}$ in general). In this case the four permutations all give the same result, by symmetry of covariances, hence the last equality
+    Primes on constants are for bookeeping purposes only ($\mi{L}^{i\prime} = \mi{L}$ always), they do not change the value of the constant -- unlike primes on variables ($\mi{m}^{i\prime}$ need not equal $\mi{m}$ in general).
 
     In order to further elucidate these estimates, we must fill in the details of the underlying stochastic processes, sufficiently identifying the regression $y$ by its first two moments $\mu_{1}, \mu_{2}$.
 
@@ -368,6 +364,10 @@
             \te[\mi{L\x o}]{\te{\rv{f_M} \vert Y \vert E,F,\Lambda} \big\vert x}^{\dagger} \sim \\
             \gauss{k(x,X) K_{Y}^{-1} Y^{\dagger}}{\ k(x,x) - k(x,X) K_{Y}^{-1} k(X,x)}
         \end{multline}
+        In order to calculate the last term, the Cholesky decomposition $K_{Y}^{1/2}$ is used to write
+        \begin{equation*}
+            \tte[\mi{Lo}^{2}]{k(x,X) K_{Y}^{-1} k(X,x)} = \tte[\mi{Lo}]{K_{Y}^{-1/2} k(X,x)}^{2}
+        \end{equation*}
 
     \subsection{GP Optimization} \label{sub:GPR:Optimization}
         Henceforth we implicitly condition on optimal hyperparameters, which maximise the marginal likelihood \cref{eq:GPR:marginalLikelihood}.
@@ -446,14 +446,13 @@
                 {\prob{\te[\mi{m}]{z}}{\te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G}}{\te[l\x l^{\prime}]{\Gamma}}}
                 {\prob{\te[\mi{m}]{z}}{\te[\mi{m}]{0}}{\diag[\mi{m}^{2}]{1}}} \\
                 &\phantom{:}= \te[l\x l^{\prime}]{\pm F} \circ 
-                \frac
-                {\prob{\te[\mi{M}]{0}}{\te[\mi{M}\x\mi{N^{\prime}}]{X}}
-                {\diag[l\x l^{\prime}]{\Lambda^{2}+1}}} 
-                {\prob{\te[\mi{m}]{0}}{\te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G}}
-                {\te[l\x l^{\prime}]{\Phi}}} \\
-                & \phantom{\deq\ } \circ
+                \prob{\te[\mi{M}]{0}}{\te[\mi{M}\x\mi{N^{\prime}}]{X}}
+                {\diag[l\x l^{\prime}]{\Lambda^{2}+1}} \\ 
+                & \phantom{\deq\ } \circ \frac{
                 {\prob{\te[l\x l^{\prime}\x\mi{m\x m^{\prime}}]{\Phi}\te[\mi{m^{\prime}}]{z}}{\te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G}}
-                {\te[l\x l^{\prime}]{\Gamma}\te[l\x l^{\prime}\x \mi{m^{\prime}\x m}]{\Phi}}}
+                {\te[l\x l^{\prime}]{\Gamma}\te[l\x l^{\prime}\x \mi{m^{\prime}\x m}]{\Phi}}}}
+                {\prob{\te[\mi{m}]{0}}{\te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G}}
+                {\te[l\x l^{\prime}]{\Phi}}}
             \end{aligned}                    
         \end{equation*}
         and
@@ -494,17 +493,18 @@
                 \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\diag[\mi{m}^{2}]{1}}\prob{\te[\mi{m^{\prime}}]{\rv{z}}}{\te[\mi{m^{\prime}}]{0}}{\diag[\mi{m^{\prime}}^{2}]{1}}}
             \end{multline*}
             \begin{multline*}
-                \te[l\x l^{\prime}]{\psi_{\mi{mm^{\prime}}}}
-                \deq \frac{\evt{\;\evt{\te[l\x l^{\prime}]{k\!\left(\te[\mi{M}]{\rv{x}},X\right) K_{Y}^{-1} k\!\left(X,\te[\mi{M^{\prime}}]{\rv{x}}\right) \big\vert \te[\mi{m}]{z},\te[\mi{m^{\prime}}]{z}}}{\mi{M^{\prime}-m^{\prime}}}}{\mi{M-m}}}{\te[l\x l^{\prime}]{F}} \\
-                 = \te[l\x\mi{L^{\prime\prime}}\x\mi{N^{\prime\prime}}]{g_{\mi{m}}}^{\dagger}
-                \te[\mi{L^{\prime\prime}N^{\prime\prime}}\x\mi{L^{\prime\prime\prime}N^{\prime\prime\prime}}]{K_{Y}^{-1}} 
-                \te[l^{\prime}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{g_{\mi{m^{\prime}}}}^{\dagger} \qquad\qquad\qquad
+                \te[\mi{L\x L^{\prime}}]{\psi_{\mi{mm^{\prime}}}}
+                \deq \evt{\;\evt{\te[l\x l^{\prime}]{k\!\left(\te[\mi{M}]{\rv{x}},X\right) K_{Y}^{-1} k\!\left(X,\te[\mi{M^{\prime}}]{\rv{x}}\right) \big\vert \te[\mi{m}]{z},\te[\mi{m^{\prime}}]{z}}}{\mi{M^{\prime}-m^{\prime}}}}{\mi{M-m}} \\
+                 = \left(\te[\mi{L^{\prime\prime}N^{\prime\prime}}\x\mi{L^{\prime\prime}N^{\prime\prime}}]{K_{Y}}^{-1/2}
+                 \te[\mi{L\x L^{\prime\prime}\x N^{\prime\prime}}]{g_{\mi{m}}}^{\dagger}\right)
+                \left(\te[\mi{L^{\prime\prime}N^{\prime\prime}}\x\mi{L^{\prime\prime}N^{\prime\prime}}]{K_{Y}}^{-1/2} 
+                \te[\mi{L^{\prime}\x L^{\prime\prime}\x N^{\prime\prime}}]{g_{\mi{m^{\prime}}}}^{\dagger}\right)
             \end{multline*}
-            and
+            using the Cholesky decomposition $\tte[]{K_{Y}^{1/2}}$ and
             \begin{equation*}
                 \begin{aligned}
                     \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Upsilon} &\deq \te[\mi{m}\x\mi{M}]{\Theta}
-                    \diag[\mi{M}\x\mi{M^{\prime}}]{\diag[l\x l^{\prime}]{\Lambda^{2}+1}\diag[l\x l^{\prime}]{\Lambda^{2}+2}^{-1}} \te[\mi{m^{\prime\prime}}\x\mi{M^{\prime}}]{\Theta}^{\intercal} \\
+                    \diag[\mi{M}\x\mi{M^{\prime}}]{\diag[l\x l^{\prime}]{\Lambda^{2}+2}^{-1}} \te[\mi{m^{\prime\prime}}\x\mi{M^{\prime}}]{\Theta}^{\intercal} \\
                     \te[l\x l^{\prime}\x \mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{\Pi}^{-1} &\deq 
                     \diag[\mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{1} + \te[l\x l^{\prime}\x \mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{\Phi} + \\
                     &\phantom{\deq}\ \te[l\x l^{\prime}\x\mi{M^{\prime}\x\mi{m}}]{\Phi}
@@ -522,14 +522,14 @@
     \subsection{Expected Value}\label{sub:GPEst:Expectation}
     Using the shorthand
     \begin{equation*}
-        \te[l\x\mi{L^{\prime}}\mi{N^{\prime}}]{KY\!g_{\mi{0}}} \deq \te[\mi{L^{\prime}}\mi{N^{\prime}}]{K_{Y}^{-1} Y^{\dagger}} \circ \te[l\x\mi{L^{\prime}}\x\mi{N^{\prime}}]{g_{\mi{0}}}^{\dagger}
+        \te[l\x\mi{L^{\prime}}\mi{N^{\prime}}]{KY\!g_{\mi{0}}}^{\dagger} \deq \te[\mi{L^{\prime}}\mi{N^{\prime}}]{K_{Y}^{-1} Y^{\dagger}} \circ \te[l\x\mi{L^{\prime}}\x\mi{N^{\prime}}]{g_{\mi{0}}}^{\dagger}
     \end{equation*}
     to write
     \begin{equation*}                
         \evt{\te[l\x l^{\prime}]{\te[\mi{L}]{\mu_{\mi{m}}}^{2}}}{\mi{m}} 
-        = \te[l\x\mi{L^{\prime\prime}}\mi{N^{\prime\prime}}]{KY\!g_{\mi{0}}}
+        = \te[l\x\mi{L^{\prime\prime}}\mi{N^{\prime\prime}}]{KY\!g_{\mi{0}}}^{\dagger}
         \te[l\x\mi{L^{\prime\prime}}\x\mi{N^{\prime\prime}} \x l^{\prime}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{H_{\mi{m}}}^{\dagger}
-        \te[l^{\prime}\x\mi{L^{\prime\prime\prime}}\mi{N^{\prime\prime\prime}}]{KY\!g_{\mi{0}}}
+        \te[l^{\prime}\x\mi{L^{\prime\prime\prime}}\mi{N^{\prime\prime\prime}}]{KY\!g_{\mi{0}}}^{\dagger}
     \end{equation*}
     results in
     \begin{align*}
@@ -577,24 +577,25 @@
             \evt{\;\evt{\te[\mi{L}^{2} \x \mi{L^{\prime}}^{2}]{\mu_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}}
         \end{equation*}
         from \cref{eq:GPMom:Second} the terms containing $E$ reduce to squares of $g_{\mi{0}}$ by iterated expectations, and these will obviously cancel across \cref{eq:SPEst:W}. 
-        We may therefore assume $E=0$ in \cref{eq:GPMom:Second}. The remaining terms are given by
+        We may therefore assume $E=0$ in \cref{eq:GPMom:Second}. This leaves just two terms.
+        Firstly
         \begin{multline*}
             \evt{\;\evt{\te[]{\te[l]{\mu_{\mi{m}}} \otimes \te[l^{\prime\prime}\x l^{\prime}]{\phi_{\mi{mm^{\prime}}}} \otimes \te[l^{\prime\prime\prime}]{\mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}}{\mi{m}} = \\
             \frac
             {\modulus{\diag[l^{\prime\prime}\x l^{\prime}\x\mi{M}^{2}]{\Lambda^{2}}}^{1/2}(2\pi)^{m/2}}
             {\modulus{\diag[l^{\prime\prime}\x l^{\prime}\x\mi{M}^2]{\Lambda^{2}+2}}^{1/2}}
-            \te[\mi{L^{*}N^{*}}]{K_{Y}^{-1} Y^{\dagger}} \otimes
-            \te[\mi{L^{*\prime}N^{*\prime}}]{K_{Y}^{-1} Y^{\dagger}} \\
-            \left\lbrack\frac{
-            \te[l\x\mi{L^{*}}\x\mi{N^{*}}]{g_{\mi{0}}} \otimes
-            \te[l^{\prime\prime\prime}\x\mi{L^{*\prime}}\x\mi{N^{*\prime}}]{g_{\mi{0}}}}
-            {\prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}{\te[l^{\prime\prime\prime}\x \mi{L^{*\prime}}]{\Phi}}} \circ \right.\\
+            \te[l\x\mi{L^{*}N^{*}}]{KY\!g_{\mi{0}}} \otimes
+            \te[l^{\prime\prime\prime}\x\mi{L^{*\prime}N^{*\prime}}]{KY\!g_{\mi{0}}} \\
+            \left\lbrack
             \prob{\te[\mi{m}]{0}}{\te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}} 
-            {\diag[]{1} +
-            \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[l\x \mi{L^{*}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{\intercal/2}} \circ \\
-            \left. \prob{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}
-            {\te[]{\Omega} \te[]{C} \te[l\x \mi{L^{*}}]{\Gamma}^{-1} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}{\te[]{B}+\te[]{\Omega} \te[]{C} \te[]{\Omega}^{\intercal}}
-            \phantom{\frac{_{\vert}^{\vert}}{_{\vert}^{\vert}}}\right\rbrack^{\dagger}
+            {\diag[]{1} -
+            \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[l\x \mi{L^{*}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{\intercal/2}} \phantom{\frac{_{\vert}^{\vert}}{_{\vert}^{\vert}}} \right.\\
+            \left. \circ 
+                \frac{
+                    \prob{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}
+                    {\te[]{\Omega} \te[]{C} \te[l\x \mi{L^{*}}]{\Gamma}^{-1} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}{\te[]{B}+\te[]{\Omega} \te[]{C} \te[]{\Omega}^{\intercal}}}
+                    {\prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}{\te[l^{\prime\prime\prime}\x \mi{L^{*\prime}}]{\Phi}}}
+            \right\rbrack^{\dagger}
         \end{multline*}
         using the Cholesky decomposition
         \begin{equation*}
@@ -623,7 +624,62 @@
                 &\phantom{\deq\ }\te[l\x l^{*}\x\mi{m^{*\prime\prime}}\x\mi{m^{\prime\prime}}]{\Gamma}
             \end{aligned}
         \end{equation*}
-        and
+        Secondly
+        \begin{equation*}
+            \evt{\;\evt{\te[]{\te[l]{\mu_{\mi{m}}} \otimes \te[l^{\prime\prime}\x l^{\prime}]{\psi_{\mi{mm^{\prime}}}} \otimes \te[l^{\prime\prime\prime}]{\mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}}{\mi{m}} = 
+            \te[l\x l^{\prime\prime}\x \mi{L^{*\prime}N^{*\prime}}]{E_{\mi{m}}}
+            \te[l^{\prime\prime\prime}\x l^{\prime}\x \mi{L^{*\prime}N^{*\prime}}]{E_{\mi{m^{\prime}}}}
+        \end{equation*}
+        where
+        \begin{multline*}
+            \te[l^{\prime\prime\prime}\x l^{\prime}\x \mi{L^{*\prime}N^{*\prime}}]{E_{\mi{m^{\prime}}}} \deq 
+            \left(
+                \te[\mi{L^{*\prime}N^{*\prime}}\x\mi{L^{*\prime}N^{*\prime}}]{K_{Y}}^{-1/2} \otimes \te[l^{\prime\prime\prime}\x\mi{L^{*\prime\prime\prime}N^{*\prime\prime\prime}}]{KY\!g_{\mi{0}}}^{\dagger} \right) \\
+            \left\lbrack\frac{
+            \te[l^{\prime}\x\mi{L^{*\prime}}\x\mi{N^{*\prime}}]{g_{\mi{0}}} \circ
+            \prob
+            {\te[l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}}]{\Phi} 
+            \te[\mi{m^{\prime}}\x l^{\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}
+            {\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}
+            {\te[]{D}}}
+            {\prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}{\te[l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}}]{\Phi}}} \right\rbrack^{\dagger}
+        \end{multline*}
+        \begin{multline*}
+            \te[l^{\prime\prime\prime} \x l^{*\prime\prime\prime}\x l^{\prime}\x l^{*\prime}\x\mi{m^{\prime}}^{2}]{D} \deq \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi} -  \\ 
+            \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi}
+            \te[l^{\prime}\x l^{*\prime}\x\mi{m^{*\prime\prime\prime}}\x\mi{m^{*\prime}}]{\Phi}
+            \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}
+        \end{multline*}
+        and $\te[l\x l^{\prime\prime}\x \mi{L^{*\prime}N^{*\prime}}]{E_{\mi{m}}}$ substitutes $\mi{m^{\prime}}\rightarrow\mi{m},\ l^{\prime\prime\prime}\rightarrow l,\ l^{\prime}\rightarrow l^{\prime\prime}$ in these definitions.
+
+        
+\section{Scrap}
+        \begin{multline*}
+            \evt{\;\evt{\te[]{\te[l]{\mu_{\mi{m}}} \otimes \te[l^{\prime\prime}\x l^{\prime}]{\psi_{\mi{mm^{\prime}}}} \otimes \te[l^{\prime\prime\prime}]{\mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}}{\mi{m}} = \\
+            \left(\te[l\x\mi{L^{*}N^{*}}]{KY\!g_{\mi{0}}}^{\dagger} \otimes
+            \te[\mi{L^{*\prime\prime}N^{*\prime\prime}}\x\mi{L^{*\prime}N^{*\prime}}]{K_{Y}}^{-1/2}\right) \\
+            \left\lbrack\frac{
+            \te[l^{\prime\prime}\x\mi{L^{*\prime\prime}}\x\mi{N^{*\prime\prime}}]{g_{\mi{0}}}
+            \prob{\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}
+            {\te[\mi{m}\x l^{\prime\prime}\x \mi{L^{*\prime\prime}\x N^{*\prime\prime}}]{G}}{\te[l\x\mi{L^{*}}\x l^{\prime\prime}\x\mi{L^{*\prime\prime}}]{D}}}
+            {\prob{\te[\mi{m}]{0}}{\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}{\te[l\x \mi{L^{*}}]{\Phi}}} \right\rbrack^{\dagger} \\
+            \left\lbrack\frac{
+            \te[l^{\prime}\x\mi{L^{*\prime}}\x\mi{N^{*\prime}}]{g_{\mi{0}}}
+            \prob{\te[\mi{m}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}
+            {\te[\mi{m}\x l^{\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}{\te[l^{\prime\prime\prime}\x\mi{L^{*\prime\prime\prime}}\x l^{\prime}\x\mi{L^{*\prime}}]{D}}}
+            {\prob{\te[\mi{m}]{0}}{\te[\mi{m}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}{\te[l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}}]{\Phi}}} \right\rbrack^{\dagger} \\
+            \left(\te[l^{\prime\prime\prime}\x\mi{L^{*\prime\prime\prime}N^{*\prime\prime\prime}}]{KY\!g_{\mi{0}}}^{\dagger} \otimes
+            \te[\mi{L^{*\prime\prime}N^{*\prime\prime}}\x\mi{L^{*\prime}N^{*\prime}}]{K_{Y}}^{-1/2}\right)
+            \qquad\qquad\qquad\quad
+        \end{multline*}
+        where
+        \begin{multline*}
+            \te[l^{\prime\prime\prime} \x l^{*\prime\prime\prime}\x l^{\prime}\x l^{*\prime}\x\mi{m^{\prime}}^{2}]{D} \deq \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi} -  \\ 
+            \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi}
+            \te[l^{\prime}\x l^{*\prime}\x\mi{m^{*\prime\prime\prime}}\x\mi{m^{*\prime}}]{\Phi}
+            \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}
+        \end{multline*}
+        and similarly for $\te[l\x\mi{L^{*}}\x l^{\prime\prime}\x\mi{L^{*\prime\prime}\x m}^{2}]{D}$.
         \begin{multline*}
             \evt{\;\evt{\te[]{\te[l]{\mu_{\mi{m}}} \otimes \te[l^{\prime\prime}\x l^{\prime}]{\psi_{\mi{mm^{\prime}}}} \otimes \te[l^{\prime\prime\prime}]{\mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}}{\mi{m}} = \\
             \te[\mi{L^{*}N^{*}}]{K_{Y}^{-1} Y^{\dagger}} \otimes
