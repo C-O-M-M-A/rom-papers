@@ -171,12 +171,12 @@
     the expected conditional variance in \cref{def:COD:mean} amounts to
     \begin{equation}\label{eq:SPEst:V}
         \begin{aligned}
-            \te[\mi{L}]{V_{\mi{m}}} 
+            \te[\mi{L}^{2}]{V_{\mi{m}}} 
             &= \evt{\;\ev{\te[\mi{L}]{\rv{e_m} + \mu_{\mi{m}}}^{2}}{M}}{\mi{m}}
             - \ev{\te[\mi{L}]{\rv{e_0} + \mu_{\mi{0}}}^{2}}{M} \\
             &= \ev{\te[\mi{L}]{\mu_{\mi{m}}}^{2}}{\mi{m}} - \te[\mi{L}]{\mu_{\mi{0}}}^{2} + 
             \evt{\te[\mi{L}^2]{\mu_{\mi{mm}}}}{\mi{m}} - \te[\mi{L}^2]{\mu_{\mi{00}}} \\
-            &= \ev{\te[\mi{L}]{\mu_{\mi{m}}}^{2}}{\mi{m}} - \te[\mi{L}]{\mu_{\mi{0}}}^{2}
+            &= \evt{\te[\mi{L}^{2}]{\mu_{\mi{m}}^{2}}}{\mi{m}} - \te[\mi{L}]{\mu_{\mi{0}}}^{2}
         \end{aligned}
     \end{equation}
 
@@ -337,7 +337,7 @@
                 %
                 \te[\mi{LN}\x\mi{LN}]{K_{Y}} &\deq 
                 \cov{\te{\te[\mi{L}]{\rv{y}\vert E,F,\Lambda} \big\vert \te[\mi{M}\x\mi{N}]{X}}^{\dagger}}{\mi{Lo}} \\
-                &\phantom{:}= k(\te[\mi{M}\x\mi{N}]{X},\te[\mi{M}\x\mi{N}]{X}) + \te[\mi{LN}\x\mi{LN}]{K_{\rv{e}}})
+                &\phantom{:}= k(\te[\mi{M}\x\mi{N}]{X},\te[\mi{M}\x\mi{N}]{X}) + \te[\mi{LN}\x\mi{LN}]{K_{\rv{e}}}
             \end{aligned}
         \end{equation}
         Applying Bayes' rule

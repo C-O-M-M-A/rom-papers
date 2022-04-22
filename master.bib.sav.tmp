@@ -786,7 +786,7 @@
   author    = {K. B. Petersen and M. S. Pedersen},
   title     = {The Matrix Cookbook},
   note      = {Version 20121115},
-  urlurl    = {http://www2.imm.dtu.dk/pubdb/p.php?3274},
+  url       = {http://www2.imm.dtu.dk/pubdb/p.php?3274},
   abstract  = {Matrix identities, relations and approximations. A desktop reference for quick overview of mathematics of matrices.},
   file      = {:C\:/Users/fc1ram/Documents/User/fc1ram/lib/Maths/Analysis/Matrix Cookbook.pdf:PDF},
   keywords  = {Matrix identity, matrix relations, inverse, matrix derivative, Analysis},
@@ -795,11 +795,11 @@
   year      = {2012},
 }
 
-@Online{Roweis1999,
+@Misc{Roweis1999,
   author   = {Sam Roweis},
   date     = {2018-08-26},
   title    = {gaussian identities},
-  urlurl   = {https://cs.nyu.edu/~roweis/notes/gaussid.pdf},
+  url      = {https://cs.nyu.edu/~roweis/notes/gaussid.pdf},
   file     = {:C\:/Users/fc1ram/Documents/User/fc1ram/lib/Maths/GP/Gaussian Identities/gaussid.pdf:PDF},
   keywords = {GP Gaussian Identities},
   year     = {1999},
@@ -810,17 +810,17 @@
   title    = {Some useful Gaussian and matrix equations},
   year     = {2016},
   date     = {2018-08-26},
-  urlurl   = {http://mlg.eng.cam.ac.uk/teaching/4f13/1617/gaussian%20and%20matrix%20equations.pdf},
+  url      = {http://mlg.eng.cam.ac.uk/teaching/4f13/1617/gaussian%20and%20matrix%20equations.pdf},
   file     = {:C\:/Users/fc1ram/Documents/User/fc1ram/lib/Maths/GP/Gaussian Identities/gaussian and matrix equations.pdf:PDF},
   keywords = {GP Gaussian Identities},
 }
 
-@Online{Schoen.Lindsten2018,
+@Misc{Schoen.Lindsten2018,
   author   = {Thomas B. Sch{\"o}n and Fredrik Lindsten},
   title    = {Manipulating the Multivariate Gaussian Density},
   year     = {2011},
   date     = {2018-08-26},
-  urlurl   = {http://user.it.uu.se/~thosc112/pubpdf/schonl2011.pdf},
+  url      = {http://user.it.uu.se/~thosc112/pubpdf/schonl2011.pdf},
   file     = {:C\:/Users/fc1ram/Documents/User/fc1ram/lib/Maths/GP/Gaussian Identities/schonl2011.pdf:PDF},
   keywords = {GP Gaussian Identities},
 }
@@ -1369,18 +1369,18 @@
   keywords    = {cs.LG, MOGP},
 }
 
-@Online{Tao2013,
+@Misc{Tao2013,
   author = {Terrence Tao},
   date   = {2013},
   title  = {Matrix identities as derivatives of determinant identities},
-  urlurl    = {https://terrytao.wordpress.com/2013/01/13/matrix-identities-as-derivatives-of-determinant-identities/},
+  url    = {https://terrytao.wordpress.com/2013/01/13/matrix-identities-as-derivatives-of-determinant-identities/},
 }
 
-@Online{GPy2020,
+@Misc{GPy2020,
   author = {{SheffieldML}},
   date   = {2020},
   title  = {{GPy}: A Gaussian process framework in python},
-  urlurl    = {https://sheffieldml.github.io/GPy/},
+  url    = {https://sheffieldml.github.io/GPy/},
 }
 
 @Article{Al2019,
@@ -1623,6 +1623,20 @@
   keywords  = {Probability},
 }
 
+@Article{Saltelli2010,
+  author       = {Andrea Saltelli and Paola Annoni and Ivano Azzini and Francesca Campolongo and Marco Ratto and Stefano Tarantola},
+  date         = {2010-02},
+  journaltitle = {Computer Physics Communications},
+  title        = {Variance based sensitivity analysis of model output. Design and estimator for the total sensitivity index},
+  doi          = {10.1016/j.cpc.2009.09.018},
+  number       = {2},
+  pages        = {259--270},
+  volume       = {181},
+  file         = {:C\:/Users/fc1ram/Documents/User/fc1ram/lib/Maths/GSA/Sobol/1-s2.0-S0010465509003087-main.pdf:PDF},
+  keywords     = {Sobol},
+  publisher    = {Elsevier {BV}},
+}
+
 @Comment{jabref-meta: databaseType:biblatex;}
 
 @Comment{jabref-meta: grouping:
@@ -1636,14 +1650,4 @@
 2 KeywordGroup:Multivariate\;1\;keywords\;GSA Multivariate\;0\;0\;1\;\;\;\;;
 2 KeywordGroup:MAVE\;2\;keywords\;MAVE\;0\;0\;1\;\;\;\;;
 1 KeywordGroup:Active-Subspace\;2\;keywords\;Active-Subspace\;0\;0\;1\;\;\;\;;
-1 KeywordGroup:GP\;0\;keywords\;GP\;0\;0\;0\;\;\;\;;
-2 KeywordGroup:Gaussian Identities\;2\;keywords\;GP Gaussian Identities\;0\;0\;1\;\;\;\;;
-2 KeywordGroup:MOGP\;0\;keywords\;MOGP\;0\;0\;1\;\;\;\;;
-2 KeywordGroup:Sparse\;0\;keywords\;GP Sparse\;0\;0\;1\;\;\;\;;
-2 KeywordGroup:Categorical\;2\;keywords\;GP Categorical\;0\;0\;1\;\;\;\;;
-2 KeywordGroup:Optimization\;2\;keywords\;Optimization\;0\;0\;1\;\;\;\;;
-2 KeywordGroup:Warped\;0\;keywords\;Warped GP\;0\;0\;1\;0x8a8a8aff\;\;\;;
-1 KeywordGroup:ML\;0\;keywords\;ML\;0\;0\;0\;\;\;\;;
-2 KeywordGroup:Intro\;0\;keywords\;ML,Intro\;0\;0\;1\;\;\;\;;
-1 KeywordGroup:CCS\;0\;keywords\;CCS\;0\;0\;0\;\;\;\;;
-2 KeywordGroup:Review\;0\;keywor
+1 KeywordGroup:GP\;0\;keywords\;G
