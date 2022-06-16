@@ -1,0 +1,718 @@
+\documentclass[preprint,12pt]{elsarticle}
+    \usepackage{algorithm}
+    \usepackage{algorithmic}
+    \renewcommand{\algorithmicrequire}{\textbf{Input:}}
+    \renewcommand{\algorithmicensure}{\textbf{Output:}}
+    \usepackage{amssymb}
+    \usepackage{amsmath}
+    \usepackage[hidelinks]{hyperref}
+    \usepackage[capitalize]{cleveref}
+    \usepackage{xspace} 
+    \usepackage{ifthen} 
+    \usepackage{csvsimple}
+    \setlength {\marginparwidth }{2cm}
+    \usepackage{todonotes}
+    \usepackage{float}
+    \newcommand*{\M}[1]{\ensuremath{#1}\xspace} 
+    \newcommand*{\tr}[1]{\M{#1}}
+    \newcommand*{\x}{\times}
+    \newcommand*{\mi}[1]{\mathbf{#1}} 
+    \newcommand*{\st}[1]{\mathbb{#1}} 
+    \newcommand*{\rv}[1]{\mathsf{#1}} 
+    \newcommand*{\te}[2][]{\left\lbrack{#2}\right\rbrack_{#1}}
+    \newcommand*{\tte}[2][]{\lbrack{#2}\rbrack_{#1}}
+    \newcommand*{\tse}[2][]{\mi{\lbrack#2\rbrack}_{#1}}
+    \newcommand*{\tme}[3][]{\lbrack{#3}\rbrack_{\tse[#1]{#2}}}
+    \newcommand*{\diag}[2][]{\left\langle{#2}\right\rangle_{#1}}
+    \newcommand*{\prob}[3]{\M{\mathsf{p}\!\left(\left.{#1}\right\vert{#2,#3}\right)}} 
+    \newcommand*{\deq}{\M{\mathrel{\mathop:}=}} 
+    \newcommand*{\deqr}{\M{=\mathrel{\mathop:}}} 
+    \newcommand{\T}[1]{\text{#1}} 
+    \newcommand*{\QT}[2][]{\M{\quad\T{#2}\ifthenelse{\equal{#1}{}}{\quad}{#1}}} 
+    \newcommand*{\ev}[3][]{\mathbb{E}_{#3}^{#1}\!\left\lbrack{#2}\right\rbrack}
+    \newcommand*{\evt}[3][]{\mathbb{E}_{#3}^{#1}\!#2}
+    \newcommand*{\cov}[3][]{\ifthenelse{\equal{#1}{}}{\mathbb{V}_{#3}\!\left\lbrack{#2}\right\rbrack}{\mathbb{V}_{#3}\!\left\lbrack{#2,#1}\right\rbrack}}
+    \newcommand*{\covt}[2]{\mathbb{V}_{#2}\!{#1}}
+    \newcommand*{\gauss}[2]{\mathsf{N}\!\left({#1,#2}\right)}
+    \newcommand*{\tgauss}[2]{\mathsf{N}({#1,#2})}
+    \newcommand*{\gaussd}[2]{\mathsf{N}^{\dagger}\!\left({#1,#2}\right)}
+    \newcommand*{\modulus}[1]{\M{\left\lvert{#1}\right\rvert}} 
+    \newcommand*{\norm}[1]{\M{\left\lVert{#1}\right\rVert}} 
+    \newcommand*{\ceil}[1]{\M{\left\lceil{#1}\right\rceil}} 
+    \newcommand*{\set}[1]{\M{\left\lbrace{#1}\right\rbrace}} 
+    \newcommand*{\setbuilder}[2]{\M{\left\lbrace{#1}\: \big\vert \:{#2}\right\rbrace}}
+    \DeclareMathOperator*{\argmax}{argmax}
+    \DeclareMathOperator*{\argmin}{argmin}
+    \DeclareMathOperator*{\trace}{tr\!}
+
+\journal{Reliability Engineering and System Safety}
+
+\begin{document}
+\begin{frontmatter}
+
+    \title{Minimum  Reduced Order Modelling}
+
+    \author{Robert A. Milton}
+    \ead{r.a.milton@sheffield.ac.uk}
+
+    \author{Solomon F. Brown}
+    \ead{s.f.brown@sheffield.ac.uk}
+
+    \address{Department of Chemical and Biological Engineering, University of Sheffield, Sheffield, S1 3JD, United Kingdom}       
+
+    \begin{abstract}
+        %% Text of abstract
+
+    \end{abstract}
+
+    \begin{keyword}
+        Gaussian Process, Global Sensitivity Analysis, Sobol' Index, Surrogate Model
+    \end{keyword}
+
+\end{frontmatter}
+
+
+\section{Notation} \label{sec:Notation}
+    Tensors axes are multi-indexed as boldface subscripts 
+    \begin{equation*}
+        () \deqr \mi{0} \subseteq\mi{n} \deq(1,\ldots,n) \subseteq \mi{N}\deq(1,\ldots,N)\subset\st{Z}^{+} \qquad 0 \leq n \leq N \in \st{N}
+    \end{equation*}
+    which precede any superscript operation (e.g. inversion, transposition, exterior power).
+    Subtraction of multi-indices is set-theoretic difference, for example
+    \begin{equation*}
+        \mi{lN}-\mi{(l-1)N} \deq ((l-1)N+1,\ldots,lN) 
+    \end{equation*}
+    Prime diacritics are used for bookeeping only, and will appear and disappear quite freely. We always demand that constant $N^{\cdots\prime} \deq N$, but do not constrain $n^{\cdots\prime} = n$ except explicitly. 
+    Multi-indexed quantities are square bracketed, and broadcast to fill every explicit axis. The matrix $\te[\mi{N} \x \mi{N}]{1}$ filled with 1s should not be confused with the diagonal (identity) matrix $\diag[\mi{N}\x\mi{N}]{1} \deqr \diag{\te[\mi{N}]{1}}$. 
+    
+    The response $\te[\mi{L}\x\mi{N}]{Y}\in \st{R}^{LN}$ to the design matrix $\te[\mi{M}\x\mi{N}]{X}\in\st{R}^{MN}$ of observed inputs is assumed standardized to multivariate normal sampling
+    \begin{equation*}
+        \begin{aligned}
+            \te[\mi{M}]{0} = \ev{X}{\mi{N}} 
+            \deq \sum_{n \in \mi{N}} \frac{\te[\mi{M}\x n]{X}}{N}
+            = \frac{\te[\mi{M}\x\mi{N}]{X} \te[\mi{N}]{1}}{N}
+            &\QT{;} \te[\mi{M}]{1} = \trace\left(\cov{X}{}\right)
+            \\
+            \te[\mi{L}]{0} = \ev{Y}{\mi{N}}  
+            \deq \sum_{n \in \mi{N}} \frac{\te[\mi{L} \times n]{Y}}{N}
+            = \frac{\te[\mi{L}\x\mi{N}]{Y} \te[\mi{N}]{1}}{N}
+            &\QT{;} \te[\mi{L}]{1} = \trace\left(\cov{Y}{}\right)
+        \end{aligned}                
+    \end{equation*}
+    Adjacent tensors are multiplied following the Einstein summation convention by boldface multi-index only. 
+    Because tensors arise in this work almost exclusively as covariances or exterior products, they are usually symmetric under permutations of ranks of the same dimension (e.g $\mi{N},\mi{N^{\prime\prime}}$ or $\mi{L},\mi{L^{\prime}}$).
+
+    Syntax for exterior powers of tensors and their expectations is
+    \begin{equation*}
+        \begin{aligned}
+            \te[\cdots]{\cdot}^k &\deq 
+            \te[\cdots]{\cdot}^{(k-1)} \otimes \te[\cdots^{\prime}]{\cdot} \\
+            \ev[k]{\cdot}{} &\deq \ev{\cdot}{}^{k} \\
+            \cov{\cdot}{} \deq \cov[\cdot]{\cdot}{} &\deq \ev{\te{\cdot}^2}{} - \ev[2]{\cdot}{}
+        \end{aligned}
+    \end{equation*}
+    Expectations always carry a multi-index indicating (the dimensions of) the probability space over which they are taken.
+
+    Tensor quotients denote the inverse of the Hadamard (element-wise) product $\circ$
+    \begin{equation*}
+        \te{q} = \frac{\te{a}}{\te{b}} \quad \Longleftrightarrow \quad {\te{q}} \circ {\te{b}} = {\te{a}}
+    \end{equation*}
+    where every tensor is broadcast to the same dimensions.
+
+    Unbounded multi-indices will use $\mi{o}$ in place of $\mi{n}$.
+    A tensor Gaussian like
+    \begin{multline} \label{def:Notation:p}
+        \te[l\x l^{\prime} \x l^{\prime\prime} \x l^{\prime\prime\prime} \x o\x o^{\prime}]{\prob{\te[\mi{m}\x\mi{o}]{\rv{z}}}{\te[\mi{m}\x\mi{L}\x\mi{L^{\prime\prime}}\x\mi{o^{\prime}}]{Z}}{\te[\mi{L}\x\mi{L^{\prime}}\x\mi{L^{\prime\prime}}\x\mi{L^{\prime\prime\prime}}\x\mi{m}\x\mi{m}]{\Sigma}}} \\
+        \deq (2 \pi)^{-M/2} \modulus{\te[l\x l^{\prime} \x l^{\prime\prime} \x l^{\prime\prime\prime}]{\Sigma}}^{-1/2} \\
+        \exp\left(-\frac{
+            \te[\mi{m}\x l\x l^{\prime} \x l^{\prime\prime} \x l^{\prime\prime\prime} \x o\x o^{\prime}]{\rv{z}-Z}^{\intercal} 
+        \te[l\x l^{\prime} \x l^{\prime\prime} \x l^{\prime\prime\prime}]{\Sigma}^{-1} 
+        \te[\mi{m^{\prime}}\x l\x l^{\prime} \x l^{\prime\prime} \x l^{\prime\prime\prime} \x o\x o^{\prime}]{\rv{z}-Z}}
+        {2}\right)
+    \end{multline}
+    is defined in terms of the matrix
+    \begin{equation*}
+        \te[l\x l^{\prime} \x l^{\prime\prime} \x l^{\prime\prime\prime}]{\Sigma} \deq
+        \te[l\x l^{\prime} \x l^{\prime\prime} \x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Sigma}
+    \end{equation*}
+    and the transpose ${\intercal}$ (moving first multi-index to last) of the broadcast difference between two tensors
+    \begin{equation*}
+        \te[\mi{m}\x l\x l^{\prime} \x l^{\prime\prime} \x l^{\prime\prime\prime} \x \mi{o}\x \mi{o^{\prime}}]{\rv{z} - Z}
+        \deq \te[\mi{m}\x 1\x 1\x 1\x 1\x\mi{o}\x 1]{\rv{z}} - \te[\mi{m}\x l\x 1\x l^{\prime\prime}\x 1\x 1\x\mi{o^{\prime}}]{Z}
+    \end{equation*}
+    To be clear, this tensor definition applies only to explicit $\mathsf{p}$, it \emph{never} underpins a normal distibution $\mathsf{N}$. 
+    The algebraic development which follows relies exclusively on trivial normal marginalization and scaling
+    \begin{equation} \label{eq:Notation:marginalization}
+        \begin{aligned}
+            \te[\mi{M}]{\rv{z}} \sim \gauss{\te[\mi{M}]{Z}}{\te[\mi{M}\x\mi{M}]{\Sigma}} &\Rightarrow
+            \te[\mi{m}]{\rv{z}} \sim \gauss{\te[\mi{m}]{Z}}{\te[\mi{m}\x\mi{m}]{\Sigma}} \\
+            \te[\mi{M}]{\rv{z}} \sim \gauss{\te[\mi{M}]{Z}}{\te[\mi{M}\x\mi{M}]{\Sigma}} &\Rightarrow
+            \te[\mi{M}\x\mi{M}]{\Theta}^{\intercal}\te[\mi{M}]{\rv{z}} \sim \gauss{\Theta^{\intercal}Z}{\Theta^{\intercal}\Sigma\Theta}                        
+        \end{aligned}
+    \end{equation}
+    \begin{equation} \label{eq:Notation:scaling}
+    \end{equation}
+    together with an invaluable product formula reported in \cite{Rasmussen2016}
+    \begin{multline} \label{eq:Notation:product}
+        \prob{\tr{\rv{z}}}{\tr{a}}{\tr{A}}\prob{\Theta^{\intercal}\tr{\rv{z}}}{\tr{b}}{\tr{B}}
+        = \prob{\tr{0}}{(\tr{b}-\Theta^{\intercal}\tr{a})}{(\tr{B} + \Theta^{\intercal}\tr{A}\Theta)} \\
+        \x \prob{\tr{\rv{z}}}
+        {(\tr{A}^{-1}+\Theta\tr{B}^{-1}\Theta^{\intercal})^{-1}(\tr{A}^{-1}\tr{a}+\Theta\tr{B}^{-1}\tr{b})}
+        {(\tr{A}^{-1}+\Theta\tr{B}^{-1}\Theta^{\intercal})^{-1}}
+    \end{multline}
+    In referring back to these formulae, remember that $\tr{\rv{z}}, \tr{Z}, \Sigma, \Theta$ are arbitrary vectors and matrices here -- within the dictates of the minimal dimension, sign, symmetry and invertibility requirements for these formulae to make sense -- and not restricted to any particular values these quantities may later take.
+
+
+\section{Gaussian Process (GP) Regression} \label{sec:GP}
+    Conventionally, a Gaussian process is viewed either as a random function, or an indexed collection of random variables (RVs). In either case the argument or index is the singular datum $\te[\mi{M}]{x}\in\st{R}^M$.
+    We shall instead adopt the perspective of formal definition, wherein the input (index) set is a variable-sized design matrix $\te[\mi{M}\x\mi{o}]{x}\in\st{R}^{Mo}$ and the response (state) space is $\st{R}^{Lo}\ni\te[\mi{L}\x\mi{o}]{\te[\mi{L}]{\rv{y}} \vert \te[\mi{M}\x\mi{o}]{x}}(\omega)$. The argument $(\omega)$ indicates a realization of the random variable which formally defines and fully specifies the GP:
+    \begin{equation*}
+        \te[\mi{L}]{\rv{y}} \big\vert \te[\mi{M}\x\mi{o}]{x} \sim 
+        \gaussd{\te[\mi{L}\x\mi{o}]{y(x)}}{\te[\mi{L}\x\mi{L}\x\mi{o}\x\mi{o}]
+        {k_{\rv{y}}(x,x)}} \quad \forall o \in \st{Z^{+}}
+    \end{equation*}
+    Tensor axes must concatenate into a multivariate normal distribution
+    \begin{equation*}
+        \begin{aligned}
+            \te[\mi{L}\x\mi{o}]{} \sim \gaussd{\te[\mi{L}\x\mi{o}]{}}{\te[\mi{L}\x\mi{L^{\prime}}\x\mi{o}\x\mi{o^{\prime}}]{}}
+            & \Longleftrightarrow
+            \te[\mi{L}\x\mi{o}]{}^{\dagger} \sim \gauss{\te[\mi{L}\x\mi{o}]{}^{\dagger}}{\te[\mi{L}\x\mi{L^{\prime}}\x\mi{o}\x\mi{o^{\prime}}]{}^{\dagger}} \\
+            \te[\mi{lo}-\mi{(l-1)o}]{\te[\mi{L}\x\mi{o}]{}^{\dagger}} 
+            &\deq \te[l\x\mi{o}]{} \\
+            \te[(\mi{lo}-(\mi{l-1)o}) \x (\mi{l^{\prime}o^{\prime}}-\mi{(l^{\prime}-1)o^{\prime}})]
+            {\te[\mi{L}\x\mi{L^{\prime}}\x\mi{o}\x\mi{o^{\prime}}]{}^{\dagger}} 
+            &\deq \te[l \x l^{\prime}\x\mi{o}\x\mi{o^{\prime}}]{} \\
+        \end{aligned}
+    \end{equation*}
+    supporting the fundamental definition of the Gaussian process kernel, as a covariance over response space
+    \begin{equation*}
+        \te[l\x l^{\prime}\x o\x o^{\prime}]{k_{\rv{y}}(x,x)} 
+        \deq \cov[{\te[l^{\prime}\x o^{\prime}]{\rv{y}\vert x}}]{\te[l\x o]{\rv{y}\vert x}}{\mi{Lo}}
+    \end{equation*}
+
+    \subsection{Prior GP} \label{sub:GP:Prior}
+        Gaussian Process regression decomposes output $\te[\mi{L}]{\rv{y}}$ into signal GP $\te[\mi{L}]{\rv{f}}$, and independent noise GP $\te[\mi{L}]{\rv{\hat{e}}}$ with constant noise covariance $\te[\mi{L}\x\mi{L}]{E}$
+        \begin{equation*}
+            \begin{aligned}
+                \te[\mi{L}]{\rv{y}\vert E} 
+                &= \te[\mi{L}]{\rv{f}} + \te[\mi{L}]{\rv{\hat{e}}\vert E} \\
+                \te[\mi{L}]{\rv{\hat{e}}\vert E} \big\vert \te[\mi{M}\x\mi{o}]{x}
+                &\sim \gaussd{\te[\mi{L}\x\mi{o}]{0}}{\te[\mi{L}\x\mi{L}]{E} \otimes \diag[\mi{o}\x\mi{o}]{1}}
+            \end{aligned}
+        \end{equation*}
+        The ARD kernel is hyperparametrized by signal covariance $\te[\mi{L}\x\mi{L}]{F}$ and the matrix $\te[\mi{L}\x\mi{M}]{\Lambda}$ of characteristic lengthscales for each output/input combination. 
+        Using the broadcast Hadamard product $\circ$ we define
+        \begin{equation*}
+            \begin{aligned}
+                \diag[l\x l^{\prime}\x\mi{M}\x\mi{M}]{\Lambda^{2} \pm I} 
+                &\deq \diag{\te[l\x\mi{M}]{\Lambda} \circ \te[l^{\prime}\x\mi{M}]{\Lambda} \pm \te[\mi{M}]{I}} 
+                \qquad I \in \st{Z}-\st{Z}^{-} \\
+                \diag[l\x l^{\prime}\x\mi{M}\x\mi{M}]{\Lambda^{2}} &\deq 
+                \diag[l\x l^{\prime}]{\Lambda^{2} \pm 0} \\
+                    \te[l\x l^{\prime}]{\pm F} 
+                &\deq (2 \pi)^{M/2} \modulus{\diag[l\x l^{\prime}]{\Lambda^{2}}}^{1/2} \te[l\x l^{\prime}]{F}
+            \end{aligned}
+        \end{equation*}
+        and implement the objective ARD prior using \cref{def:Notation:p}
+        \begin{equation*}
+            \te[\mi{L}]{\rv{f} \vert F,\Lambda}
+            \big\vert \te[\mi{M}\x\mi{o}]{x} \sim \\
+            \gaussd{\te[\mi{L}\x\mi{o}]{0}}{\te[\mi{L}\x\mi{L^{\prime}}]{\pm F} \circ 
+            \prob{\te[\mi{M}\x\mi{o}]{x}}{\te[\mi{M}\x\mi{o}]{x}}
+            {\diag[\mi{L}\x\mi{L^{\prime}}]{\Lambda^{2}}}} 
+        \end{equation*}
+        
+    \subsection{Predictive GP} \label{sub:GP:Predictive}
+        Bayesian inference for GP regression further conditions the hyper-parametrized GP $\rv{y} \vert E,F,\Lambda$ on the observed realization of the random variable $\te{\rv{y}\vert X}$
+        \begin{equation*}
+            \te[\mi{L} \x \mi{N}]{Y}^{\dagger} \deq \te{\te[\mi{L}]{\rv{y}\vert E,F,\Lambda} \big\vert \te[\mi{M}\x\mi{N}]{X}}^{\dagger}\!(\omega) \in \st{R}^{LN}
+        \end{equation*}
+        To this end we define
+        \begin{equation} \label{def:GP:Kk}
+            \begin{aligned}
+                \te[\mi{Lo}\x\mi{Lo}]{K_{\rv{\hat{e}}}} &\deq 
+                \cov{\te{\te[\mi{L}]{\rv{\hat{e}}\vert E} \big\vert \te[\mi{M}\x\mi{o}]{x}}^{\dagger}}{\mi{Lo}} \\
+                &\phantom{:}= \te{\te[\mi{L}\x\mi{L}]{E} \otimes \diag[\mi{o}\x\mi{o}]{1}}^{\dagger} \\
+                \te[\mi{Lo}\x\mi{L^{\prime}o^{\prime}}]{k(x, x^{\prime})} &\deq
+                \cov[{\te{\te[\mi{L^{\prime}}]{\rv{f}\vert F,\Lambda} \big\vert \te[\mi{M}\x\mi{o^{\prime}}]{x^{\prime}}}^{\dagger}}]
+                {\te{\te[\mi{L}]{\rv{f}\vert F,\Lambda} \big\vert \te[\mi{M}\x\mi{o}]{x}}^{\dagger}}{\mi{Lo}} \\
+                &\phantom{:}= \te{\te[\mi{L}\x\mi{L^{\prime}}]{\pm F} \circ 
+                \prob{\te[\mi{M}\x\mi{o}]{x}}{\te[\mi{M}\x\mi{o^{\prime}}]{x^{\prime}}}
+                {\diag[\mi{L}\x\mi{L^{\prime}}]{\Lambda^{2}}}}^{\dagger} \\
+                %
+                \te[\mi{LN}\x\mi{LN}]{K_{Y}} &\deq 
+                \cov{\te{\te[\mi{L}]{\rv{y}\vert E,F,\Lambda} \big\vert \te[\mi{M}\x\mi{N}]{X}}^{\dagger}}{\mi{Lo}} \\
+                &\phantom{:}= k(\te[\mi{M}\x\mi{N}]{X},\te[\mi{M}\x\mi{N}]{X}) + \te[\mi{LN}\x\mi{LN}]{K_{\rv{\hat{e}}}})
+            \end{aligned}
+        \end{equation}
+        Applying Bayes' rule
+        \begin{equation*}
+            \begin{aligned}
+                \mathrm{p}(\rv{f}\vert Y)\mathrm{p}(Y) = \mathrm{p}(Y\vert \rv{f})\mathrm{p}(\rv{f})
+                &= \prob{Y^{\dagger}}{\rv{f}^{\dagger}}{K_{\rv{\hat{e}}}} \prob{\rv{f}^{\dagger}}{\te[\mi{LN}]{0}}{k(X,X)} \\
+                &= \prob{\rv{f}^{\dagger}}{Y^{\dagger}}{K_{\rv{\hat{e}}}} \prob{\rv{f}^{\dagger}}{\te[\mi{LN}]{0}}{k(X,X)}
+            \end{aligned}
+        \end{equation*}
+        \cref{eq:Notation:product} immediately reveals the marginal likelihood
+        \begin{equation} \label{eq:GP:marginalLikelihood}
+            \mathrm{p}\!\left(\te{Y \vert E,F,\Lambda} \big\vert X\right)
+            = \prob{\te[\mi{L\x N}]{Y}^{\dagger}}{\te[\mi{LN}]{0}}{K_Y}
+        \end{equation}
+        and the posterior distribution
+        \begin{multline*}
+            \te[\mi{L\x N}]{\te{\rv{f} \vert Y \vert E,F,\Lambda} \big\vert X}^{\dagger} \sim \\
+            \gauss{k(X,X) K_{Y}^{-1} Y^{\dagger}}{\ k(X,X) - k(X,X) K_{Y}^{-1} k(X,X)}
+        \end{multline*}
+
+        The ultimate goal is the posterior predictive GP which extends the posterior distribution to arbitrary -- usually unobserved -- $\te[\mi{M}\x\mi{o}]{x}$. This is traditionally derived from the definition of conditional probability, but this seems unnecessary, for the extension must recover the posterior distribution when $x=X$. There is only one way of selectively replacing $X$ with $x$ in the posterior formula which preserves the coherence of tensor ranks:
+        \begin{multline} \label{def:GP:Predictive}
+            \te[\mi{L\x o}]{\te{\rv{f} \vert Y \vert E,F,\Lambda} \big\vert x}^{\dagger} \sim \\
+            \gauss{k(x,X) K_{Y}^{-1} Y^{\dagger}}{\ k(x,x) - k(x,X) K_{Y}^{-1} k(X,x)}
+        \end{multline}
+
+    \subsection{GP Optimization} \label{sub:GP:Optimization}
+        Henceforth we implicitly condition on optimal hyperparameters, which maximise the marginal likelihood \cref{eq:GP:marginalLikelihood}.
+        \begin{equation} \label{eq:GP:hyperparameters}
+            \te[\mi{L}\x\mi{L}]{E},\te[\mi{L}\x\mi{L}]{F},\te[\mi{L}\x\mi{M}]{\Lambda} \deq \argmax \prob{\te[\mi{L\x N}]{Y}^{\dagger}}{\te[\mi{LN}]{0}}{K_Y}
+        \end{equation}
+        The lengthscale tensor could feasibly have been of maximal rank $\te[\mi{L}\x\mi{L}\x\mi{M}]{\Lambda}$. We have restricted this to $\te[\mi{L}\x\mi{M}]{\Lambda}$, as one set of ARD lengthscales per output is heuristically satisfying and enables effective optimization as follows.
+        For each output $l \in \mi{L}$ construct a separate GP to optimize the diagonal hyperparameters
+        \begin{multline*}
+            \te[l\x l]{E},\te[l\x l]{F},\te[l\x\mi{M}]{\Lambda} = \\
+            \argmax \prob{\te[l\x \mi{N}]{Y}^{\dagger}}{\te[\mi{N}]{0}}{\te[(\mi{lN-(l-1)N})\x (\mi{lN-(l-1)N})]{K_Y}}
+        \end{multline*}
+        From this starting point, $E,F$ may be optimized (off-diagonal elements in particular) in the full multi-output GP \cref{eq:GP:hyperparameters}. One may then attempt to re-optimize lengthscales according to \cref{eq:GP:hyperparameters}, and iterate, although this may be gilding the lily.
+
+
+\section{Reduction of Order by Marginalization (ROM)} \label{sec:ROM}
+    As sample data we take three standardized normal random variables
+    \begin{equation} \label{def:ROM:zDist}
+        \te[\mi{M}\x 3]{\rv{z}} \sim \gaussd{\te[\mi{M\x 3}]{0}}{\diag[\mi{M\x M\x 3\x 3}]{1}}
+    \end{equation}
+    The sample basis is rotated to the input data
+    \begin{equation} \label{def:ROM:rotation}
+        \te[\mi{M^{\prime}}\x i]{\rv{x}} \deq \te[\mi{M\x M^{\prime}}\x i]{\Theta}^{\intercal} \te[\mi{M}\x i]{\rv{z}}
+    \end{equation}
+    The three datapoints represent an arbitrary datum, marginalized differently in 3 ROMs. This is needed to ascertain covariances between these ROMs. For bookeeping we define
+    \begin{equation*}
+        \tte[]{\mi{m}} \deq \tte[\mi{3}]{\mi{m}} \deq \te{\mi{\dot{m}},\mi{\ddot{m}},\mi{0}} \QT{;} 
+        \mi{m} \in \set{\mi{\dot{m}}\x 1,\mi{\ddot{m}}\x 2,\mi{0}\x 3}
+    \end{equation*}
+    and the ragged tensors
+    \begin{equation*}
+            \tme{m}{\rv{z}} \deq
+            \te{\te[\mi{\dot{m}}]{\rv{\dot{z}}} , \te[\mi{\ddot{m}}]{\rv{\ddot{z}}} , \te[\mi{0}]{\rv{\dddot{z}}}} \QT{;}
+            \tte[\tse{m}\x\tse{M}]{\Theta} \deq
+            \te{\te[\mi{\dot{m}\x M}]{\Theta} , \te[\mi{\ddot{m}\x M}]{\Theta} , \te[\mi{0\x M}]{\Theta}}
+    \end{equation*}
+    The non-ragged versions straightforwardly replace $\tte{\mi{m}}$ with $\tte{\mi{M}}\deq \tte{\mi{M},\mi{M},\mi{M}}$, eliciting the surrogate response RV
+    \begin{multline} \label{def:ROM:predictive}
+        \te[\mi{L\x 3}]{\te[\mi{L}]{\rv{y} \vert Y} \big\vert \tte[\tse{M}\x\tse{M}]{\Theta}^{\intercal} \tme{M}{\rv{z}}}^{\dagger} =
+        \te[\mi{L\x 3}]{\te[\mi{L}]{\rv{y} \vert Y} \big\vert \te[\mi{M\x 3}]{\rv{x}}}^{\dagger} \sim \\
+        \gauss{k(\rv{x},X) K_{Y}^{-1} Y^{\dagger}}{\ k(\rv{x},\rv{x}) - k(\rv{x},X) K_{Y}^{-1} k(X,\rv{x}) + {K_{\rv{\hat{e}}}}}
+    \end{multline}
+    The marginal response
+    \begin{multline} \label{def:ROM:marginal}
+        \te[\mi{L\x \mi{3}}]{\rv{e}} \deq \evt{\te[\mi{L\x 3}]{\te[\mi{L}]{\rv{y} \vert Y}
+        \big\vert \tte[\tse{m}\x\tse{M}]{\Theta}^{\intercal} \tme{m}{\rv{z}}}}{\tse{M}\mi{-}\tse{m}} \\
+        \sim \gaussd{\te[\mi{L\x 3}]{f(\rv{z}; \Theta)}}
+        {\te[\mi{L\x L\x 3\x 3}]{\sigma(\rv{z}; \Theta)}}
+    \end{multline}
+    serves to define marginal expectation $f$ and covariance $\sigma$.
+    For lucidity we may directly subscript output sub-tensors by their $\tse{m}$-element, as in
+    \begin{equation*}
+        {\rv{e}_{\tse[i]{m}}}\deq \te[\mi{L}\x i]{\rv{e}} \QT{;}
+        {f_{\tse[i]{m}}}\deq \te[\mi{L}\x i]{f} \QT{;}
+        {\sigma_{\tse[i]{m},\tse[j]{m}}}\deq \te[\mi{L}\x\mi{L}\x i\x j]{\sigma}
+    \end{equation*}
+    Knowledge ranges from the totally marginal RV $\sim \tgauss{f_{\mi{0}}}
+    {\sigma_{\mi{0},\mi{0}}}$ to the totally conditioned RV $\sim \tgauss{f_{\mi{M}}}{\sigma_{\mi{M},\mi{M}}}$. The question is how to calculate these quantities, and this deserves some clarity.
+    The marginal response lies at the root of ROM, stratifying the overall response $\rv{e_{M}}$ into the response $\rv{e_{m}}$ to the first $m \in (0,\ldots,M)$ sample dimensions. We do not regard a marginal response as a GP because its input (index) is necessarily a single datum, moreover a random variable $\te[\mi{m}]{\rv{z}}$. Rather than a GP, we envisage each marginal response in \cref{def:ROM:marginal} as a normally distributed RV on response $\mi{L}$-space. The parameters $f,\sigma$ specifying each normal RV are functions of $\te[\mi{m}]{\rv{z}}$, an RV on input $\mi{M}$-space. The input and response probability spaces are entirely separate.
+    According to this discussion -- and, for purely technical reasons, Fubini's Theorem -- we may re-order expectations taken over the two probability spaces
+    \begin{equation*}
+        \evt{\;\evt{}{\mi{m}}}{\mi{L}} = \evt{\;\evt{}{\mi{L}}}{\mi{m}}
+    \end{equation*}
+    This will be used repeatedly, starting with the normal RV parameters
+    \begin{equation*}
+        \begin{aligned}
+            \te[\mi{L\x 3}]{f({\rv{z}}; \Theta)}^{\dagger} &\deq
+            \evt{\;\evt{\te[\mi{L\x 3}]{\te[\mi{L}]{\rv{y} \vert Y} 
+            \big\vert \tte[\tse{m}\x\tse{M}]{\Theta}^{\intercal} \tme{m}{\rv{z}}}}{\tse{M}\mi{-}\tse{m}}^{\dagger}}{\mi{L}} \\
+            &\phantom{:}= \evt{\;\evt{\te{\rv{y} \vert Y}}{\mi{L}}^{\dagger}}{\tse{M}\mi{-}\tse{m}} \\
+            &\phantom{:}= \evt{\te{k(\rv{x},X) K_{Y}^{-1} Y^{\dagger}}}{\tse{M}\mi{-}\tse{m}} \\
+            \te[\mi{L\x L\x 3\x 3}]{\sigma({\rv{z}}; \Theta)}^{\dagger} &\deq
+            \covt{\;\evt{\te[\mi{L\x 3}]{\te[\mi{L}]{\rv{y} \vert Y} 
+            \big\vert \tte[\tse{m}\x\tse{M}]{\Theta}^{\intercal} \tme{m}{\rv{z}}}}{\tse{M}\mi{-}\tse{m}}^{\dagger}}{\mi{L}} \\
+            &\phantom{:}= \evt{\;\covt{\;\te{\rv{y} \vert Y}}{\mi{L}}^{\dagger}}{\tse{M}\mi{-}\tse{m}} \\
+            &\phantom{:}= \evt{\te{k(\rv{x},\rv{x}) - k(\rv{x},X) K_{Y}^{-1} k(X,\rv{x}) 
+            + K_{\rv{\hat{e}}}}}{\tse{M}\mi{-}\tse{m}}
+        \end{aligned}                    
+    \end{equation*}
+    which uses the shorthand
+    \begin{equation*}
+        \ev{\cdot }{\tse{M}\mi{-}\tse{m}} \deq
+        \ev{\cdot \,
+        \big\vert \tte[\tse{m}\x\tse{M}]{\Theta}^{\intercal} \tme{m}{\rv{z}}}
+        {\tse{M}\mi{-}\tse{m}}
+    \end{equation*}
+    \Crefrange{def:ROM:zDist}{def:ROM:marginal} support analytic expectations of $f$ and $\sigma$ using 
+    \cref{def:GP:Kk} and \crefrange{eq:Notation:marginalization}{eq:Notation:product}, reported in the following Subsections.
+
+    \subsection{Marginal Expectation} \label{sub:ROM:Expectation}
+        The marginal expectation in \cref{def:ROM:marginal} is given by
+        \begin{equation*}
+            \te[\mi{L\x 3}]{f({\rv{z}}; \Theta)}^{\dagger}
+            = \evt{\te{k(\rv{x},X) K_{Y}^{-1} Y^{\dagger}}}{\tse{M}\mi{-}\tse{m}}
+            = \te[\mi{L}\x\mi{L^{\prime}}\x \mi{3} \x\mi{N^{\prime}}]{g({\rv{z}}; \Theta)}^{\dagger}
+            \te[\mi{L^{\prime}N^{\prime}}]{K_{Y}^{-1} Y^{\dagger}}
+        \end{equation*}
+        where $\mi{m} = \te[i]{\mi{m}}\x i$ and
+        \begin{equation*}
+            \begin{aligned}
+                \te[l\x l^{\prime}\x i \x\mi{N^{\prime}}]{g({\rv{z}}; \Theta)} 
+                &\deq \te[l\x l^{\prime}]{\pm F} \circ 
+                \prob{\te[\mi{M}]{0}}{\te[\mi{M}\x\mi{N^{\prime}}]{X}}
+                {\diag[l\x l^{\prime}]{\Lambda^{2}+1}} \\
+                & \phantom{\deq\ } \circ \frac
+                {\prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G}}{\te[l\x l^{\prime}]{\Gamma}}}
+                {\prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\diag[]{1}}} \\
+                &\phantom{:}= \te[l\x l^{\prime}]{\pm F} \circ 
+                \frac
+                {\prob{\te[\mi{M}]{0}}{\te[\mi{M}\x\mi{N^{\prime}}]{X}}
+                {\diag[l\x l^{\prime}]{\Lambda^{2}+1}}} 
+                {\prob{\te[\mi{m}]{0}}{\te[\mi{m}\x\mi{M}]{\Theta}\te[\mi{M}\x\mi{N^{\prime}}]{X}}
+                {\te[l\x l^{\prime}]{\Phi}^{-1}}} \\
+                & \phantom{\deq\ } \circ
+                {\prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}\x\mi{M}]{\Theta}\te[\mi{M}\x\mi{N^{\prime}}]{X}}
+                {\te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Phi}^{-1}\te[l\x l^{\prime}]{\Gamma}}}
+            \end{aligned}                    
+        \end{equation*}
+        and
+        \begin{equation*}
+            \begin{aligned}
+                \te[\mi{m}\x l\x l^{\prime}\x\mi{N^{\prime}}]{G} &\deq 
+                \te[\mi{m}\x\mi{M}]{\Theta} \diag[l\x l^{\prime}\x\mi{M}\x\mi{M^{\prime}}]{\Lambda^{2}+1}^{-1} \te[\mi{M^{\prime}}\x\mi{N^{\prime}}]{X}
+                    \\
+                \te[l\x l^{\prime}\x\mi{m}\x\mi{m}^{\prime}]{\Gamma} &\deq 
+                \te[\mi{m}\x\mi{M}]{\Theta} 
+                \diag[\mi{M}\x\mi{M^{\prime}}]
+                {\diag[l\x l^{\prime}]{\Lambda^{2}} 
+                \diag[l\x l^{\prime}]{\Lambda^{2}+1}^{-1}} 
+                \te[\mi{m}^{\prime}\x\mi{M^{\prime}}]{\Theta}^{\intercal} \\
+                \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Phi} &\deq \te[\mi{m}\x\mi{M}]{\Theta}
+                \diag[l\x l^{\prime}\x\mi{M}\x\mi{M^{\prime}}]{\Lambda^{2}+1}^{-1} \te[\mi{m^{\prime}}\x\mi{M^{\prime}}]{\Theta}^{\intercal}
+            \end{aligned}
+        \end{equation*}
+        Of particular importance
+        \begin{equation*}
+            \begin{aligned}
+                f_{\mi{0}}({\rv{z}}; \Theta)
+                &\phantom{:}= \te[\mi{L}\x\mi{L^{\prime}}\x\mi{N^{\prime}}]{g_{\mi{0}}({\rv{z}}; \Theta)}^{\dagger}
+                \te[\mi{L^{\prime}N^{\prime}}]{K_{Y}^{-1} Y^{\dagger}} \\
+                g_{\mi{0}}({\rv{z}}; \Theta) 
+                &\deq
+                \te[\mi{L}\x\mi{L^{\prime}}\x 3 \x\mi{N^{\prime}}]{g({\rv{z}}; \Theta)} \\
+                &\deq
+                \te[\mi{L}\x\mi{L^{\prime}}]{\pm F} \circ 
+                \prob{\te[\mi{M}]{0}}{\te[\mi{M}\x\mi{N^{\prime}}]{X}}
+                {\diag[\mi{L}\x\mi{L^{\prime}}\x\mi{M}\x\mi{M}]{\Lambda^{2}+1}} \\
+            \end{aligned}                    
+        \end{equation*}
+        Standardization of $X$ and $Y$ instills a totally marginal expectation of $f_{\mi{0}}({\rv{z}}; \Theta) \approx \te[\mi{L}]{0}$, but this is usually inexact.
+
+    \subsection{Marginal Covariance} \label{sub:ROM:Covariance}
+        The marginal covariance in \cref{def:ROM:marginal} is given by
+        \begin{multline*}
+            \te[\mi{L\x L^{\prime}\x 3\x 3^{\prime}}]{\sigma(\rv{z}; \Theta)} = \\
+            \te[\mi{L\x L^{\prime}}]{F} \circ \te[\mi{L\x L^{\prime}\x 3\x 3^{\prime}}]{\phi(\rv{z}; \Theta)} - 
+            \te[\mi{L\x L^{\prime}\x 3\x 3^{\prime}}]{\psi(\rv{z}; \Theta)}                
+            + \te[\mi{L\x L^{\prime}\x 3\x 3^{\prime}}]{E}                        
+        \end{multline*}
+        For $\mi{m} \deq \te[i]{\mi{m}}\x i, \   \mi{m^{\prime}}\deq\te[i^{\prime}]{\mi{m}}\x i^{\prime}$
+        \begin{multline*}
+            \te[l\x l^{\prime}\x i\x i^{\prime}]{\phi(\rv{z}; \Theta)}^{\dagger}
+            \deq \frac{\evt{\te[l\x l^{\prime}]{k(\te[i]{\rv{x}},\te[i^{\prime}]{\rv{x}})}}{\tse{M}\mi{-}\tse{m}}}{\te[l\x l^{\prime}]{F}} = \\
+            \frac
+            {\modulus{\diag[l\x l^{\prime}\x\mi{M}\x\mi{M}]{\Lambda^{2}}}^{1/2} \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\te[l\x l^{\prime}]{\Upsilon}}\prob{\te[\mi{m^{\prime}}]{\rv{z}}}{\te[l\x l^{\prime}\x i\x\mi{m^{\prime}}]{Z}}{\te[l\x l^{\prime}\x i]{\Pi}}}
+            {\modulus{\diag[l\x l^{\prime}\x\mi{M}\x\mi{M}]{\Lambda^{2}+2}}^{1/2}
+            \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\diag{1}}\prob{\te[\mi{m^{\prime}}]{\rv{z}}}{\te[\mi{m^{\prime}}]{0}}{\diag{1}}}
+        \end{multline*}
+        \begin{multline*}
+            \te[l\x l^{\prime}\x i\x i^{\prime}]{\psi(\rv{z}; \Theta)}^{\dagger}
+            \deq \evt{\te[l\x l^{\prime}]{k(\te[i]{\rv{x}},X) K_{Y}^{-1} k(X,\te[i^{\prime}]{\rv{x}})}}{\tse{M}\mi{-}\tse{m}} = \\
+            \te[l\x\mi{L^{\prime\prime}}\x i \x\mi{N^{\prime\prime}}]{g({\rv{z}}; \Theta)}^{\dagger}
+            \te[\mi{L^{\prime\prime}N^{\prime\prime}}\x\mi{L^{\prime\prime\prime}N^{\prime\prime\prime}}]{K_{Y}^{-1}} 
+            \te[l^{\prime}\x\mi{L^{\prime\prime\prime}}\x i^{\prime} \x\mi{N^{\prime\prime\prime}}]{g({\rv{z}}; \Theta)}^{\dagger}
+        \end{multline*}
+        where
+        \begin{equation*}
+            \begin{aligned}
+                \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Upsilon} &\deq \te[\mi{m}\x\mi{M}]{\Theta}
+                \diag[\mi{M}\x\mi{M^{\prime}}]{\diag[l\x l^{\prime}]{\Lambda^{2}+1}\diag[l\x l^{\prime}]{\Lambda^{2}+2}^{-1}} \te[\mi{m^{\prime\prime}}\x\mi{M^{\prime}}]{\Theta}^{\intercal} \\
+                \te[l\x l^{\prime}\x i\x\mi{m^{\prime}}\x\mi{m^{\prime\prime\prime}}]{\Pi}^{-1} &\deq \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Phi}^{\intercal}
+                \te[\mi{m}\x\mi{m^{\prime\prime}}]{\Gamma}^{-1} \te[l\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} \\
+                &\phantom{\deq}\ +\te[\mi{m^{\prime}}\x\mi{m^{\prime\prime\prime}}]{\te[l\x l^{\prime}\x\mi{M}\x\mi{M}]{\Upsilon}^{-1}} \\
+                \te[l\x l^{\prime}\x i\x\mi{m^{\prime}}]{Z} &\deq 
+                \te[l\x l^{\prime}\x i\x\mi{m^{\prime}}\x\mi{M}]{\Pi}
+                \te[l\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{M}]{\Phi}^{\intercal}
+                \te[\mi{m^{\prime\prime}}\x\mi{m}]{\Gamma}^{-1}
+                \te[\mi{m}]{\rv{z}}
+            \end{aligned}
+        \end{equation*}
+
+    \subsection{Centralized Marginals} \label{sub:ROM:CentralMarg}
+        Calculations are easier with the centralized marginal responses
+        \begin{equation*}
+            \te[\mi{L\x 3}]{\rv{c}} \deq \te[\mi{L\x 3}]{\rv{e}} - \te[\mi{L\x 3}]{f(\rv{z},\Theta)}
+        \end{equation*}
+        These are normally ($\mathsf{N}^{\dagger}$) distributed with moments \cite{Isserlis1916,Isserlis1918}
+        \begin{equation} \label{eq:ROM:CentralMarg:Moments}
+            \begin{aligned}
+                \evt{\te[\mi{L\x 3}]{\rv{c}}}{\mi{L}} &= \te[\mi{L\x 3}]{0} \\
+                \ev{\te[\mi{L\x 3}]{\rv{c}}^{2}}{\mi{L}} &= \te[\mi{L\x L^{\prime}\x 3\x 3^{\prime}}]{\sigma(\rv{z},\Theta)} \\
+                \ev{\te[\mi{L\x 3}]{\rv{c}}^{3}}{\mi{L}} &= \te[\mi{L\x L^{\prime}\x L^{\prime\prime}\x 3\x 3^{\prime}\x 3^{\prime\prime}}]{0} \\
+                \ev{\te[\mi{L\x 3}]{\rv{c}}^{4}}{\mi{L}} &= 
+                \te[\mi{L\x L^{\prime}\x 3\x 3^{\prime}}]{\sigma(\rv{z},\Theta)} \otimes
+                \te[\mi{L^{\prime\prime}\x L^{\prime\prime\prime}\x 3^{\prime\prime}\x 3^{\prime\prime\prime}}]{\sigma(\rv{z},\Theta)} \\
+                &+ \te[\mi{L\x L^{\prime\prime}\x 3\x 3^{\prime\prime}}]{\sigma(\rv{z},\Theta)} \otimes
+                \te[\mi{L^{\prime}\x L^{\prime\prime\prime}\x 3^{\prime}\x 3^{\prime\prime\prime}}]{\sigma(\rv{z},\Theta)} \\
+                &+ \te[\mi{L\x L^{\prime\prime\prime}\x 3\x 3^{\prime\prime\prime}}]{\sigma(\rv{z},\Theta)} \otimes
+                \te[\mi{L^{\prime}\x L^{\prime\prime}\x 3^{\prime}\x 3^{\prime\prime}}]{\sigma(\rv{z},\Theta)}
+            \end{aligned}
+        \end{equation}
+
+\section{Closed Sobol' Indices} \label{sec:Sobol}
+    The relevance of the first $m$ inputs is measured by the Closed Sobol' Index
+    \begin{equation} \label{def:Sobol:Sobol}
+    \te[\mi{L}\x\mi{L}]{\rv{S} \big\vert \te[\mi{m}\x\mi{M}]{\Theta}} \deq 
+    \frac
+    {\cov{\rv{e_{m}}}{\mi{m}}}
+    {\cov{\rv{e_{M}}}{\mi{M}}}
+    \end{equation}
+    In our formulation, this is an RV on response $\mi{L}$-space, whose distribution is effectively inexpressible. It is the quotient of two (presumably dependent) RVs from the stratified hierarchy
+    \begin{equation*}
+    \cov{\rv{e_{m}}}{\mi{m}} = \ev{\rv{e_{m}^{2}}}{\mi{m}} - \ev[2]{\rv{e_{m}}}{\mi{m}} = \ev{\rv{e_{m}^{2}}}{\mi{m}} - \rv{e_{0}^{2}} = \ev{\te[\mi{L}]{\rv{c_{m}} + f_{\mi{m}}}^{2}}{\mi{m}} - \te[\mi{L}]{\rv{c_{0}} + f_{\mi{0}}}^{2}
+    \end{equation*}
+    Each stratum $\cov{\rv{e_{m}}}{\mi{m}}$ is an RV on response $\mi{L}$-space which is the difference of two (presumably dependent) RVs, each of which has a generalized chi-squared distribution on response $\mi{L}$-space (because $\rv{e_m}$ is always normally distributed).
+
+    \subsection{Expectations} \label{sub:Sobol:Expectations}
+        The expected value of the Closed Sobol' Index is simply
+        \begin{equation*}
+            \te[\mi{L}\x\mi{L}]{S_\mi{m}(\Theta)} \deq 
+            \evt{\te[\mi{L}\x\mi{L}]{\rv{S} \big\vert \te[\mi{m}\x\mi{M}]{\Theta}}}{\mi{L}} =
+            \frac
+            {V_{\mi{m}}(\Theta)}
+            {V_{\mi{M}}(\Theta)}
+        \end{equation*}
+        where for any $\mi{m}\subseteq\mi{M}$
+        \begin{equation*}
+            \begin{aligned}
+                \te[\mi{L\x L}]{V_{\mi{m}}(\Theta)} &\deq \evt{\cov{\rv{e_{m}}}{\mi{m}}}{\mi{L}} \\
+                &\phantom{:}= \evt{\;\ev{\te[\mi{L}]{\rv{c_{m}} + f_{\mi{m}}}^{2}}{\mi{L}}}{\mi{m}} - \ev{\te[\mi{L}]{\rv{c_{0}} + f_{\mi{0}}}^{2}}{\mi{L}} \\
+                &\phantom{:}= \ev{\te[\mi{L\x L}]{\sigma_{\mi{m,m}}} + \te[\mi{L}]{f_{\mi{m}}}^{2}}{\mi{m}} - \te[\mi{L\x L}]{\sigma_{\mi{0,0}}} - \te[\mi{L}]{f_{\mi{0}}}^{2}\\
+                &\phantom{:}= \ev{\te[\mi{L}]{f_{\mi{m}}}^{2}}{\mi{m}} - \te[\mi{L}]{f_{\mi{0}}}^{2}
+            \end{aligned}
+        \end{equation*}
+        When using GPs to calculate Sobol' indices, there is no difference between the $\mi{L}$-expectation of the $\mi{m}$-covariance and the $\mi{m}$-covariance of the $\mi{L}$-expectation. This is not entirely obvious, and Oakley and O'Hagan \cite{Oakley.OHagan2004} caution one to respect the (ultimately non-existent) difference. On the other hand, valid interchange is a natural consequence of the separation of probability spaces we have described in \cref{sec:ROM}.
+
+        Using the shorthand
+        \begin{equation*}
+            \te[l\x\mi{L^{\prime}}\x\mi{N^{\prime}}]{KY3}^{\dagger} \deq \te[l\x\mi{L^{\prime}}\x\mi{N^{\prime}}]{K_{Y}^{-1} Y^{\dagger}} \circ \te[l\x\mi{L^{\prime}}\x 3 \x\mi{N^{\prime}}]{g({\rv{z}}; \Theta)}^{\dagger}
+        \end{equation*}
+        to write
+        \begin{equation*}                
+            \evt{\te[l\x l^{\prime}]{\te[\mi{L}]{f_{\mi{m}}}^{2}}}{\mi{m}} = \te[l\x\mi{L^{\prime\prime}}\x\mi{N^{\prime\prime}}]{KY3}^{\dagger} \\
+            \te[l \x l^{\prime}\x\mi{L^{\prime\prime}}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{H_{\mi{m}}(\Theta)}^{\dagger}
+            \te[l^{\prime}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{KY3}^{\dagger}
+        \end{equation*}
+        results in
+        \begin{multline*}
+            \te[l \x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x n^{\prime\prime}\x n^{\prime\prime\prime}]{H_{\mi{m}}(\Theta)} \deq \\
+            \ev{\frac{
+                \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}\x l\x l^{\prime\prime}\x n^{\prime\prime}]{G}}{\te[l\x l^{\prime\prime}\x\mi{m}\x\mi{m}]{\Gamma}}
+                \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}\x l^{\prime}\x l^{\prime\prime\prime}\x n^{\prime\prime\prime}]{G}}{\te[l^{\prime}\x l^{\prime\prime\prime}\x \mi{m}\x\mi{m}]{\Gamma}}}
+            {\prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\diag[\mi{m\x m}]{1}}
+            \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\diag[\mi{m\x m}]{1}}}}{\mi{m}}
+        \end{multline*}
+        Using \cref{eq:Notation:product} twice, with Hadamard (element-wise) division and product
+        \begin{multline*}
+            \te[l \x l^{\prime}\x\mi{L^{\prime\prime}}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{H_{\mi{m}}(\Theta)} \deq
+            \te[l\x l^{\prime}\x \mi{L^{\prime\prime}}\x \mi{L^{\prime\prime\prime}}]{\modulus{\Psi}^{-1}} \circ \\
+            \frac{
+                \prob{\te[\mi{m}\x l^{\prime}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{G}}
+                {\te[\mi{m}\x l\x\mi{L^{\prime\prime}}\x\mi{N^{\prime\prime}}]{G}}{\te[l \x l^{\prime}\x\mi{L^{\prime\prime}}\x\mi{L^{\prime\prime\prime}}\x\mi{m}\x\mi{m}]{\Sigma}}
+                }
+            {\prob{\te[\mi{m}]{0}}
+            {\te[\mi{m}\x l \x l^{\prime}\x\mi{L^{\prime\prime}}\x\mi{L^{\prime\prime\prime}}\x\mi{N^{\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{\Sigma G}}{\te[l \x l^{\prime}\x\mi{L^{\prime\prime}}\x\mi{L^{\prime\prime\prime}}\x\mi{m}\x\mi{m}]{\Sigma\Psi}}}
+        \end{multline*}
+        where
+        \begin{equation*}
+            \begin{aligned}
+                \te[l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m}]{\Sigma} &\deq 
+                \te[l\x l^{\prime\prime}\x\mi{m}\x\mi{m}]{\Gamma} + \te[l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m}]{\Gamma} \\
+                \te[l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Psi} &\deq 
+                \te[l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Sigma} \\
+                &\phantom{:}- \te[l\x l^{\prime\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Gamma} \te[l^{\prime}\x l^{\prime\prime\prime}\x\mi{m^{\prime\prime}}\x\mi{m^{\prime}}]{\Gamma} \\
+                \te[l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}]{\modulus{\Psi}^{-1}} &\deq 
+                \modulus{\te[l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m^{\prime\prime}}\x\mi{m^{\prime}}]{\Psi}}^{-1} \\
+                \te[\mi{m}\x l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{N^{\prime\prime}}\x\mi{N^{\prime\prime\prime}}]{\Sigma G} &\deq 
+                \te[l^{\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Gamma}
+                \te[\mi{m^{\prime}}\x l\x l^{\prime\prime}\x\mi{N^{\prime\prime}}]{G}\\
+                &\phantom{\deq}+
+                \te[l\x l^{\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Gamma}
+                \te[\mi{m^{\prime}}\x l^{\prime}\x l^{\prime\prime\prime}\x\mi{N^{\prime\prime\prime}}]{G}\\
+                \te[l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime}}]{\Sigma\Psi} &\deq 
+                \te[l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Sigma}
+                \te[l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m^{\prime\prime}}\x\mi{m^{\prime}}]{\Psi}
+            \end{aligned}                    
+        \end{equation*}
+
+    \subsection{Variances} \label{sub:Sobol:Variances}
+        Although it is not normally distributed, we shall use the $\mi{L}$-variance of a stratum to measure its uncertainty
+        \begin{multline*}
+                \te[\mi{L}\x\mi{L}\x\mi{L}\x\mi{L}]{T_\mi{m}(\Theta)} \deq 
+                \covt{\te[\mi{L}\x\mi{L}]{\rv{S} \big\vert \te[\mi{m}\x\mi{M}]{\Theta}}}{\mi{L}} = 
+                \frac{\te[\mi{L\x L}]{V_{\mi{m}}(\Theta)}^{2}}{\te[\mi{L\x L}]{V_{\mi{M}}(\Theta)}^{2}} \\ \circ
+                \left(
+                    \frac{W_{\mi{m},\mi{m}}(\Theta)}{\te[\mi{L\x L}]{V_{\mi{m}}(\Theta)}^{2}}
+                    -2\frac{W_{\mi{m},\mi{M}}(\Theta)}{\te[\mi{L\x L}]{V_{\mi{m}}(\Theta)}\otimes\te[\mi{L\x L}]{V_{\mi{M}}(\Theta)}}
+                    +\frac{W_{\mi{M},\mi{M}}(\Theta)}{\te[\mi{L\x L}]{V_{\mi{M}}(\Theta)}^{2}}
+                \right)
+        \end{multline*}
+        where for any $\mi{m},\mi{m^{\prime}}\subseteq\mi{M}$, using the shorthand $\mi{L^4} \deq \mi{L\x L^{\prime}\x L^{\prime\prime}\x L^{\prime\prime\prime}}$
+        \begin{equation} \label{def:Sobol:Variances:W}
+            \begin{aligned}
+                \te[\mi{L^4}]{W_{\mi{m},\mi{m^{\prime}}}(\Theta)} &\deq \cov[\cov{\rv{e_{m^{\prime}}}}{\mi{m^{\prime}}}]{\cov{\rv{e_{m}}}{\mi{m}}}{\mi{L}} \\
+                &\phantom{:}=
+                \cov[\ev{\te[\mi{L^{\prime\prime}}]{\rv{e_{m^{\prime}}}}^{2} - \te[\mi{L^{\prime\prime}}]{\rv{e_{0}}}^{2}}{\mi{m^{\prime}}}]{\ev{\te[\mi{L}]{\rv{e_{m}}}^{2} - \te[\mi{L}]{\rv{e_{0}}}^{2}}{\mi{m}}}{\mi{L}} \\
+                &\phantom{:}=
+                \ev{\ev{\te[\mi{L}]{\rv{e_{m}}}^{2} - \te[\mi{L}]{\rv{e_{0}}}^{2}}{\mi{m}} \otimes\ev{\te[\mi{L^{\prime\prime}}]{\rv{e_{m^{\prime}}}}^{2} - \te[\mi{L^{\prime\prime}}]{\rv{e_{0}}}^{2}}{\mi{m^{\prime}}}}{\mi{L}}\\
+                &\phantom{\deq}\  - \te[\mi{L\x L^{\prime}}]{V_{\mi{m}}(\Theta)}\otimes \te[\mi{L^{\prime\prime}\x L^{\prime\prime\prime}}]{V_{\mi{m^{\prime}}}(\Theta)} \\       
+                &\phantom{:}= \te[\mi{L^4}]{A_{\mi{m,m^{\prime}}}(\Theta)-A_{\mi{0,m^{\prime}}}(\Theta)-A_{\mi{m,0}}(\Theta)+A_{\mi{0,0}}(\Theta)} \\
+                &\phantom{\deq}\  - \te[\mi{L\x L^{\prime}}]{V_{\mi{m}}(\Theta)}\otimes \te[\mi{L^{\prime\prime}\x L^{\prime\prime\prime}}]{V_{\mi{m^{\prime}}}(\Theta)}
+            \end{aligned}
+        \end{equation}
+        Here, for any $\mi{m},\mi{m^{\prime}}\subseteq\mi{M}$
+        \begin{equation*}
+            \begin{aligned}
+                \te[\mi{L^4}]{A_{\mi{m},\mi{m^{\prime}}}(\Theta)}
+                &\deq \evt{\;\evt{\;\ev{\te[\mi{L}]{\rv{e_{m}}}^{2} \otimes \te[\mi{L^{\prime\prime}}]{\rv{e_{m^{\prime}}}}^{2}}{\mi{L}}}{\mi{m}}}{\mi{m^{\prime}}} \\
+                &\phantom{:}= \evt{\;\evt{\;\ev{\te[\mi{L}]{\rv{c_{m}}+f_{\mi{m}}}^{2} \otimes \te[\mi{L^{\prime\prime}}]{\rv{c_{m^{\prime}}}+ f_{\mi{m^{\prime}}}}^{2}}{\mi{L}}}{\mi{m}}}{\mi{m^{\prime}}}  
+            \end{aligned}
+        \end{equation*}
+        which according to \cref{eq:ROM:CentralMarg:Moments} takes expected values over $\mi{L}$ of
+        \begin{multline*}
+            \te[\mi{L^4}]{A_{\mi{m},\mi{m^{\prime}}}(\Theta)} 
+            = \evt{\;\evt{\left\lbrack
+            \te[\mi{L\x L^{\prime}}]{\sigma_{\mi{m,m}}} \otimes \te[\mi{L^{\prime\prime}\x L^{\prime\prime\prime}}]{\sigma_{\mi{m^{\prime},m^{\prime}}}}\right. \\
+            +\te[\mi{L\x L^{\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \otimes \te[\mi{L^{\prime}\x L^{\prime\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}}
+            +\te[\mi{L\x L^{\prime\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \otimes \te[\mi{L^{\prime}\x L^{\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \\
+            + \te[\mi{L\x L^{\prime}}]{\sigma_{\mi{m,m}}} \otimes \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}^{2} 
+            + \te[\mi{L}]{f_{\mi{m}}}^{2} \otimes \te[\mi{L^{\prime\prime}\x L^{\prime\prime\prime}}]{\sigma_{\mi{m^{\prime},m^{\prime}}}}
+            + \te[\mi{L}]{f_{\mi{m}}}^{2} \otimes \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}^{2} \\
+            +\te[\mi{L^{\prime}}]{f_{\mi{m}}} \oslash \te[\mi{L\x L^{\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \oslash \te[\mi{L^{\prime\prime\prime}}]{f_{\mi{m^{\prime}}}}
+            +\te[\mi{L}]{f_{\mi{m}}} \oslash \te[\mi{L^{\prime}\x L^{\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \oslash \te[\mi{L^{\prime\prime\prime}}]{f_{\mi{m^{\prime}}}}\\
+            +\te[\mi{L}]{f_{\mi{m}}} \oslash \te[\mi{L^{\prime}\x L^{\prime\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \oslash \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}
+            \left. +\te[\mi{L^{\prime}}]{f_{\mi{m}}} \oslash \te[\mi{L\x L^{\prime\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \oslash \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}
+            \right\rbrack}{\mi{m}}}{\mi{m^{\prime}}} 
+        \end{multline*}
+        The binary operation $\oslash$ is the exterior product $\otimes$ followed by multi-index permutation to restore the original order $\mi{L\x L^{\prime}\x L^{\prime\prime}\x L^{\prime\prime\prime}}$.
+        These expressions shrink naturally as follows. Firstly,
+        \begin{equation*}
+            \evt{\;\ev{\te[\mi{L}]{f_{\mi{m}}}^{2} \otimes \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}^{2}}{\mi{m}}}{\mi{m^{\prime}}} = \te[\mi{L\x L^{\prime}}]{{V_{\mi{m}}(\Theta)} + \te[\,]{f_{\mi{0}}}^{2}} \otimes
+            \te[\mi{L^{\prime\prime}\x L^{\prime\prime\prime}}]{{V_{\mi{m^{\prime}}}(\Theta)} + \te[\,]{f_{\mi{0}}}^{2}}
+        \end{equation*}
+        which eliminates all terms free of $\sigma$ from \cref{def:Sobol:Variances:W}. Secondly, by the law of iterated expectations
+        \begin{equation*}
+            \ev{\sigma_{\mi{m,m}}}{\mi{m}} = \ev{\sigma_{\mi{m^{\prime},m^{\prime}}}}{\mi{m^{\prime}}} = \sigma_{\mi{0,0}}
+        \end{equation*}
+        which eliminates all remaining terms free of $\sigma_{\mi{m,m^{\prime}}}$ from \cref{def:Sobol:Variances:W}. Again by the law of iterated expectations and the structure of \cref{def:Sobol:Variances:W}, all terms containing $E$ from $\sigma_{\mi{m,m^{\prime}}}$ cancel, so we may finally write
+        \begin{equation} \label{def:Sobol:Variances:W2}
+            \te[\mi{L^4}]{W_{\mi{m},\mi{m^{\prime}}}(\Theta)} = \te[\mi{L^4}]{B_{\mi{m,m^{\prime}}}(\Theta)-B_{\mi{0,m^{\prime}}}(\Theta)-B_{\mi{m,0}}(\Theta)+B_{\mi{0,0}}(\Theta)}
+        \end{equation}
+        component-wise
+        \begin{multline*}
+            \te[l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}]{B_{\mi{m},\mi{m^{\prime}}}(\Theta)} 
+            \deq \evt{\;\evt{\left\lbrack
+            \te[l\x l^{\prime\prime}]{\bar{\sigma}_{\mi{m,m^{\prime}}}} \te[l^{\prime}\x l^{\prime\prime\prime}]{\bar{\sigma}_{\mi{m,m^{\prime}}}}\right. \\
+            +\te[l\x l^{\prime\prime\prime}]{\bar{\sigma}_{\mi{m,m^{\prime}}}} \te[l^{\prime}\x l^{\prime\prime}]{\bar{\sigma}_{\mi{m,m^{\prime}}}}
+            +\te[l^{\prime}]{f_{\mi{m}}} \te[l\x l^{\prime\prime}]{\bar{\sigma}_{\mi{m,m^{\prime}}}} \te[l^{\prime\prime\prime}]{f_{\mi{m^{\prime}}}}
+            +\te[l]{f_{\mi{m}}} \te[l^{\prime}\x l^{\prime\prime}]{\bar{\sigma}_{\mi{m,m^{\prime}}}} \te[l^{\prime\prime\prime}]{f_{\mi{m^{\prime}}}}\\
+            +\te[l]{f_{\mi{m}}} \te[l^{\prime}\x l^{\prime\prime\prime}]{\bar{\sigma}_{\mi{m,m^{\prime}}}} \te[l^{\prime\prime}]{f_{\mi{m^{\prime}}}}
+            \left. +\te[l^{\prime}]{f_{\mi{m}}} \te[l\x l^{\prime\prime\prime}]{\bar{\sigma}_{\mi{m,m^{\prime}}}} \te[l^{\prime\prime}]{f_{\mi{m^{\prime}}}}
+            \right\rbrack}{\mi{m}}}{\mi{m^{\prime}}} 
+        \end{multline*}
+        where
+        \begin{multline*}
+            \te[\mi{L\x L^{\prime}\x 3\x 3^{\prime}}]{\bar{\sigma}(\rv{z}; \Theta)} \deq
+            \te[\mi{L\x L^{\prime}\x 3\x 3^{\prime}}]{\pm F}
+            \circ \te[\mi{L\x L^{\prime}\x 3\x 3^{\prime}}]{\phi(\rv{z}; \Theta)} - 
+            \te[\mi{L\x L^{\prime}\x 3\x 3^{\prime}}]{\psi(\rv{z}; \Theta)}
+        \end{multline*}
+
+\section{spare}
+    The binary operation $\oslash$ is the exterior product $\otimes$ followed by multi-index permutation to restore the original order $\mi{L\x L^{\prime}\x L^{\prime\prime}\x L^{\prime\prime\prime}}$
+    \begin{multline*}
+        \te[\mi{L\x L^{\prime}\x L^{\prime\prime}\x L^{\prime\prime\prime}}]{A_{\mi{m},\mi{m^{\prime}}}} 
+        = \evt{\;\evt{\;\evt{\left\lbrack\te[\mi{L}]{\rv{c_{m}}}^{2} \otimes \te[\mi{L^{\prime\prime}}]{\rv{c_{m^{\prime}}}}^{2} \right. \\
+        + \te[\mi{L}]{\rv{c_{m}}}^{2} \otimes \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}^{2}
+        + \te[\mi{L}]{f_{\mi{m}}}^{2} \otimes \te[\mi{L^{\prime\prime}}]{\rv{c_{m^{\prime}}}}^{2}
+        + \te[\mi{L}]{f_{\mi{m}}}^{2} \otimes \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}^{2} \\
+        + \te[\mi{L}]{\rv{c_{m}}} \otimes \te[\mi{L^{\prime}}]{f_{\mi{m}}} \otimes \te[\mi{L^{\prime\prime}}]{\rv{c_{m^{\prime}}}}\otimes \te[\mi{L^{\prime\prime\prime}}]{f_{\mi{m^{\prime}}}}
+        + \te[\mi{L}]{f_{\mi{m}}} \otimes \te[\mi{L^{\prime}}]{\rv{c_{m}}} \otimes \te[\mi{L^{\prime\prime}}]{\rv{c_{m^{\prime}}}}\otimes \te[\mi{L^{\prime\prime\prime}}]{f_{\mi{m^{\prime}}}}\\
+        + \te[\mi{L}]{f_{\mi{m}}} \otimes \te[\mi{L^{\prime}}]{\rv{c_{m}}} \otimes \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}\otimes \te[\mi{L^{\prime\prime\prime}}]{\rv{c_{m^{\prime}}}}
+        \left. + \te[\mi{L}]{\rv{c_{m}}} \otimes \te[\mi{L^{\prime}}]{f_{\mi{m}}} \otimes \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}\otimes \te[\mi{L^{\prime\prime\prime}}]{\rv{c_{m^{\prime}}}} \right\rbrack}{\mi{L}}}{\mi{m}}}{\mi{m^{\prime}}} \\
+        = \evt{\;\evt{\left\lbrack
+        \te[\mi{L\x L^{\prime}}]{\sigma_{\mi{m,m}}} \otimes \te[\mi{L^{\prime\prime}\x L^{\prime\prime\prime}}]{\sigma_{\mi{m^{\prime},m^{\prime}}}}
+        +\te[\mi{L\x L^{\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \otimes \te[\mi{L^{\prime}\x L^{\prime\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}}\right. \\
+        +\te[\mi{L\x L^{\prime\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \otimes \te[\mi{L^{\prime}\x L^{\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}}
+        + \te[\mi{L\x L^{\prime}}]{\sigma_{\mi{m,m}}} \otimes \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}^{2} \\
+        + \te[\mi{L}]{f_{\mi{m}}}^{2} \otimes \te[\mi{L^{\prime\prime}\x L^{\prime\prime\prime}}]{\sigma_{\mi{m^{\prime}},m^{\prime}}}
+        + \te[\mi{L}]{f_{\mi{m}}}^{2} \otimes \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}^{2} \\
+        +\te[\mi{L^{\prime}}]{f_{\mi{m}}} \oslash \te[\mi{L\x L^{\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \oslash \te[\mi{L^{\prime\prime\prime}}]{f_{\mi{m^{\prime}}}}
+        +\te[\mi{L}]{f_{\mi{m}}} \oslash \te[\mi{L^{\prime}\x L^{\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \oslash \te[\mi{L^{\prime\prime\prime}}]{f_{\mi{m^{\prime}}}}\\
+        +\te[\mi{L}]{f_{\mi{m}}} \oslash \te[\mi{L^{\prime}\x L^{\prime\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \oslash \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}
+        \left. +\te[\mi{L^{\prime}}]{f_{\mi{m}}} \oslash \te[\mi{L\x L^{\prime\prime\prime}}]{\sigma_{\mi{m,m^{\prime}}}} \oslash \te[\mi{L^{\prime\prime}}]{f_{\mi{m^{\prime}}}}
+        \right\rbrack}{\mi{m}}}{\mi{m^{\prime}}} 
+    \end{multline*}
+
+    while for $i=i^{\prime}, \mi{m} \deq \te[i]{\mi{m}}\x i$
+    \begin{equation*}
+        \te[l\x l^{\prime}\x i\x i]{\phi(\rv{z}; \Theta)} \deq \frac{\evt{\te[l\x l^{\prime}]{k(\te[i]{\rv{x}},\te[i]{\rv{x}})}}{\tse{M}\mi{-}\tse{m}}}{\te[l\x l^{\prime}]{\pm F}}
+        = 1
+    \end{equation*}
+    \begin{multline*}
+        \te[l\x l^{\prime}\x i\x i]{\psi(\rv{z}; \Theta)}^{\dagger}
+        \deq  \left. \te[l\x\mi{L^{\prime\prime}}\x 3 \x\mi{N^{\prime\prime}}]{g({\rv{z}}; \Theta)}^{\dagger} \right(\te[\mi{L^{\prime\prime}N^{\prime\prime}}\x\mi{L^{\prime\prime\prime}N^{\prime\prime\prime}}]{K_{Y}^{-1}}\\
+        \circ \te{\frac
+        {\prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}\x l\x l^{\prime}\x \mi{L^{\prime\prime}}\x \mi{L^{\prime\prime\prime}}\x \mi{N^{\prime\prime}}\x \mi{N^{\prime\prime\prime}}]{Q}}{\te[l\x l^{\prime}\x \mi{L^{\prime\prime}}\x \mi{L^{\prime\prime\prime}}\x\mi{m}\x\mi{m}]{\Psi}}}
+        {\prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\diag[\mi{m}\x\mi{m}]{1}}}}^{\dagger} \\
+        \circ \te{\frac
+        {\te[l\x l^{\prime}\x \mi{L^{\prime\prime}}\x \mi{L^{\prime\prime\prime}}\x \mi{N^{\prime\prime}}\x \mi{N^{\prime\prime\prime}}]{P}}
+        {\prob{\te[\mi{M}]{0}}{\te[\mi{M}\x\mi{N^{\prime\prime\prime}}]{X}}
+        {\diag[l^{\prime}\x\mi{L^{\prime\prime\prime}}\x\mi{M}\x\mi{M}]{\Lambda^{2}+1}}}}^{\dagger}
+        \left) 
+        \te[l^{\prime}\x\mi{L^{\prime\prime\prime}}\x 3\x \mi{N^{\prime\prime\prime}}]{g({\rv{z}}; \Theta)}^{\dagger} \right.
+    \end{multline*}
+    where
+    \begin{equation*}
+        \begin{aligned}
+            \te[l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x \mi{N^{\prime\prime}}\x \mi{N^{\prime\prime\prime}}]{P} &\deq
+            \mathsf{p} \left(
+            {\diag[l\x l^{\prime\prime}\x \mi{M}\x \mi{M^{\prime}}]{\Lambda^{2} + 1}^{-1} \te[\mi{M^{\prime}}\x\mi{N^{\prime\prime}}]{X}} \right\vert {\te[\mi{M}\x\mi{N^{\prime\prime\prime}}]{X}}, \\
+            &\left. {\diag[l^{\prime}\x l^{\prime\prime\prime}\x\mi{M}\x\mi{M}]{\Lambda^{2} + 1} - \diag[l\x l^{\prime\prime}\x\mi{M}\x\mi{M}]{\Lambda^{2} + 1}^{-1}} \right) \\
+            \te[l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m}]{\Psi} &\deq \te[\mi{m}\x\mi{M^{\prime\prime}}]{\Theta} \diag[\mi{M^{\prime\prime}}\x\mi{M^{\prime}}]{\diag[l\x l^{\prime\prime}]{\Lambda^{2}} \diag[l^{\prime}\x l^{\prime\prime\prime}]{\Lambda^{2}}}\\ 
+            &\diag[\mi{M^{\prime}}\x\mi{M}]{\diag[l\x l^{\prime\prime}]{\Lambda^{2} + 1} \diag[l^{\prime}\x l^{\prime\prime\prime}]{\Lambda^{2} + 1} - 1}^{-1} \te[\mi{m}\x\mi{M}]{\Theta}^{\intercal}\\
+            \te[\mi{m}\x l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x \mi{N^{\prime\prime}}\x \mi{N^{\prime\prime\prime}}]{Q} &\deq \te[l\x l^{\prime}\x l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{M^{\prime\prime}}]{\Psi} \te[\mi{M^{\prime\prime}}\x\mi{M}]{\Theta} \\
+            &\left(\diag[\mi{M}\x\mi{M^{\prime}}]{\diag[l\x l^{\prime\prime}]{\Lambda^{2}}^{-1} {\diag[l\x l^{\prime\prime}]{\Lambda^{2} + 1}}} \te[\mi{M^{\prime}}\x\mi{N^{\prime\prime}}]{X} \right. \\
+            &\left. + {\diag[l^{\prime}\x l^{\prime\prime\prime}\x \mi{M}\x \mi{M^{\prime}}]{\Lambda^{2}}^{-1} \te[\mi{M^{\prime}}\x\mi{N^{\prime\prime\prime}}]{X}} \right)
+        \end{aligned}
+    \end{equation*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\bibliographystyle{elsarticle-num} 
+\bibliography{master}
+\end{document}
+\endinput
