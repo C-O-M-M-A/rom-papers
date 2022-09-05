@@ -57,12 +57,13 @@
     \author{Robert A. Milton}
     \ead{r.a.milton@sheffield.ac.uk}
 
-    \author{Solomon F. Brown}
-    \ead{s.f.brown@sheffield.ac.uk}
-
     \author{Aaron S. Yeardley}
     \ead{asyeardley1@sheffield.ac.uk}
 
+    
+    \author{Solomon F. Brown}
+    \ead{s.f.brown@sheffield.ac.uk}
+    
     \address{Department of Chemical and Biological Engineering, University of Sheffield, Sheffield, S1 3JD, United Kingdom}       
 
     \begin{abstract}
@@ -76,12 +77,13 @@
 \end{frontmatter}
 
 \section{Introduction}\label{sec:Intro}
-This paper is concerned with analysing the results of experiments or computer simulations embodying $M\geq 1$ inputs and $L\geq 1$ outputs. Global Sensitivity Analysis \cite{Razavi2021} examines the relevance of the various inputs to the various outputs. When pursued via ANOVA decomposition, this leads naturally to the well known Sobol' indices \cite{Sobol2001}.
-Each closed Sobol' index is essentially a coefficient of determination (correlation squared) between the predictions of a full model with $M$ inputs and those of a reduced model with $m\leq M$ inputs. As described in \cite{Gamboa.etal2013}, with multiple outputs the ANOVA is on the covariance matrix of outputs. Thus one examines not just the relevance of inputs to the output variables themselves, but also to the linkages between these outputs. This may be of considerable interest when outputs are, for example, yield and purity of a product, or perhaps a single outut measured at various times.
+This paper is concerned with analysing the results of experiments or computer simulations embodying $M\geq 1$ inputs and $L\geq 1$ outputs. Global Sensitivity Analysis \cite{Razavi2021} examines the relevance of the various inputs to the various outputs throughout the input domain. When pursued via ANOVA decomposition, this leads naturally to the well known Sobol' indices \cite{Sobol2001}.
 
-Accurate calculation of Sobol' indices even for a single output is computationally expensive and requires 10,000+ datapoints \cite{Lamoureux.etal2014}. A more efficient approach is calculation via a surrogate model, such as Polynomial Chaos Expansions \cite{Ghanem.Spanos1997,Xiu.Karniadakis2002,Xiu2010}, low-rank tensor approximations \cite{Chevreuil.etal2015,Konakli.Sudret2016}, and support vector regression \cite{Cortes.Vapnik1995}. This paper employs one of the most popular surrogates, the Gaussian Processes (GP) \cite{Sacks.etal1989, Rasmussen.Williams2005} in its multi-output form MOGP \cite{Alvarez.etal2011}, as it is highly tractable. As well as being efficient, surrogate models also smooth out noise in the outputs, which is often highly desirable in practice. Analytic expressions for Sobol' indices and their errors have been provided for integral \cite{Oakley.OHagan2004,Jin.etal2004} and parametrized \cite{Marrel.etal2009} GPs, and on uniformly distributed inputs \cite{Wu.etal2016a,Srivastava.etal2017} but never for MOGPs. In this paper we provide explicit formulae for a class of MOGP with a radial basis function (RBF) kernel applicable to smoothly varying outputs.
+Each closed Sobol' index is essentially a coefficient of determination (correlation squared) between the predictions of a full model with $M$ inputs and those of a reduced model with $m\leq M$ inputs. As described in \cite{Gamboa.etal2013}, with multiple outputs the ANOVA is on the covariance matrix of outputs. Thus one examines not just the relevance of inputs to the output variables themselves, but also to the linkages between these outputs. This may be of considerable practical interest when outputs are, for example, yield and purity of a product (reference), or perhaps a single output measured at various times.
 
-The quantities to be calculated and their formal context are introduced in \cref{sec:COD}. Our approach effectively regards a regression model (with prediction errors) as just another name for a stochastic process. A great deal of progress is made in \cref{sec:SPEst} using just stochastic (not necessarily Gaussian) processes. This approach is analytically cleaner, as it is not obfuscated by the GP details. Furthermore, it turns out that the desirable properties of the Gaussian (lack of skew, simple kurtosis) are not actually helpful, as these terms cancel of their own accord. This development leaves just two terms to be calculated, which require the stochastic process to be specified. MOGPs with an RBF kernel are tersely developed and described in \cref{sec:GPR}, then used to calculate the two unknown terms in \cref{sec:GPMom,sec:GPEst}. A conclusion is drawn in \cref{sec:Conc}.
+Accurate calculation of Sobol' indices even for a single output is computationally expensive and requires 10,000+ datapoints \cite{Lamoureux.etal2014}. A more efficient approach is calculation via a surrogate model, such as Polynomial Chaos Expansions \cite{Ghanem.Spanos1997,Xiu.Karniadakis2002,Xiu2010}, low-rank tensor approximations \cite{Chevreuil.etal2015,Konakli.Sudret2016}, and support vector regression \cite{Cortes.Vapnik1995}. This paper employs one of the most popular surrogates, the Gaussian Processes (GP) \cite{Sacks.etal1989, Rasmussen.Williams2005} in its multi-output form (MOGPs) \cite{Alvarez.etal2011}, as it is highly tractable. As well as being efficient, surrogate models also reduce noise in the outputs, which is often highly desirable in practice. Analytic expressions for Sobol' indices and their errors have been provided for integral \cite{Oakley.OHagan2004,Jin.etal2004} and parametrized \cite{Marrel.etal2009} GPs, and on uniformly distributed inputs \cite{Wu.etal2016a,Srivastava.etal2017} but never for MOGPs. In this paper we provide explicit formulae for a class of MOGP with a radial basis function (RBF) kernel applicable to smoothly varying outputs.
+
+The quantities to be calculated and their formal context are introduced in \cref{sec:COD}. Our approach effectively regards a regression model (with prediction errors) as a general stochastic process. A great deal of progress is made in \cref{sec:SPEst} using a stochastic (though not necessarily Gaussian) processes. This approach is analytically cleaner, as it is not obfuscated by the GP details. Furthermore, it is found that the desirable properties of the Gaussian (lack of skew, simple kurtosis) are not actually helpful, as these terms cancel of their own accord. This development leaves just two terms to be calculated, which require the stochastic process to be specified. MOGPs with an RBF kernel are tersely developed and described in \cref{sec:GPR}, then used to calculate the two unknown terms in \cref{sec:GPMom,sec:GPEst}. A conclusion is drawn in \cref{sec:Conc}.
 
 
 \section{Coefficient of Determination}\label{sec:COD}
