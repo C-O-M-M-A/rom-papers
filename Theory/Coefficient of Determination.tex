@@ -77,15 +77,24 @@
 \end{frontmatter}
 
 \section{Introduction}\label{sec:Intro}
+<<<<<<< Updated upstream
 This paper is concerned with analysing the results of experiments or computer simulations embodying $M\geq 1$ inputs and $L\geq 1$ outputs. Global Sensitivity Analysis \cite{Razavi2021} examines the relevance of the various inputs to the various outputs throughout the input domain. When pursued via ANOVA decomposition, this leads naturally to the well known Sobol' indices \cite{Sobol2001}. \todo{Think this last sentence needs to be expanded into, first to give more detail on the decomposition and then to give more of a description of the indices and other references where they've been used}
 
 \todo{need to motivate this statement first, otherwise you're assuming a lot of knowledge from a general reader}Each closed Sobol' index is essentially a coefficient of determination (correlation squared) between the predictions of a full model with $M$ inputs and those of a reduced model with $m\leq M$ inputs.\todo{the jump between these two sentences is too large, we haven't motivated looking at multiple outputs yet}  As described in \cite{Gamboa.etal2013}, with multiple outputs the ANOVA is on the covariance matrix of outputs. Thus one examines not just the relevance of inputs to the output variables themselves, but also to the linkages between these outputs. This may be of considerable practical interest when outputs are, for example, yield and purity of a product (reference), or perhaps a single output measured at various times.
 
 Accurate calculation of Sobol' indices even for a single output is computationally expensive and requires 10,000+ datapoints \cite{Lamoureux.etal2014}. A more efficient approach is calculation via a surrogate model, such as Polynomial Chaos Expansions \cite{Ghanem.Spanos1997,Xiu.Karniadakis2002,Xiu2010}, low-rank tensor approximations \cite{Chevreuil.etal2015,Konakli.Sudret2016}, and support vector regression \cite{Cortes.Vapnik1995}. This paper employs one of the most popular surrogates, the Gaussian Processes (GP) \cite{Sacks.etal1989, Rasmussen.Williams2005}\todo{add a break here and then say 'for multi-outputs...'} in its multi-output form (MOGPs) \cite{Alvarez.etal2011}, as it is highly tractable. As well as being efficient, surrogate models also reduce noise in the outputs, which is often highly desirable in practice. Analytic expressions for Sobol' indices and their errors have been provided for integral \cite{Oakley.OHagan2004,Jin.etal2004} and parametrized \cite{Marrel.etal2009} GPs, and on uniformly distributed inputs \cite{Wu.etal2016a,Srivastava.etal2017} but never for MOGPs. 
+=======
+This paper is concerned with analysing the results of experiments or computer simulations embodying $M\geq 1$ inputs and $L\geq 1$ outputs. Global Sensitivity Analysis \cite{Razavi2021} examines the relevance of the various inputs to the various outputs. When pursued via ANOVA decomposition, this leads naturally to the well known Sobol' indices \cite{Sobol2001}.
+Each closed Sobol' index is essentially a coefficient of determination (correlation squared) between the predictions of a full model with $M$ inputs and those of a reduced model with $m\leq M$ inputs. As described in \cite{Gamboa.etal2013}, with multiple outputs the ANOVA is on the covariance matrix of outputs. Thus one examines not just the relevance of inputs to the output variables themselves, but also to the linkages between these outputs. This may be of considerable interest when outputs are, for example, yield and purity of a product, or perhaps a single outut measured at various times. The Sobol indices reveal (amongst other things) which inputs are responsible for the covariance (linkages) between these outputs.
+>>>>>>> Stashed changes
 
 In this paper we provide explicit formulae for a class of MOGP with a radial basis function (RBF) kernel applicable to smoothly varying outputs.\todo{expand this and move some of what you have in the sentence to here as a summary of 'novelty'}
 
+<<<<<<< Updated upstream
 The quantities to be calculated and their formal context are introduced in \cref{sec:COD}. Our approach effectively regards a regression model (with prediction errors) as a general stochastic process. A great deal of progress is made in \cref{sec:SPEst} using a stochastic (though not necessarily Gaussian) processes. This approach is analytically cleaner, as it is not obfuscated by the GP details. Furthermore, it is found that the desirable properties of the Gaussian (lack of skew, simple kurtosis) are not actually helpful, as these terms cancel of their own accord. This development leaves just two terms to be calculated, which require the stochastic process to be specified. MOGPs with an RBF kernel are tersely developed and described in \cref{sec:GPR}, then used to calculate the two unknown terms in \cref{sec:GPMom,sec:GPEst}. A conclusion is drawn in \cref{sec:Conc}.
+=======
+The quantities to be calculated and their formal context are introduced in \cref{sec:COD}. Our approach effectively regards a regression model (with prediction errors) as just another name for a stochastic process. A great deal of progress is made in \cref{sec:SPEst} using just stochastic (not necessarily Gaussian) processes. This approach is analytically cleaner, as it is not obfuscated by the GP details. Furthermore, it turns out that the desirable properties of the Gaussian (lack of skew, simple kurtosis) are not actually helpful, as these terms cancel of their own accord. This development leaves just two terms to be calculated, which require the stochastic process to be specified. MOGPs with an RBF kernel are tersely developed and described in \cref{sec:GPR}, then used to calculate the two unknown terms in \cref{sec:GPMom,sec:GPEst}. Conclusions are drawn in \cref{sec:Conc}.
+>>>>>>> Stashed changes
 
 
 \section{Coefficient of Determination}\label{sec:COD}
@@ -93,7 +102,7 @@ The quantities to be calculated and their formal context are introduced in \cref
     \begin{equation*}
         \T{Integrable } y \colon \uniti^{M+1} \mapsto \st{R}^{L}
     \end{equation*}
-    begin by taking a uniformly distributed random variable (RV)
+    take as input a uniformly distributed random variable (RV)
     \begin{equation*}
         \rv{u} \sim \uni{\te[\mi{M+1}]{0}}{\te[\mi{M+1}]{1}} \deq \uni{0}{1}^{M+1}
     \end{equation*}
@@ -101,7 +110,7 @@ The quantities to be calculated and their formal context are introduced in \cref
     \begin{equation*}
         \mi{M+1} \deq (0,\ldots,M) \supseteq \mi{m+1} \deq (0,\ldots,m \leq M)
     \end{equation*}
-    with void $\mi{0}$ voiding any tensor it subscripts. Ordinals are concatenated by Cartesian $\times$ and may be subtracted like sets, as in $\mi{M-m} \deq (m,\ldots,M-1)$. 
+    with void $\mi{0}=()$ voiding any tensor it subscripts. Ordinals are concatenated by Cartesian $\times$ and may be subtracted like sets, as in $\mi{M-m} \deq (m,\ldots,M-1)$. 
     Subscripts refer to the tensor prior to any superscript operation, so $\te[\mi{L}]{y(\rv{u})}^{2}$ is an $\mi{L}^{2} \deq \mi{L\x L}$ tensor, for example.
     The preference throughout this work is for uppercase constants and lowercase variables, in case of ordinals the lowercase ranging over the uppercase. We prefer $o$ for an unbounded positive integer, avoiding O.
 
@@ -110,16 +119,16 @@ The quantities to be calculated and their formal context are introduced in \cref
     \begin{equation}\label{def:Theory:y_m}
         \te[\mi{L}]{\rv{y_m}} \deq \ev{y(\rv{u})}{\mi{M-m}} \deq \ev{y(\rv{u}) \big\vert \te[\mi{m}]{u}}{\mi{M-m}}
     \end{equation}
-    ranging from $\tte[\mi{L}]{\rv{y_0}}$ to $\tte[\mi{L}]{\rv{y_M}}$. Every SP depends on the ungovernable noise dimension $\tte[M]{\rv{u}} \perp \tte[\mi{M}]{\rv{u}}$, while ignoring governed input dimensions $\tte[\mi{M-m}]{\rv{u}}$. 
-    Sans serif symbols such as $\rv{u,y}$ generally refer to RVs and SPs, italic $u,y$ being reserved for (tensor) functions and variables. Each SP is regarded as a regression model for $y$ on the first $m$ dimensions of $\rv{u}$.
+    ranging from $\tte[\mi{L}]{\rv{y_0}}$ to $\tte[\mi{L}]{\rv{y_M}}$. Every SP depends stochastically on the ungovernable noise dimension $\tte[M]{\rv{u}} \perp \tte[\mi{M}]{\rv{u}}$ and deterministically on the first $m$ governed input dimensions $\te[\mi{m}]{u}$, while input dimensions $\tte[\mi{M-m}]{\rv{u}}$. 
+    Sans serif symbols such as $\rv{u,y}$ generally refer to RVs and SPs, italic $u,y$ being reserved for (tensor) functions and variables. Each SP is simply a regression model for $y$ on the first $m$ dimensions of $u$.
     
     Following Daniell-Kolmogorov \cite{Rogers.Williams2000} pp.124 we may regard an SP as a random function, from which we shall freely extract finite dimensional distributions generated by a design matrix $\tte[\mi{M\x o}]{u}$ of $o \in \st{Z}^{+}$ samples.
     Daniell-Kolmogorov incidentally secures $\rv{u}$. 
     Because $y$ is (Lebesgue) integrable it must be measurable, guaranteeing $\tte[\mi{L}]{\rv{y_0}}$.
     Because all probability measures are finite, integrability of $y$ implies integrability of $y^n$ for all $n \in \st{Z}^{+}$ \cite{Villani1985}. 
-    So Fubini's Theorem \cite{Williams1991} pp.77 allows all expectations to be taken in any order. It is no exaggeration to say that changing the order of expectations is the vital tool in the construction of this work. These observations suffice to ensure every object appearing in this work.
+    So Fubini's Theorem \cite{Williams1991} pp.77 allows all expectations to be taken in any order. These observations suffice to ensure every object appearing in this work. Changing the order of expectations, as permitted by Fubini's Theorem, is the vital tool in the construction of this work. 
 
-    Our aim is to compare predictions from a reduced regression model $\rv{y_m}$ with those of the full regression model $\rv{y_M}$. Correlation between these predictions is squared -- using element-wise (Hadamard) multiplication $\circ$ and division -- to form an RV called the coefficient of determination
+    Our aim is to compare predictions from a reduced regression model $\rv{y_m}$ with those of the full regression model $\rv{y_M}$. Correlation between these predictions is squared -- using element-wise (Hadamard) multiplication $\circ$ and division -- to form an RV called the coefficient of determination or closed Sobol' index
     \begin{equation}
         \te[\mi{L}^2]{\rv{R_{m}^{2}}} \deq 
         \frac{\cov[\rv{y_M}]{\rv{y_m}}{\mi{M}} \circ \cov[\rv{y_M}]{\rv{y_m}}{\mi{M}}}
@@ -147,13 +156,13 @@ The quantities to be calculated and their formal context are introduced in \cref
         \right) \\                
         \T{where }\te[\mi{L}^4]{W_{\mi{mm^{\prime}}}} &\deq \cov[\cov{\rv{y_{m^{\prime}}}}{\mi{m^{\prime}}}]{\cov{\rv{y_{m}}}{\mi{m}}}{M} \ \ \forall \mi{m,m^{\prime}} \subseteq \mi{M}
     \end{align}
-    In practice it is best to retain only the term in $W_{\mi{mm}}$, ignoring uncertainty in $V_{\mi{M}}$. This is because one is normally interested in adequate reduced models, for which $V_{\mi{m}} \approx V_{\mi{M}}$ implies a drastically tiny uncertainty in the Sobol' index.
+    In practice it is best to retain only the term in $W_{\mi{mm}}$, ignoring the uncertainty in $V_{\mi{M}}$ conveyed by $W_{\mi{Mm}},W_{\mi{MM}}$. This is because one is normally interested in adequate reduced models, for which $V_{\mi{m}} \approx V_{\mi{M}}$ implies $W_{\mi{mm}} - 2W_{\mi{Mm}} + W_{\mi{MM}} \approx 0$, giving a drastically tiny uncertainty in the Sobol' index.
 
     The remainder of this paper is devoted to calculating these two quantities -- the coefficient of determination and its variance over noise (measurement error, squared).
 
 
 \section{Stochastic Process Estimates}\label{sec:SPEst}
-    The central problem in calculating errors on Sobol' indices is that they need ineluctable covariances between differently marginalized SPs, for their moments. But marginalization and moment calculation are processes of taking expectations, so the ineluctable is avoided by reversing the order of expectations -- taking moments, then marginalizing.
+    The central problem in calculating errors on Sobol' indices is that they involve ineluctable covariances between differently marginalized SPs, via their moments over ungovernable noise. But marginalization and moment determination are both a matter of taking expectations. So the ineluctable can be avoided by reversing the order of expectations -- taking moments over ungovernable noise, then marginalizing.
     To this end, adopt as design matrix a triad of inputs to condition $\te[\mi{M+1\x 3}]{\rv{u}}$, eliciting the response
     \begin{equation}\label{def:SPEst:y}
         \te[\mi{L\x 3}]{\rv{y}} \deq 
@@ -169,7 +178,7 @@ The quantities to be calculated and their formal context are introduced in \cref
     \begin{equation*}
         \te[\mi{L}^{n}]{\mu_{\mi{m^{\prime}\ldots m}^{n\prime}}} \deq \te[(\mi{L\x}i)^{n}]{\mu_{n}} = \ev{\tte[\mi{L}]{\rv{y}_{\mi{m}^{\prime}}}\otimes\cdots\otimes\tte[\mi{L}]{\rv{y}_{\mi{m}^{n\prime}}}}{M}
     \end{equation*}
-    where $\mi{m}^{i\prime} \in \set{\mi{0},\mi{m},\mi{M}}$. This expression underpins both quantities we seek. The reduction which follows repeatedly realizes
+    where $\mi{m}^{i\prime} \in \set{\mi{0},\mi{m},\mi{M}}$. This expression underpins the quantities we seek. The reduction which follows repeatedly realizes
     \begin{equation}\label{eq:SPEstimates:reduction}
         \te[\mi{L}^{n}]{\mu_{\mi{0\ldots 0}\mi{m}^{j\prime}\mi{\ldots m}^{n\prime}}} \deq 
         \evt{\te[\mi{L}^{n}]{\mu_{\mi{M\ldots M}\mi{m}^{j\prime}\mi{\ldots m}^{n\prime}}}}{\mi{M}} = 
@@ -234,11 +243,11 @@ The quantities to be calculated and their formal context are introduced in \cref
     \end{equation*}
     Primes on constants are for bookeeping purposes only ($\mi{L}^{i\prime} = \mi{L}$ always), they do not change the value of the constant -- unlike primes on variables ($\mi{m}^{i\prime}$ need not equal $\mi{m}$ in general). One is normally only interested in variances (errors), constituted by the diagonal $\mi{L^{\prime}}^{2}=\mi{L}^{2}$, for which the summation in \cref{eq:SPEst:A} is over a pair of identical pairs.
 
-    In order to further elucidate these estimates, we must fill in the details of the underlying stochastic processes, sufficiently identifying the regression $y$ by its first two moments $\mu_{1}, \mu_{2}$.
+    In order to further elucidate these estimates, we must fill in the details of the underlying stochastic processes, sufficiently identifying the regression $y$ by its first two moments $\mu_{1}, \mu_{2}$. Then all the answers we desire are given by \cref{def:COD:mean,eq:SPEst:V} and \cref{def:COD:variance,eq:SPEst:A,eq:SPEst:W}.
 
 
 \section{Interlude: Gaussian Process Regression} \label{sec:GPR}
-    The development in this Section is based on \cite{Alvarez.etal2011}, but introduces somewhat different notation. A Gaussian Process (GP) over $x$ is formally defined and specified by
+    The development in this Section is based on \cite{Alvarez.etal2011}, but introduces different notation. A Gaussian Process (GP) over $x$ is formally defined and specified by
     \begin{equation*}
         \te[\mi{L}]{\rv{y_M}} \big\vert \te[\mi{M}\x\mi{o}]{x} \sim 
         \gaussd{\te[\mi{L}\x\mi{o}]{\bar{y}(x)}}{\te[(\mi{L}\x\mi{o})^{2}]
@@ -251,10 +260,10 @@ The quantities to be calculated and their formal context are introduced in \cref
             & \Longleftrightarrow
             \te[\mi{L}\x\mi{o}]{}^{\dagger} \sim \gauss{\te[\mi{L}\x\mi{o}]{}^{\dagger}}{\te[(\mi{L\x o})^{2}]{}^{\dagger}} \\
             \te[\mi{lo}-\mi{(l-1)o}]{\te[\mi{L}\x\mi{o}]{}^{\dagger}} 
-            &\deq \te[l-1\x\mi{o}]{} \\
+            &\deq \te[(l-1)\x\mi{o}]{} \\
             \te[(\mi{lo}-(\mi{l-1})\mi{o}) \x (\mi{l^{\prime}o}-\mi{(l^{\prime}-1)o})]
             {\te[(\mi{L\x o})^{2}]{}^{\dagger}} 
-            &\deq \te[l-1\x\mi{o} \x l^{\prime}-1\x\mi{o}]{} \\
+            &\deq \te[(l-1)\x\mi{o} \x (l^{\prime}-1)\x\mi{o}]{} \\
         \end{aligned}
     \end{equation*}
     supporting the fundamental definition of the GP kernel, as a covariance between responses
@@ -307,7 +316,7 @@ The quantities to be calculated and their formal context are introduced in \cref
                 &\sim \gaussd{\te[\mi{L}\x\mi{o}]{0}}{\te[(\mi{L}\x 1)^2]{E} \circ \diag[(1\x\mi{o})^2]{1}}
             \end{aligned}
         \end{equation*}
-        The RBF kernel is hyperparametrized by signal covariance $\te[\mi{L}^2]{F}$ and the matrix $\te[\mi{L}\x\mi{M}]{\Lambda}$ of characteristic lengthscales for each output/input combination. 
+        The RBF kernel is hyperparametrized by signal covariance $\te[\mi{L}^2]{F}$ and the tensor $\te[\mi{L}^{2}\x\mi{M}]{\Lambda}$ of characteristic lengthscales, which must be symmetric $\te[l\x l^{\prime}\x\mi{M}]{\Lambda}=\te[l^{\prime}\x l\x\mi{M}]{\Lambda}$. 
         Angle brackets denoting a (perhaps broadcast) diagonal tensor, such as the identity matrix $\diag[\mi{m}^2]{1} \deqr \diag[]{\tte[\mi{m}]{1}}$, are used to define
         \begin{equation*}
             \begin{aligned}
@@ -384,15 +393,8 @@ The quantities to be calculated and their formal context are introduced in \cref
     \subsection{GP Optimization} \label{sub:GPR:Optimization}
         Henceforth we implicitly condition on optimal hyperparameters, which maximise the marginal likelihood \cref{eq:GPR:marginalLikelihood}.
         \begin{equation} \label{eq:GPR:hyperparameters}
-            \te[\mi{L}^{2}]{E},\te[\mi{L}^{2}]{F},\te[\mi{L}\x\mi{M}]{\Lambda} \deq \argmax \prob{\te[\mi{L\x N}]{Y}^{\dagger}}{\te[\mi{LN}]{0}}{K_Y}
+            \te[\mi{L}^{2}]{E},\te[\mi{L}^{2}]{F},\te[\mi{L}^{2}\x\mi{M}]{\Lambda} \deq \argmax \prob{\te[\mi{L\x N}]{Y}^{\dagger}}{\te[\mi{LN}]{0}}{K_Y}
         \end{equation}
-        The lengthscale tensor could feasibly have been of maximal rank $\te[\mi{L}^{2}\x\mi{M}]{\Lambda}$. We have restricted this to $\te[\mi{L}\x\mi{M}]{\Lambda}$, as one set of ARD lengthscales per output is heuristically satisfying and enables effective optimization as follows.
-        For each output $l \in \mi{L}$ construct a separate GP to optimize the diagonal hyperparameters
-        \begin{equation*}
-            \te[l^{2}]{E},\te[l^{2}]{F},\te[l\x\mi{M}]{\Lambda} = \\
-            \argmax \prob{\te[l\x \mi{N}]{Y}^{\dagger}}{\te[\mi{N}]{0}}{\te[\mi{(l+1)N-N}\x\mi{(l+1)N-N}]{K_Y}}
-        \end{equation*}
-        From this starting point, $E,F$ may be optimized (off-diagonal elements in particular) in the full multi-output GP \cref{eq:GPR:hyperparameters}. One may then attempt to re-optimize lengthscales according to \cref{eq:GPR:hyperparameters}, and iterate, although this may be gilding the lily.
 
 
 \section{Gaussian Process Moments}\label{sec:GPMom}
@@ -406,9 +408,9 @@ The quantities to be calculated and their formal context are introduced in \cref
         \end{aligned}
     \end{equation*}
     Here, the rotation matrix $\te[\mi{M\x M^{\prime}}]{\Theta}^{\intercal} = \te[\mi{M\x M^{\prime}}]{\Theta}^{-1}$ is broadcast to multiply the triad $\tte[\mi{M\x 3}]{\rv{z}}$. 
-    The purpose of ths arbitrary rotation is to allow GPs whose input basis $\rv{x}$ is not aligned with the fundamental basis $\rv{u}$ of model reduction and coefficient of determination. The latter is aligned with $\rv{z}$ which is the input we must condition.
+    The purpose of ths arbitrary rotation is to allow GPs whose input basis $\rv{x}$ is not aligned with the fundamental basis $\rv{u}$ of the coefficient of determination. The latter is aligned with $\rv{z}$ which is the input we must condition.
     
-    Throughout the remainder of this paper, primed ordinal subscripts are used to specify Einstein sum (einsum) contraction of tensors, the multiplication and summation of elements over a matching index which underpins matrix multiplication. In this paper, whenever a subscript primed in a specific fashion appears in adjacent tensors (those not separated by algebraic operations $+,-,\circ,\,\otimes$) and does not subscript the result, it is einsummed over.
+    Throughout the remainder of this paper, primed ordinal subscripts are used to specify Einstein sum (einsum) contraction of tensors, the multiplication and summation of elements over a matching index which underpins matrix multiplication. In this work, whenever a subscript primed in a specific fashion appears in adjacent tensors (those not separated by algebraic operations $+,-,\circ,\,\otimes$) and does not subscript the result, it is einsummed over.
     
     Adding shared Gaussian noise $\te[\mi{L}]{\rv{e}_M\vert E}$ to \cref{def:GPR:Predictive} yields
     \begin{multline}\label{eq:GPMom:yDist}
