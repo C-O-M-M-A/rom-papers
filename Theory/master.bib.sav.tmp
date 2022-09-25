@@ -924,10 +924,12 @@
   keywords    = {stat.ML, cs.LG, GP, Categorical},
 }
 
-@Book{2017,
-  title     = {Handbook of Uncertainty Quantification},
+@Book{Ghanem2017,
+  author    = {Ghanem, Roger and Higdon, David and Owhadi, Houman and others},
+  title     = {Handbook of uncertainty quantification},
   isbn      = {978-3-319-12384-4},
   publisher = {Springer},
+  volume    = {6},
   file      = {:C\:/Users/fc1ram/Documents/User/fc1ram/lib/Maths/UQ/Handbook of Uncertainty Quantification.pdf:PDF},
   keywords  = {UQ},
   year      = {2017},
@@ -1208,7 +1210,6 @@
   title           = {{Analytical metamodel-based global sensitivity analysis and uncertainty propagation for robust design}},
   doi             = {10.4271/2004-01-0429},
   language        = {English},
-  file            = {:C\:/Users/fc1ram/Documents/User/fc1ram/lib/Maths/GSA/Sobol/EasyGSApaper.pdf:PDF},
   isbn            = {0768013194},
   journal         = {SAE Transactions Journal of Materials \& Manufacturing},
   keywords        = {GSA Sobol},
@@ -1646,4 +1647,4 @@
   doi          = {10.1016/j.envsoft.2019.01.012},
   pages        = {29--39},
   volume       = {114},
-  file         = {:C\:/Users/fc1ram/Documents/User/f
+  file         = {:C\:/Users/fc1ram/Documents/User/
