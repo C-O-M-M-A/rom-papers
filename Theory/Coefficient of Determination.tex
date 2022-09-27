@@ -434,6 +434,8 @@ The quantities to be calculated and their formal context are introduced in \cref
             \gauss{\Theta^{\intercal}Z}{\Theta^{\intercal}\Sigma\Theta}                        
         \end{aligned}
     \end{equation*}
+    Henceforth the ordinal set $\mi{m^{\prime\prime}}$, whether or not decorated with a further even number of primes, should be taken as equal to $\mi{m}$. 
+    Likewise the ordinal set $\mi{m^{\prime\prime\prime}}$, whether or not decorated with a further even number of primes, should be taken as equal to $\mi{m^{\prime}}$. Such fussy ornamentation is necessary to maintain the integrity of einstein summation. This encumbrance applies to ordinal sets, not singleton values, so the many different prime decorations of $l$ \emph{always} indicate potentially different values.
 
     \subsection{First Moments} \label{sub:GPMom:First}
         The first moment of the GP for any $\mi{m}\subseteq\mi{M}$ is given by
@@ -490,11 +492,11 @@ The quantities to be calculated and their formal context are introduced in \cref
             \end{multline*}
             \begin{multline*}
                 \te[\mi{L\x L^{\prime}}]{\psi_{\mi{mm^{\prime}}}}
-                \deq \evt{\;\evt{\te[l\x l^{\prime}]{k\!\left(\te[\mi{M}]{\rv{x}},X\right) K_{Y}^{-1} k\!\left(X,\te[\mi{M^{\prime}}]{\rv{x}}\right) \big\vert \te[\mi{m}]{z},\te[\mi{m^{\prime}}]{z}}}{\mi{M^{\prime}-m^{\prime}}}}{\mi{M-m}} \\
-                 = \left(\te[\mi{L^{\prime\prime}N^{\prime\prime}}\x\mi{L^{\prime\prime}N^{\prime\prime}}]{K_{Y}}^{-1/2}
-                 \te[\mi{L\x L^{\prime\prime}\x N^{\prime\prime}}]{g_{\mi{m}}}^{\dagger}\right)
-                \left(\te[\mi{L^{\prime\prime}N^{\prime\prime}}\x\mi{L^{\prime\prime}N^{\prime\prime}}]{K_{Y}}^{-1/2} 
-                \te[\mi{L^{\prime}\x L^{\prime\prime}\x N^{\prime\prime}}]{g_{\mi{m^{\prime}}}}^{\dagger}\right)
+                \deq \evt{\;\evt{\te[\mi{L\x L^{\prime}}]{k\!\left(\te[\mi{M}]{\rv{x}},X\right) K_{Y}^{-1} k\!\left(X,\te[\mi{M^{\prime}}]{\rv{x}}\right) \big\vert \te[\mi{m}]{z},\te[\mi{m^{\prime}}]{z}}}{\mi{M^{\prime}-m^{\prime}}}}{\mi{M-m}} \\
+                 = \left(\te[\mi{L\x L^{\prime\prime}\x N^{\prime\prime}}]{g_{\mi{m}}}^{\dagger}
+                    \te[\mi{L^{\prime\prime\prime}N^{\prime\prime\prime}}\x\mi{L^{\prime\prime}N^{\prime\prime}}]{K_{Y}}^{-1/2}\right)
+                \left(\te[\mi{L^{\prime}\x L^{\prime\prime}\x N^{\prime\prime}}]{g_{\mi{m^{\prime}}}}^{\dagger}
+                    \te[\mi{L^{\prime\prime\prime}N^{\prime\prime\prime}}\x\mi{L^{\prime\prime}N^{\prime\prime}}]{K_{Y}}^{-1/2}\right)
             \end{multline*}
             using the Cholesky decomposition $\tte[\mi{LN}\x\mi{LN}]{K_{Y}}^{1/2}$ and
             \begin{equation*}
@@ -575,97 +577,98 @@ The quantities to be calculated and their formal context are introduced in \cref
             \evt{\;\evt{\te[\mi{L}^{2} \x \mi{L^{\prime}}^{2}]{\mu_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}}
         \end{equation*}
         in \cref{eq:GPMom:Second} the terms containing the ungovernable noise variance $\te[\mi{L}^2]{E}$ reduce to the same function of $g_{\mi{0}}$ by reduction formula \cref{eq:SPEstimates:reduction}, so these will obviously cancel across the four $A_{\mi{m m^{\prime}}}$ terms in \cref{eq:SPEst:W}. 
-        We may therefore assume $E=0$ in \cref{eq:GPMom:Second}. This leaves just two terms.
-        Firstly
+        We may therefore assume $E=0$ in \cref{eq:GPMom:Second}. This leaves just two terms, which we report using superscript $^{*}$ to stand for four consecutive primes $^{\prime\prime\prime\prime}$. Firstly
         \begin{multline*}
-            \evt{\;\evt{\te[]{\te[l]{\mu_{\mi{m}}} \otimes \te[l^{\prime\prime}\x l^{\prime}]{\phi_{\mi{mm^{\prime}}}} \otimes \te[l^{\prime\prime\prime}]{\mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}}{\mi{m}} = \\
+            \evt{\;\evt{\te[]{\te[l]{\mu_{\mi{m}}} \otimes \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{\phi_{\mi{mm^{\prime}}}} \otimes \te[l^{\prime}]{\mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}}{\mi{m}} = \\
             \frac
-            {\modulus{\diag[l^{\prime\prime}\x l^{\prime}\x\mi{M}^{2}]{\Lambda^{2}}}^{1/2}(2\pi)^{m/2}}
-            {\modulus{\diag[l^{\prime\prime}\x l^{\prime}\x\mi{M}^2]{\Lambda^{2}+2}}^{1/2}}
+            {\modulus{\diag[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{M}^{2}]{\Lambda^{2}}}^{1/2}(2\pi)^{m/2}}
+            {\modulus{\diag[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{M}^2]{\Lambda^{2}+2}}^{1/2}}
             \te[l\x\mi{L^{*}N^{*}}]{g_{\mi{0}}KY} \otimes
-            \te[l^{\prime\prime\prime}\x\mi{L^{*\prime}N^{*\prime}}]{g_{\mi{0}}KY} \\
+            \te[l^{\prime}\x\mi{L^{*\prime}N^{*\prime}}]{g_{\mi{0}}KY} \\
             \left\lbrack
-            \prob{\te[\mi{m}]{0}}{\te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}} 
+            \prob{\te[\mi{m}]{0}}{\te[l^{\prime\prime}\x l^{\prime\prime\prime}]{1-\Upsilon}^{1/2} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}} 
             {\diag[]{1} -
-            \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[l\x \mi{L^{*}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{\intercal/2}} \phantom{\frac{_{\vert}^{\vert}}{_{\vert}^{\vert}}} \right.\\
+            \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{1-\Upsilon}^{1/2} \te[l\x \mi{L^{*}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime\prime\prime}]{1-\Upsilon}^{\intercal/2}} \phantom{\frac{_{\vert}^{\vert}}{_{\vert}^{\vert}}} \right.\\
             \left. \circ 
                 \frac{
-                    \prob{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}
+                    \prob{\te[\mi{m^{\prime}}\x l^{\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}
                     {\te[]{\Omega} \te[]{C} \te[l\x \mi{L^{*}}]{\Gamma}^{-1} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}{\te[]{B}+\te[]{\Omega} \te[]{C} \te[]{\Omega}^{\intercal}}}
-                    {\prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}{\te[l^{\prime\prime\prime}\x \mi{L^{*\prime}}]{\Phi}}}
+                    {\prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}{\te[l^{\prime}\x \mi{L^{*\prime}}]{\Phi}}}
             \right\rbrack^{\dagger}
         \end{multline*}
         using the Cholesky decomposition
         \begin{equation*}
-            \diag[\mi{m}^{2}]{1} - \te[l^{\prime\prime}\x l^{\prime}\x\mi{m}^{2}]{\Upsilon}
-            = \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{1/2} \te[l^{\prime\prime}\x l^{\prime}]{1-\Upsilon}^{\intercal/2}
+            \diag[\mi{m}^{2}]{1} - \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}^{2}]{\Upsilon}
+            = \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{1-\Upsilon}^{1/2} \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{1-\Upsilon}^{\intercal/2}
         \end{equation*}
         and
         \begin{equation*}
             \begin{aligned}
                 \te[\mi{m^{\prime}\x m}]{\Omega} &\deq 
-                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}
-                \te[l^{\prime\prime}\x l^{\prime}\x\mi{m^{\prime\prime\prime}}\x\mi{M}]{\Pi}
-                \te[l^{\prime\prime}\x l^{\prime}\x\mi{M}\x\mi{m^{\prime\prime}}]{\Phi}
-                \te[l^{\prime\prime}\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{m}]{\Gamma}^{-1} \\
+                \te[l^{\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}
+                \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m^{\prime\prime\prime}}\x\mi{M}]{\Pi}
+                \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{M}\x\mi{m^{\prime\prime}}]{\Phi}
+                \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m^{\prime\prime}}\x\mi{m}]{\Gamma}^{-1} \\
                 \te[\mi{m^{\prime}}^{2}]{B} &\deq 
-                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime}}]{\Gamma}
-                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} + \\
-                &\phantom{\deq\ }\te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi}
-                \te[l^{\prime\prime}\x l^{\prime}\x\mi{m^{*\prime\prime\prime}}\x\mi{m^{*\prime}}]{\Pi}
-                \te[l^{\prime\prime\prime}\x l^{*\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} \\
+                \te[l^{\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime}}]{\Gamma}
+                \te[l^{\prime}\x l^{*\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} + \\
+                &\phantom{\deq\ }\te[l^{\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi}
+                \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m^{*\prime\prime\prime}}\x\mi{m^{*\prime}}]{\Pi}
+                \te[l^{\prime}\x l^{*\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} \\
                 \te[\mi{m}^{2}]{C} &\deq 
-                \te[l^{\prime\prime}\x l^{\prime}\x\mi{m}\x\mi{m^{*}}]{\Upsilon} \\
+                \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{*}}]{\Upsilon} \\
                 &\phantom{\deq\ }
                 \te[\mi{m^{*}}\x\mi{m^{*\prime\prime}}]{\te[]{\te[l\x l^{*}\x\mi{m^{**}}^{2}]{\Gamma}
-                + \te[l\x l^{*}\x\mi{m^{**}}\x\mi{m^{**\prime\prime}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime}\x\mi{m^{**\prime\prime}}\x\mi{m^{***}}]{\Upsilon}}^{-1}} \\
+                + \te[l\x l^{*}\x\mi{m^{**}}\x\mi{m^{**\prime\prime}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m^{**\prime\prime}}\x\mi{m^{***}}]{\Upsilon}}^{-1}} \\
                 &\phantom{\deq\ }\te[l\x l^{*}\x\mi{m^{*\prime\prime}}\x\mi{m^{\prime\prime}}]{\Gamma}
             \end{aligned}
         \end{equation*}
         Secondly
         \begin{equation*}
-            \evt{\;\evt{\te[]{\te[l]{\mu_{\mi{m}}} \otimes \te[l^{\prime\prime}\x l^{\prime}]{\psi_{\mi{mm^{\prime}}}} \otimes \te[l^{\prime\prime\prime}]{\mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}}{\mi{m}} = 
-            \te[l\x l^{\prime\prime}\x \mi{L^{*\prime}N^{*\prime}}]{E_{\mi{m}}}
-            \te[l^{\prime\prime\prime}\x l^{\prime}\x \mi{L^{*\prime}N^{*\prime}}]{E_{\mi{m^{\prime}}}}
+            \evt{\;\evt{\te[]{\te[l]{\mu_{\mi{m}}} \otimes \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{\psi_{\mi{mm^{\prime}}}} \otimes \te[l^{\prime}]{\mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}}{\mi{m}} = 
+            \te[l\x l^{\prime\prime}\x \mi{L^{*\prime\prime\prime}N^{*\prime\prime\prime}}]{E_{\mi{m}}}
+            \te[l^{\prime}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}N^{*\prime\prime\prime}}]{E_{\mi{m^{\prime}}}}
         \end{equation*}
         where
         \begin{multline*}
-            \te[l^{\prime\prime\prime}\x l^{\prime}\x \mi{L^{*\prime}N^{*\prime}}]{E_{\mi{m^{\prime}}}} \deq 
+            \te[l\x l^{\prime\prime}\x \mi{L^{*\prime\prime\prime}N^{*\prime\prime\prime}}]{E_{\mi{m}}} \deq 
             \left(
-                \te[\mi{L^{*\prime}N^{*\prime}}\x\mi{L^{*\prime}N^{*\prime}}]{K_{Y}}^{-1/2} \otimes \te[l^{\prime\prime\prime}\x\mi{L^{*\prime\prime\prime}N^{*\prime\prime\prime}}]{g_{\mi{0}}KY}^{\dagger} \right) \\
+                \te[\mi{L^{*\prime\prime\prime}N^{*\prime\prime\prime}}\x\mi{L^{*\prime}N^{*\prime}}]{K_{Y}}^{-1/2} \otimes \te[l\x\mi{L^{*}N^{*}}]{g_{\mi{0}}KY}^{\dagger} \right) \\
             \left\lbrack\frac{
-            \te[l^{\prime}\x\mi{L^{*\prime}}\x\mi{N^{*\prime}}]{g_{\mi{0}}} \circ
+            \te[l^{\prime\prime}\x\mi{L^{*\prime}}\x\mi{N^{*\prime}}]{g_{\mi{0}}} \circ
             \prob
-            {\te[l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}}]{\Phi} 
-            \te[\mi{m^{\prime}}\x l^{\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}
-            {\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}
+            {\te[l\x \mi{L^{*}}]{\Phi} 
+            \te[\mi{m}\x l^{\prime\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}
+            {\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}
             {\te[]{D}}}
-            {\prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}\x N^{*\prime\prime\prime}}]{G}}{\te[l^{\prime\prime\prime}\x \mi{L^{*\prime\prime\prime}}]{\Phi}}} \right\rbrack^{\dagger}
+            {\prob{\te[\mi{m}]{0}}{\te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}}{\te[l\x \mi{L^{*}}]{\Phi}}} \right\rbrack^{\dagger}
         \end{multline*}
         \begin{multline*}
-            \te[l^{\prime\prime\prime} \x l^{*\prime\prime\prime}\x l^{\prime}\x l^{*\prime}\x\mi{m^{\prime}}^{2}]{D} \deq \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi} -  \\ 
-            \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi}
-            \te[l^{\prime}\x l^{*\prime}\x\mi{m^{*\prime\prime\prime}}\x\mi{m^{*\prime}}]{\Phi}
-            \te[l^{\prime\prime\prime}\x l^{*\prime\prime\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi}
+            \te[l\x l^{\prime\prime} \x l^{*}\x l^{*}\x\mi{m}^{2}]{D} \deq \te[l\x l^{*}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Phi} \\ 
+            - \te[l\x l^{*}\x\mi{m}\x\mi{m^{*\prime\prime}}]{\Phi}
+            \te[l^{\prime\prime}\x l^{*}\x\mi{m^{*\prime\prime}}\x\mi{m^{*}}]{\Phi}
+            \te[l\x l^{*}\x\mi{m^{*}}\x\mi{m^{\prime\prime}}]{\Phi}
         \end{multline*}
-        and $\te[l\x l^{\prime\prime}\x \mi{L^{*\prime}N^{*\prime}}]{E_{\mi{m}}}$ substitutes $\mi{m^{\prime}}\rightarrow\mi{m},\ l^{\prime\prime\prime}\rightarrow l,\ l^{\prime}\rightarrow l^{\prime\prime}$ in these definitions.
+        and $\te[l^{\prime}\x l^{\prime\prime\prime}\x \mi{L^{*}N^{*}}]{E_{\mi{m^{\prime}}}}$ substitutes $\mi{m}\rightarrow\mi{m^{\prime}},\ l\rightarrow l^{\prime},\ l^{\prime\prime}\rightarrow l^{\prime\prime\prime}$ in these definitions. In other words, add a prime to every symbol which is not superscripted $^{*\prime\prime\prime}$ already.
+
         This completes the calculation of all quantities of interest.
 
         \subsection{Simplifications}\label{sub:GPEst:Simp}
-        The tensors calculated in this Section have many dimensions, up to $L^{4}N^{2}$ each. For a medium-sized problem of 10 outputs and 1000 datapoints, this is $10^{10}$ dimensions, for larger problems this could easily breach $10^{16}$ dimensions. This will challenge the memory limitations of a CPU or GPU. However, there are two simplifications which substantially ease this burden.
+        The tensors calculated in this Section have many dimensions, up to $L^{4}N^{3}$ each. For a medium-sized problem of 10 outputs and 1000 datapoints, this is $10^{13}$ dimensions, for larger problems this could easily breach $10^{20}$ dimensions. This will challenge the memory limitations of a CPU or GPU. However, there are two simplifications which substantially ease this burden.
 
         Firstly, if the signal covariance $\te[\mi{L}^{2}]{F}$ is diagonal (in which case the lengthscales tensor $\te[\mi{L}^{2}\x\mi{m}]{F}$ may as well be diagonal in $\mi{L}^{2}$) then
-        \begin{equation*}
-            l = l^{\prime\prime} \QT{and} l^{\prime} = l^{\prime\prime\prime} \QT{throughout \cref{sec:GPEst}.}   
-        \end{equation*}
-        This reduces the largest tensor $H$ needed to calculate a Sobol' index $S_{\mi{m}}$ by a factor of $L^{2}$ dimensions. The same reduction applies to the Gaussian densities involving $C$ or $D$ needed to calculate the variance of a Sobol' index. Note that the noise variance $\te[\mi{L}^{2}]{E}$ need not be diagonal to achieve these reductions.
+        \begin{gather*}
+            l^{\prime\prime} = l \QT{and} l^{\prime\prime\prime} = l^{\prime} \QT{throughout \cref{sub:GPEst:Expectation}.}  \\ 
+            l^{*} = l \QT{and} l^{*\prime} = l^{\prime} \QT{and} l^{\prime\prime\prime} = l^{\prime\prime} \QT{throughout \cref{sub:GPEst:Variance}.}
+        \end{gather*}
+        This reduces the largest tensor $\tte[]{H_{\mi{m}}}$ needed to calculate a Sobol' index $S_{\mi{m}}$ from $L^{4}N^{2}$ dimensions to $L^{2}N^{2}$. The same reduction factor $L^{2}$ applies to the two largest terms needed to calculate the variance of a Sobol' index. Note that the noise variance $\te[\mi{L}^{2}]{E}$ need not be diagonal to achieve these reductions.
 
         Secondly, to assess uncertainty we are only really interested in the variances of Sobol' indices, not the cross covariances between them. This means
         \begin{equation*}
-            l = l^{\prime} \T{ and } l^{\prime\prime} = l^{\prime\prime\prime} \QT{or} 
-            l = l^{\prime\prime\prime} \T{ and } l^{\prime\prime} = l^{\prime} \QT{throughout \cref{sub:GPEst:Variance}.}   
+            l^{\prime} = l \T{ and } l^{\prime\prime\prime} = l^{\prime\prime} \QT{or} 
+            l^{\prime} = l^{\prime\prime} \T{ and } l^{\prime\prime\prime} = l \QT{throughout \cref{sub:GPEst:Variance}.}   
         \end{equation*}
-        Which (further) reduces the tensors for calculating the uncertainty of a Sobol' index by a factor of $L^{2}$.
+        This reduces the largest tensor in the uncertainty calculation from $L^{4}N^{3}$ dimensions to $L^{2}N^{3}$, or from $L^{2}N^{3}$ to $LN^{3}$.
 
 
 \section{Conclusion}\label{sec:Conc}
