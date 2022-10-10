@@ -70,34 +70,33 @@
     \end{abstract}
 
     \begin{keyword}
-        Global Sensitivity Analysis, Sobol' Index, Surrogate Model, Active Subspace
+        Global Sensitivity Analysis, Sobol' Index, Surrogate Model, Multi-Output, Gaussian Process
     \end{keyword}
 
 \end{frontmatter}
 
 \section{Introduction}\label{sec:Intro}
-This paper is concerned with analysing the results of experiments or computer simulations embodying $M\geq 1$ inputs and $L\geq 1$ outputs. Global Sensitivity Analysis \cite{Razavi2021} examines the relevance of the various inputs to the various outputs. When pursued via ANOVA decomposition, this leads naturally to the well known Sobol' indices, which have by now been applied across most fields of science and engineering \cite{Saltelli2019,Ghanem2017}. 
+This paper is concerned with analysing the results of experiments or computer simulations in a design matrix of $M\geq 1$ input and $L\geq 1$ output columns, over $N$ rows (datapoints). Global Sensitivity Analysis \cite{Razavi2021} examines the relevance of the various inputs to the various outputs. When pursued via ANOVA decomposition, this leads naturally to the well known Sobol' indices, which have by now been applied across most fields of science and engineering \cite{Saltelli2019,Ghanem2017}. 
 
-The Sobol' decomposition apportions the variance of the output to sets of one or more inputs \cite{Sobol2001}. We shall use ordinal sets $\mi{m} = (\ldots)$ of inputs for convenience, as they are both sets and tuples. The maximal set $\mi{M}\deq(0,\ldots ,M-1)$ of all $M$ inputs explains everything explicable, so its Sobol' index is 1 by definition. The void set $\mi{0}\deq ()$ explains nothing, so its Sobol' index is 0 by definition. 
-The influence of an isolated set of inputs $\mi{m}\deq(0,\ldots ,m-1) \subseteq \mi{M}$ is measured by its closed Sobol' index $S_{\mi{m}} \in \lbrack 0,1\rbrack$. A first-order Sobol' index $S_{m^{\prime}}$ is simply the closed Sobol' index of a singleton set $\{m^{\prime}\}$.
-Because inputs in an isolated set may act in concert with each other, the influence of the isolated set often exceeds the sum of first-order contributions from its members, always obeying $S_{\mi{m}} \geq \sum_{m^{\prime} \in \mi{m}} S_{m^{\prime}}$.
+The Sobol' decomposition apportions the variance of the outputs to sets of one or more inputs \cite{Sobol2001}. We shall use ordinal sets of inputs $\mi{m}\deq(0,\ldots ,m-1) \subseteq \mi{M}$, as tuples which are totally ordered sets. The maximal set $\mi{M}$ of all $M$ inputs explains everything explicable, so its Sobol' index is 1 by definition. The void set $\mi{0}$ explains nothing, so its Sobol' index is 0 by definition. 
+The influence of an isolated set of inputs $\mi{m}$ is measured by its closed Sobol' index $S_{\mi{m}} \in \lbrack 0,1\rbrack$. A first-order Sobol' index $S_{m^{\prime}}$ is simply the closed Sobol' index of a single input $m^{\prime}$.
+Because inputs in an isolated set may act in concert with each other, the influence of an isolated set often exceeds the sum of first-order contributions from its members, always obeying $S_{\mi{m}} \geq \sum_{m^{\prime} \in \mi{m}} S_{m^{\prime}}$.
 
-The total Sobol index $S^{T}_{\mi{M-m}} \geq 0$ of the set theoretic complement $\mi{M-m}$ is $1-S_{\mi{m}}$, which expresses the influence of non-isolated inputs $\mi{M-m}$ acting in concert with each other \emph{and} isolated inputs $\mi{m}$. When speaking of irrelevant inputs $\mi{M-m}$, we mean that $S^{T}_{\mi{M-m}} \approx 0$. This is synonymous with the isolated set of inputs $\mi{m}$ explaining everything explicable $S_{\mi{m}}\approx 1$.
+The total Sobol index $S^{T}_{\mi{M-m}} \geq 0$ of the set theoretic complement $\mi{M-m}$ is $1-S_{\mi{m}}$, which expresses the influence of non-isolated inputs $\mi{M-m}$ allowed to act in concert with each other \emph{and} isolated inputs $\mi{m}$. When speaking of irrelevant inputs $\mi{M-m}$, we mean that $S^{T}_{\mi{M-m}} \approx 0$. This is synonymous with the isolated set of inputs $\mi{m}$ explaining everything explicable $S_{\mi{m}}\approx 1$.
 It is apparent that we can readily obtain any Sobol' index of interest by ordering input dimensions appropriately and calculating the closed index $S_{\mi{m}}$ of some ordinal set $\mi{m}$.
 
-Apportioning variance is mathematically equivalent to squaring a correlation coefficient to produce a coefficient of determination $R^{2}$ \cite{Chicco2021}. A closed Sobol' index is thus a coefficient of determination between the predictions of a reduced model with $m\leq M$ inputs and those of the full model with $M$ inputs. Simplicity and economy (not least of calculation) motivate the adoption of a reduced model, a closed Sobol' index close to 1 permits it. Why on earth would one use the full model, when its predictions are almost identical to the reduced model?
+Apportioning variance is mathematically equivalent to squaring a correlation coefficient to produce a coefficient of determination $R^{2}$ \cite{Chicco2021}. A closed Sobol' index is thus a coefficient of determination between the predictions from a reduced model with $m\leq M$ inputs and predictions from the full model with $M$ inputs. Simplicity and economy (not least of calculation) motivate the adoption of a reduced model, a closed Sobol' index close to 1 permits it. Why on earth would one use the full model, when its predictions are almost identical to the reduced model?
 
-With multiple outputs, the Sobol' decomposition apportions the covariance matrix of outputs \cite{Gamboa.etal2013}, rather than the variance of a single output. With $L$ outputs, the closed Sobol' index $S_{\mi{m}}$ is a symmetric $L\x L$ matrix. The diagonal elements express the relevance of inputs to the output variables themselves. The off-diagonal elements express relevance to the linkages between outputs. This may be of considerable interest when outputs are, for example, yield and purity of a product, or perhaps a single outut measured at various times. The Sobol indices reveal (amongst other things) which inputs it is worthwhile varying in an effort to alter the relationship between these outputs.
+With multiple outputs, the Sobol' decomposition apportions the covariance matrix of outputs \cite{Gamboa.etal2013}, rather than the variance of a single output. With $L$ outputs, the closed Sobol' index $S_{\mi{m}}$ is a symmetric $L\x L$ matrix. The diagonal elements express the relevance of inputs to the output variables themselves. The off-diagonal elements express relevance to the linkages between outputs. This may be of considerable interest when outputs are, for example, yield and purity of a product, or perhaps a single output measured at various times. The Sobol indices reveal (amongst other things) which inputs it is worthwhile varying in an effort to alter the linkages between outputs.
 
 Accurate calculation of Sobol' indices even for a single output is computationally expensive and requires 10,000+ datapoints \cite{Lamoureux.etal2014}. A more efficient approach is calculation via a surrogate model, such as Polynomial Chaos Expansion \cite{Ghanem.Spanos1997,Xiu.Karniadakis2002,Xiu2010}, low-rank tensor approximation \cite{Chevreuil.etal2015,Konakli.Sudret2016}, and support vector regression \cite{Cortes.Vapnik1995}. As well as being efficient, surrogate models also smooth out noise in the outputs, which is often highly desirable in practice. This paper employs one of the most popular surrogates, the Gaussian Processes (GP) \cite{Sacks.etal1989, Rasmussen.Williams2005} as it is highly tractable. We shall follow the multi-output form (MOGP) described in \cite{Alvarez.etal2011}, in order to examine the linkages between outputs. 
 
-Semi-analytic expressions for Sobol' indices have been provided in integral form by \cite{Oakley.OHagan2004} and alternatively by \cite{Chen.etal2005}. These approaches are implemented, examined and compared in \cite{Marrel.etal2009,Srivastava.etal2017}. Both \cite{Oakley.OHagan2004,Marrel.etal2009} estimate the errors on Sobol' indices in semi-analytic, integral form. Fully analytic, closed form expressions in terms of the normal cumulative density function have been derived for uniformly distributed inputs \cite{Wu.etal2016a}, without error estimates. There are currently no closed form expressions for MOGPs, or the errors on Sobol' indices or any GPs for which inputs are not uniformly distributed. 
+Semi-analytic expressions for Sobol' indices have been provided in integral form by \cite{Oakley.OHagan2004} and alternatively by \cite{Chen.etal2005}. These approaches are implemented, examined and compared in \cite{Marrel.etal2009,Srivastava.etal2017}. Both \cite{Oakley.OHagan2004,Marrel.etal2009} estimate the errors on Sobol' indices in semi-analytic, integral form. Fully analytic, closed form expressions have been derived without error estimates for uniformly distributed inputs \cite{Wu.etal2016a} with an RBF kernel. There are currently no closed form expressions for MOGPs, or the errors on Sobol' indices, or any GPs for which inputs are not uniformly distributed. 
 
-In this paper we provide explicit analytic formulae for a class of MOGP with an anisotropic radial basis function (RBF/ARD) kernel applicable to smoothly varying outputs. 
+In this paper we provide explicit, closed-form analytic formulae for closed Sobol' indices and their errors, for a class of MOGP with an anisotropic radial basis function (RBF/ARD) kernel applicable to smoothly varying outputs. 
 We transform uniformly distributed inputs $u$ to normally distributed inputs $z$ prior to fitting a GP and performing analytic calculation of closd Sobol' indices. This leads to relatively concise expressions in terms of exponentials, and enables ready calculation of the errors (variances) of these expressions. It also allows for an arbitrary rotation $\Theta$ of inputs, as normal variables are additive, whereas summing uniform inputs does not produce uniform inputs. If the goal is reducing inputs, rotating their basis first boosts the possibilities immensely \cite{Constantine2015}. It presents the possibilty of choosing $\Theta$ to maximise the closed Sobol' index of the first few inputs.
 
-
-The quantities to be calculated and their formal context are introduced in \cref{sec:COD}. Our approach effectively regards a regression model furnishing an uncertainty measure with each prediction as just another name for a stochastic process. A great deal of progress is made in \cref{sec:SPEst} using just stochastic (not necessarily Gaussian) processes. This approach is analytically cleaner, as it is not obfuscated by the GP details. Furthermore, it turns out that the desirable properties of the Gaussian (lack of skew, simple kurtosis) are not actually helpful, as these terms cancel of their own accord. This development leaves just two terms to be calculated, which require the stochastic process to be specified. MOGPs with an RBF/ARD kernel are tersely developed and described in \cref{sec:GPR}, then used to calculate the two unknown terms in \cref{sec:GPMom,sec:GPEst}. Useful simplifications are collected in \cref{sec:Conc}, and conclusions are drawn in \cref{sec:Conc}.
+The quantities to be calculated and their formal context are introduced in \cref{sec:COD}. Our approach effectively regards a regression model furnishing an uncertainty measure with each prediction as just another name for a stochastic process. A great deal of progress is made in \cref{sec:SPEst} using general stochastic (not necessarily Gaussian) processes. This approach is analytically cleaner, as it is not obfuscated by the GP details. Furthermore, it turns out that the desirable properties of the Gaussian (lack of skew, simple kurtosis) are not actually helpful, as these terms cancel of their own accord. This development leaves just two terms to be calculated, which require the stochastic process to be specified. MOGPs with an RBF/ARD kernel are tersely developed and described in \cref{sec:GPR}, then used to calculate the two unknown terms in \cref{sec:GPMom,sec:GPEst}. Conclusions are drawn in \cref{sec:Conc}.
 
 
 \section{Coefficient of Determination}\label{sec:COD}
@@ -111,9 +110,9 @@ The quantities to be calculated and their formal context are introduced in \cref
     \end{equation*}
     Throughout this paper exponentiation is categorical -- repeated cartesian $\x$ or tensor $\otimes$ -- unless otherwise specified. Square bracketed quantities are tensors, carrying their axes as a subscript tuple. In this case the subscript tuple is the von Neumann ordinal
     \begin{equation*}
-        \mi{M+1} \deq (0,\ldots,M) \supset \mi{m} \deq (0,\ldots,m \leq M-1)
+        \mi{M+1} \deq (0,\ldots,M) \supset \mi{m} \deq (0,\ldots,m-1 \leq M-1)
     \end{equation*}
-    with void $\mi{0}=()$ voiding any tensor it subscripts. Ordinals are concatenated into tuples by Cartesian $\times$ and will be subtracted like sets, as in $\mi{M-m} \deq (m,\ldots,M-1)$. 
+    with void $\mi{0}\deq ()$ voiding any tensor it subscripts. Ordinals are concatenated into tuples by Cartesian $\times$ and will be subtracted like sets, as in $\mi{M-m} \deq (m,\ldots,M-1)$. 
     Subscripts refer to the tensor prior to any superscript operation, so $\te[\mi{L}]{y(\rv{u})}^{2}$ is an $\mi{L}^{2} \deq \mi{L\x L}$ tensor, for example.
     The preference throughout this work is for uppercase constants and lowercase variables, in case of ordinals the lowercase ranging over the uppercase. We prefer $o$ for an unbounded positive integer, avoiding O.
 
@@ -122,16 +121,16 @@ The quantities to be calculated and their formal context are introduced in \cref
     \begin{equation}\label{def:Theory:y_m}
         \te[\mi{L}]{\rv{y_m}} \deq \ev{y(\rv{u})}{\mi{M-m}} \deq \ev{y(\rv{u}) \big\vert \te[\mi{m}]{u}}{\mi{M-m}}
     \end{equation}
-    ranging from $\tte[\mi{L}]{\rv{y_0}}$ to $\tte[\mi{L}]{\rv{y_M}}$. Every SP depends stochastically on the ungovernable noise dimension $\tte[M]{\rv{u}} \perp \tte[\mi{M}]{\rv{u}}$ and deterministically on the first $m$ governed inputs $\te[\mi{m}]{u}$, marginalizing inputs $\tte[\mi{M-m}]{\rv{u}}$. 
+    ranging from $\tte[\mi{L}]{\rv{y_0}}$ to $\tte[\mi{L}]{\rv{y_M}}$. Every SP depends stochastically on the ungovernable noise dimension $\tte[M]{\rv{u}} \perp \tte[\mi{M}]{\rv{u}}$ and deterministically on the first $m$ governed inputs $\te[\mi{m}]{u}$, marginalizing the remaining inputs $\tte[\mi{M-m}]{\rv{u}}$. 
     Sans serif symbols such as $\rv{u,y}$ generally refer to RVs and SPs, italic $u,y$ being reserved for (tensor) functions and variables. Each SP is simply a regression model for $y$ on the first $m$ dimensions of $u$.
     
-    Following the Kolmogorov extension theorem \cite{Rogers.Williams2000} pp.124 we may regard an SP as a random function, from which we shall freely extract finite dimensional distributions generated by a design matrix $\tte[\mi{M\x o}]{u}$ of $o \in \st{Z}^{+}$ samples.
+    Following the Kolmogorov extension theorem \cite{Rogers.Williams2000} pp.124 we may regard an SP as a random function, from which we shall freely extract finite dimensional distributions generated by a design matrix $\tte[\mi{M\x o}]{u}$ of $o \in \st{Z}^{+}$ input samples.
     The Kolmogorov extension theorem incidentally secures $\rv{u}$. 
     Because $y$ is (Lebesgue) integrable it must be measurable, guaranteeing $\tte[\mi{L}]{\rv{y_0}}$.
     Because all probability measures are finite, integrability of $y$ implies integrability of $y^n$ for all $n \in \st{Z}^{+}$ \cite{Villani1985}. 
     So Fubini's Theorem \cite{Williams1991} pp.77 allows all expectations to be taken in any order. These observations suffice to ensure every object appearing in this work. Changing the order of expectations, as permitted by Fubini's Theorem, is the vital tool in the construction of this work. 
 
-    Our aim is to compare predictions from a reduced regression model $\rv{y_m}$ with those of the full regression model $\rv{y_M}$. Correlation between these predictions is squared -- using element-wise (Hadamard) multiplication $\circ$ and division -- to form an RV called the coefficient of determination or closed Sobol' index
+    Our aim is to compare predictions from a reduced regression model $\rv{y_m}$ with those from the full regression model $\rv{y_M}$. Correlation between these predictions is squared -- using element-wise (Hadamard) multiplication $\circ$ and division $/$ -- to form an RV called the coefficient of determination or closed Sobol' index
     \begin{equation}
         \te[\mi{L}^2]{\rv{R_{m}^{2}}} \deq 
         \frac{\cov[\rv{y_M}]{\rv{y_m}}{\mi{M}} \circ \cov[\rv{y_M}]{\rv{y_m}}{\mi{M}}}
@@ -161,7 +160,7 @@ The quantities to be calculated and their formal context are introduced in \cref
     \end{align}
     In practice it is best to retain only the term in $W_{\mi{mm}}$, ignoring the uncertainty in $V_{\mi{M}}$ conveyed by $W_{\mi{Mm}},W_{\mi{MM}}$. This is because one is normally interested in adequate reduced models, for which $V_{\mi{m}} \approx V_{\mi{M}}$ implies $W_{\mi{mm}} - 2W_{\mi{Mm}} + W_{\mi{MM}} \approx 0$, yielding a drastically vanishing uncertainty in the Sobol' index.
 
-    The remainder of this paper is devoted to calculating these two quantities -- the coefficient of determination and its variance over ungovernable noise (measurement error, squared).
+    The remainder of this paper is devoted to calculating these two quantities -- the coefficient of determination and its variance over ungovernable noise (i.e. measurement error, squared).
 
 
 \section{Stochastic Process Estimates}\label{sec:SPEst}
@@ -173,7 +172,7 @@ The quantities to be calculated and their formal context are introduced in \cref
             \big\vert \te[]{\te[\mi{0}]{u}, \te[\mi{m^{\prime}}]{u}, \te[\mi{M^{\prime\prime}}]{u}}}{\mi{0^{\prime\prime}}}}
         {\mi{M^{\prime}-m^{\prime}}}}{\mi{M}}
     \end{equation}
-    Primes mark independent input dimesnions, otherwise expectations are shared by all three members of the triad. It is not always obvious whether axes are independent or shared by the triad, but this can be mechanically checked against the measure of integration behind an expectation. Repeated expectations over the same axis are rare here, usually indicating that apparent repetitions must be ``primed''. The purpose of the triad is to interrogate its response for moments in respect of ungovernable noise (which is shared)
+    Primes mark independent inputs, otherwise expectations are shared by all three members of the triad. It is not always obvious whether inputs are independent or shared by the triad, but this can be mechanically checked against the measure of integration behind an expectation. Repeated expectations over the same axis are rare here, usually indicating that apparent repetitions must be ``primed''. The purpose of the triad is to interrogate its response for moments in respect of ungovernable noise (which is shared by the triad members)
     \begin{equation}\label{def:SPEst:mu}
             \te[(\mi{L\x 3})^{n}]{\mu_{n}} \deq \ev{\tte[\mi{L\x 3}]{\rv{y}}^{n}}{M} \ \ \forall n \in \st{Z}^{+}
     \end{equation}
@@ -225,7 +224,7 @@ The quantities to be calculated and their formal context are introduced in \cref
             - \te[\mi{L}^2]{V_{\mi{m}}}\otimes \te[\mi{L}^2]{V_{\mi{m^{\prime}}}}
         \end{aligned}
     \end{equation*}
-    exploiting the fact that $V_{\mi{0}} = \te[\mi{L}^2]{0}$. \Cref{eq:SPEstimates:reduction} cancels all terms beginning with $\te[\mi{L}]{\rv{e_{m}}}^{2}$, first across $A_{\mi{m,m^{\prime}}}-A_{\mi{0,m^{\prime}}}$ then across $A_{\mi{m,0}}-A_{\mi{0,0}}$. All remaining terms ending in $\te[\mi{L}]{\mu_{\mi{m^{\prime}}}}^{2}$ are eliminated by centralization $\evt{\,\tte[]{\rv{e_{m}}}}{M} = 0$ and
+    exploiting the fact that $V_{\mi{0}} = \te[\mi{L}^2]{0}$. \Cref{eq:SPEstimates:reduction} cancels all terms beginning with $\te[\mi{L}]{\rv{e_{m}}}^{2}$, first across $A_{\mi{mm^{\prime}}}-A_{\mi{0m^{\prime}}}$ then across $A_{\mi{m0}}-A_{\mi{00}}$. All remaining terms ending in $\te[\mi{L}]{\mu_{\mi{m^{\prime}}}}^{2}$ are eliminated by centralization $\evt{\,\tte[]{\rv{e_{m}}}}{M} = 0$ and
     \begin{multline*}
         \evt{\;\ev{\te[\mi{L}]{\mu_{\mi{m}}}^{2} \otimes \te[\mi{L}]{\mu_{\mi{m^{\prime}}}}^{2}}{\mi{m^{\prime}}}}{\mi{m}}
         - \te[\mi{L}^2]{V_{\mi{m}}}\otimes \te[\mi{L}^2]{V_{\mi{m^{\prime}}}} \\
@@ -233,7 +232,7 @@ The quantities to be calculated and their formal context are introduced in \cref
         + \te[\mi{L}]{\mu_{\mi{0}}}^{2}\otimes \te[\mi{L}^2]{V_{\mi{m^{\prime}}}}
         + \te[\mi{L}]{\mu_{\mi{0}}}^{4}
     \end{multline*}
-    cancelling across $A_{\mi{m,m^{\prime}}}-A_{\mi{0,m^{\prime}}} - A_{\mi{m,0}}+A_{\mi{0,0}}$.
+    cancelling across $A_{\mi{mm^{\prime}}}-A_{\mi{0m^{\prime}}} - A_{\mi{m0}}+A_{\mi{00}}$.
     Similar arguments eliminate $\te[\mi{L}]{\rv{e_{m^{\prime}}}}^{2}$ and $\te[\mi{L}]{\mu_{\mi{m}}}^{2}$.
     Effectively then
     \begin{equation}\label{eq:SPEst:A}
@@ -250,7 +249,7 @@ The quantities to be calculated and their formal context are introduced in \cref
 
 
 \section{Interlude: Gaussian Process Regression} \label{sec:GPR}
-    The development in this Section is based on \cite{Alvarez.etal2011}, but introduces different notation. A Gaussian Process (GP) over $x$ is formally defined and specified by
+    The development in this Section is based on \cite{Alvarez.etal2011}, with slightly different notation. A Gaussian Process (GP) over $x$ is formally defined and specified by
     \begin{equation*}
         \te[\mi{L}]{\rv{y_M}} \big\vert \te[\mi{M}\x\mi{o}]{x} \sim 
         \gaussd{\te[\mi{L}\x\mi{o}]{\bar{y}(x)}}{\te[(\mi{L}\x\mi{o})^{2}]
@@ -269,26 +268,26 @@ The quantities to be calculated and their formal context are introduced in \cref
             &\deq \te[(l-1)\x\mi{o} \x (l^{\prime}-1)\x\mi{o}]{} \\
         \end{aligned}
     \end{equation*}
-    supporting the fundamental definition of the GP kernel, as a covariance between responses
+    supporting the fundamental definition of the GP kernel, as a covariance (over ungovernable noise) between responses
     \begin{equation*}
         \te[l\x o\x l^{\prime}\x o^{\prime}]{k_{\rv{y}}(x,x)} 
-        \deq \cov[{\te[l^{\prime}\x o^{\prime}]{\rv{y_M}\vert x}}]{\te[l\x o]{\rv{y_M}\vert x}}{\mi{Lo}}
+        \deq \cov[{\te[l^{\prime}\x o^{\prime}]{\rv{y_M}\vert x}}]{\te[l\x o]{\rv{y_M}\vert x}}{M}
     \end{equation*}
 
     \subsection{Tensor Gaussians} \label{sub:GPR:Tensor}
-        Henceforth, tensors will be broadcast when necessary, as described in \cite{Numpy2022,Harris2020}. This means that ranks and dimensions are implicitly expanded as necessary to perform an algebraic operation between tensors whose signature differs. A tensor Gaussian like $\prob{\te[\mi{m}\x\mi{o}]{x}}{\te[\mi{m}\x\mi{o^{\prime}}]{x^{\prime}}}
+        Henceforth, tensors will be broadcast when necessary, as described in \cite{Numpy2022,Harris2020}. This means that ranks and dimensions are implicitly expanded as necessary to perform an algebraic operation between tensors of differing signature. A tensor Gaussian like $\prob{\te[\mi{m}\x\mi{o}]{x}}{\te[\mi{m}\x\mi{o^{\prime}}]{x^{\prime}}}
         {\te[\mi{L}^{2}\x\mi{m}^{2}]{\Sigma}}$ is defined element-wise, using broadcasting
         \begin{multline} \label{def:Notation:p}
             \te[l\x o \x l^{\prime}\x o^{\prime}]{\prob{\te[\mi{m}\x\mi{o}]{x}}{\te[\mi{m}\x\mi{o^{\prime}}]{x^{\prime}}}
             {\te[\mi{L}^{2}\x\mi{m}^{2}]{\Sigma}}}
             \deq (2 \pi)^{-M/2} \modulus{\te[l\x l^{\prime}]{\Sigma}}^{-1/2} \\
             \exp\left(-\frac{
-                \te[\mi{m}\x l\x o\x l^{\prime}\x o^{\prime}]{x-x^{\prime}} 
+                \te[\mi{m}\x l\x o\x l^{\prime}\x o^{\prime}]{x-x^{\prime}}^{\intercal} 
             \te[l\x l^{\prime}\x\mi{m\x m^{\prime}}]{\Sigma}^{-1} 
             \te[\mi{m^{\prime}}\x l\x o\x l^{\prime}\x o^{\prime}]{x-x^{\prime}}}
             {2}\right)
         \end{multline}
-        for $\mi{m^{\prime}} = \mi{m}$.
+        for $\mi{m^{\prime}} = \mi{m}$ and transposition $^{\intercal}$ moving first rank to last.
 
         Remarkably, the algebraic development in the remainder of this paper relies almost exclusively on an invaluable product formula reported in \cite{Rasmussen2016}:
         \begin{multline} \label{eq:GPR:product}
@@ -301,7 +300,7 @@ The quantities to be calculated and their formal context are introduced in \cref
         This formula and the Gaussian tensors behind it will appear in a variety of guises.
 
     \subsection{Prior GP} \label{sub:GPR:Prior}
-        GP regression decomposes output $\te[\mi{L}]{\rv{y_M}}$ into signal GP $\te[\mi{L}]{\rv{f_M}}$, and independent noise GP $\te[\mi{L}]{\rv{e}_M}$ with constant noise covariance $\te[\mi{L}^2]{E}$
+        GP regression decomposes output $\te[\mi{L}]{\rv{y_M}}$ into signal GP $\te[\mi{L}]{\rv{f_M}}$, and independent noise GP $\te[\mi{L}]{\rv{e}_M}$ with homoskedastic noise covariance $\te[\mi{L}^2]{E}$
         \begin{equation*}
             \begin{aligned}
                 \te[\mi{L}]{\rv{y_M}\vert E} 
@@ -310,8 +309,9 @@ The quantities to be calculated and their formal context are introduced in \cref
                 &\sim \gaussd{\te[\mi{L}\x\mi{o}]{0}}{\te[(\mi{L}\x 1)^2]{E} \circ \diag[(1\x\mi{o})^2]{1}}
             \end{aligned}
         \end{equation*}
-        The RBF kernel is hyperparametrized by signal covariance $\te[\mi{L}^2]{F}$ and the tensor $\te[\mi{L}^{2}\x\mi{M}]{\Lambda}$ of characteristic lengthscales, which must be symmetric $\te[l\x l^{\prime}\x\mi{M}]{\Lambda}=\te[l^{\prime}\x l\x\mi{M}]{\Lambda}$. 
-        Angle brackets denoting a (perhaps broadcast) diagonal tensor, such as the identity matrix $\diag[\mi{m}^2]{1} \deqr \diag[]{\tte[\mi{m}]{1}}$, are used to define
+        Angle brackets denote a (perhaps broadcast) diagonal tensor, such as the identity matrix $\diag[(1\x\mi{o})^2]{1} \deqr \diag[]{\tte[(1\x\mi{o})^2]{1}}$.
+
+        The RBF kernel is hyperparametrized by signal covariance $\te[\mi{L}^2]{F}$ and the tensor $\te[\mi{L}^{2}\x\mi{M}]{\Lambda}$ of characteristic lengthscales, which must be symmetric $\te[l\x l^{\prime}\x\mi{M}]{\Lambda}=\te[l^{\prime}\x l\x\mi{M}]{\Lambda}$. Now use
         \begin{equation*}
             \begin{aligned}
                 \diag[l\x l^{\prime}\x\mi{M}^{2}]{\Lambda^{2} \pm I} 
@@ -323,7 +323,7 @@ The quantities to be calculated and their formal context are introduced in \cref
                 &\deq (2 \pi)^{M/2} \modulus{\diag[l\x l^{\prime}]{\Lambda^{2}}}^{1/2} \te[l\x l^{\prime}]{F}
             \end{aligned}
         \end{equation*}
-        and implement the non-informative RBF prior using \cref{def:Notation:p}
+        to implement the non-informative RBF prior according to \cref{def:Notation:p}
         \begin{equation*}
             \te[\mi{L}]{\rv{f_M} \vert F,\Lambda}
             \big\vert \te[\mi{M}\x\mi{o}]{x} \sim \\
@@ -333,7 +333,7 @@ The quantities to be calculated and their formal context are introduced in \cref
         \end{equation*}
         
     \subsection{Predictive GP} \label{sub:GPR:Predictive}
-        Bayesian inference for GP regression further conditions the hyper-parametrized GP $\rv{y} \vert E,F,\Lambda$ on the observed realization of the random variable $\te{\rv{y}\vert X}$
+        Bayesian inference for GP regression further conditions the hyper-parametrized GP $\rv{y} \vert E,F,\Lambda$ on the observed realization (over ungovernable noise) of the random variable $\te{\rv{y}\vert X}$
         \begin{equation*}
             \te[\mi{L} \x \mi{N}]{Y}^{\dagger} \deq \te{\te[\mi{L}]{\rv{y_M}\vert E,F,\Lambda} \big\vert \te[\mi{M}\x\mi{N}]{X}}^{\dagger}\!(\omega) \in \st{R}^{LN}
         \end{equation*}
@@ -341,17 +341,17 @@ The quantities to be calculated and their formal context are introduced in \cref
         \begin{equation} \label{def:GPR:Kk}
             \begin{aligned}
                 \te[\mi{Lo}\x\mi{Lo}]{K_{\rv{e}}} &\deq 
-                \cov{\te{\te[\mi{L}]{\rv{e}_{M}\vert E} \big\vert \te[\mi{M}\x\mi{o}]{x}}^{\dagger}}{\mi{Lo}} \\
+                \cov{\te{\te[\mi{L}]{\rv{e}_{M}\vert E} \big\vert \te[\mi{M}\x\mi{o}]{x}}^{\dagger}}{M} \\
                 &\phantom{:}= \te{\te[(\mi{L}\x 1)^2]{E} \circ \diag[(1\x\mi{o})^2]{1}}^{\dagger} \\
                 \te[\mi{Lo}\x\mi{L o^{\prime}}]{k(x, x^{\prime})} &\deq
                 \cov[{\te{\te[\mi{L}]{\rv{f_M}\vert F,\Lambda} \big\vert \te[\mi{M}\x\mi{o^{\prime}}]{x^{\prime}}}^{\dagger}}]
-                {\te{\te[\mi{L}]{\rv{f_M}\vert F,\Lambda} \big\vert \te[\mi{M}\x\mi{o}]{x}}^{\dagger}}{\mi{Lo}} \\
+                {\te{\te[\mi{L}]{\rv{f_M}\vert F,\Lambda} \big\vert \te[\mi{M}\x\mi{o}]{x}}^{\dagger}}{M} \\
                 &\phantom{:}= \te{\te[\mi{L}^{2}]{\pm F} \circ 
                 \prob{\te[\mi{M}\x\mi{o}]{x}}{\te[\mi{M}\x\mi{o^{\prime}}]{x^{\prime}}}
                 {\diag[\mi{L}^{2}\x\mi{M}^{2}]{\Lambda^{2}}}}^{\dagger} \\
                 %
                 \te[\mi{LN}\x\mi{LN}]{K_{Y}} &\deq 
-                \cov{\te{\te[\mi{L}]{\rv{y}\vert E,F,\Lambda} \big\vert \te[\mi{M}\x\mi{N}]{X}}^{\dagger}}{\mi{Lo}} \\
+                \cov{\te{\te[\mi{L}]{\rv{y}\vert E,F,\Lambda} \big\vert \te[\mi{M}\x\mi{N}]{X}}^{\dagger}}{M} \\
                 &\phantom{:}= k(\te[\mi{M}\x\mi{N}]{X},\te[\mi{M}\x\mi{N}]{X}) + \te[\mi{LN}\x\mi{LN}]{K_{\rv{e}}}
             \end{aligned}
         \end{equation}
@@ -374,7 +374,7 @@ The quantities to be calculated and their formal context are introduced in \cref
             \gauss{k(X,X) K_{Y}^{-1} Y^{\dagger}}{\ k(X,X) - k(X,X) K_{Y}^{-1} k(X,X)}
         \end{multline*}
 
-        The ultimate goal is the posterior predictive GP which extends the posterior distribution to arbitrary -- usually unobserved -- $\te[\mi{M}\x\mi{o}]{x}$. This is traditionally derived from the definition of conditional probability, but this seems unnecessary, for the extension must recover the posterior distribution when $x=X$. There is only one way of selectively replacing $X$ with $x$ in the posterior formula which preserves the coherence of tensor ranks:
+        The ultimate goal is the posterior predictive GP which extends the posterior distribution to arbitrary -- usually unobserved -- $\te[\mi{M}\x\mi{o}]{x}$. This is formally derived from the definition of conditional probability, but this seems unnecessary, for the extension must recover the posterior distribution when $x=X$. Without unfeasible distortions, there is only one way of selectively replacing $X$ with $x$ in the posterior formula which preserves the coherence of tensor ranks:
         \begin{multline} \label{def:GPR:Predictive}
             \te[\mi{L\x o}]{\te{\rv{f_M} \vert Y \vert E,F,\Lambda} \big\vert x}^{\dagger} \sim \\
             \gauss{k(x,X) K_{Y}^{-1} Y^{\dagger}}{\ k(x,x) - k(x,X) K_{Y}^{-1} k(X,x)}
@@ -402,9 +402,9 @@ The quantities to be calculated and their formal context are introduced in \cref
         \end{aligned}
     \end{equation*}
     Here, the rotation matrix $\te[\mi{M\x M^{\prime}}]{\Theta}^{\intercal} = \te[\mi{M\x M^{\prime}}]{\Theta}^{-1}$ is broadcast to multiply the triad $\tte[\mi{M\x 3}]{\rv{z}}$. 
-    The purpose of ths arbitrary rotation is to allow GPs whose input basis $\rv{x}$ is not aligned with the fundamental basis $\rv{u}$ of the coefficient of determination. The latter is aligned with $\rv{z}$ which is the input we must condition. This generalization is cheap, given product formula \cref{eq:GPR:product}, and of great potential benefit. One could, for example, imagine optimiziing $\Theta$ to maximize $S_{\mi{m}}$.
+    The purpose of ths arbitrary rotation is to allow GPs whose input basis $\rv{x}$ is not aligned with the fundamental basis $\rv{u}$ of the coefficient of determination. The latter is aligned with $\rv{z}$ which is the input we must condition. This generalization is cheap, given product formula \cref{eq:GPR:product}, and of great potential benefit. One could, for example, imagine optimizing $\Theta$ to maximize $S_{\mi{m}}$.
     
-    Throughout the remainder of this paper, primed ordinal subscripts are used to specify Einstein sum (einsum) contraction of tensors, the multiplication and summation of elements over a matching index which underpins matrix multiplication. In this work, whenever a subscript primed in a specific fashion appears in adjacent tensors (those not separated by algebraic operations $+,-,\circ,\,\otimes$) and does not subscript the result, it is einsummed over.
+    Throughout the remainder of this paper, primed ordinal subscripts are used to specify Einstein sum (einsum) contraction of tensors, the multiplication and summation of elements over a matching index which underpins matrix multiplication. In this work, whenever a subscript primed in a specific fashion appears in adjacent tensors (those not separated by algebraic operations $+,-,\circ,\,\otimes$) and does not subscript the result, it is einsummed over. Detailed examples of the convention are given under {\tt einsum} in \cite{Numpy2022}.
     
     Adding shared Gaussian noise $\te[\mi{L}]{\rv{e}_M\vert E}$ to \cref{def:GPR:Predictive} yields
     \begin{multline}\label{eq:GPMom:yDist}
@@ -420,10 +420,10 @@ The quantities to be calculated and their formal context are introduced in \cref
         = \te[\mi{L\x 3}]{\mu_{1}}^{\dagger}
         + \te[\mi{L\x 3\x L^{\prime}\x 3^{\prime}}]{\mu_{2}}^{\dagger/2} \te[\mi{L^{\prime}\x 3^{\prime}}]{\te[\mi{L}\x 1]{c^{-1}\!\left(d\left(\te[M]{\rv{u}}\right)\right)} \circ \te[1\x\mi{3}]{1}}^{\dagger}
     \end{multline}
-    where $\tte[(\mi{L\x 3})^{2}]{\mu_{2}}^{\dagger/2}$ denotes the Cholesky decomposition of the matrix $\tte[(\mi{L\x 3})^{2}]{\mu_{2}}^{\dagger}$.
+    where $\tte[(\mi{L\x 3})^{2}]{\mu_{2}}^{\dagger/2}$ denotes the lower triangular Cholesky decomposition of the matrix $\tte[(\mi{L\x 3})^{2}]{\mu_{2}}^{\dagger}$.
     From the development in \cref{sec:SPEst}, the first two moments $\mu_{1},\mu_{2}$ are sufficient to compute the coefficient of determination and its variance. 
     
-    The crucial moments $\mu_{1},\mu_{2}$ can be determined from \cref{eq:GPMom:yDist,eq:GPMom:yReveal}, but still need conditioning. This is entirely a matter of repeatedly applying product formula \cref{eq:GPR:product}, together with the familiar Gaussian identities
+    The crucial moments $\mu_{1},\mu_{2}$ are simply read from \cref{eq:GPMom:yDist,eq:GPMom:yReveal}, but still need conditioning. This is entirely a matter of repeatedly applying product formula \cref{eq:GPR:product}, together with the familiar Gaussian identities
     \begin{equation*}
         \begin{aligned}
             \te[\mi{M}]{\rv{z}} \sim \gauss{\te[\mi{M}]{Z}}{\te[\mi{M}\x\mi{M}]{\Sigma}} &\Rightarrow
@@ -435,7 +435,7 @@ The quantities to be calculated and their formal context are introduced in \cref
         \end{aligned}
     \end{equation*}
     Henceforth the ordinal set $\mi{m^{\prime\prime}}$, whether or not decorated with a further \emph{even} number of primes, should be taken as equal to $\mi{m}$. 
-    Likewise the ordinal set $\mi{m^{\prime\prime\prime}}$, whether or not decorated with a further even number of primes, should be taken as equal to $\mi{m^{\prime}}$. Superscript $^{*}$ will stand for four consecutive primes $^{\prime\prime\prime\prime}$. Such fussy ornamentation is necessary to maintain the integrity of einstein summation. This encumbrance applies to ordinal sets, not singleton values, so the many different prime decorations of $l$ \emph{always} indicate potentially different values.
+    Likewise the ordinal set $\mi{m^{\prime\prime\prime}}$, whether or not decorated with a further \emph{even} number of primes, should be taken as equal to $\mi{m^{\prime}}$. Superscript $^{*}$ will stand for four consecutive primes $^{\prime\prime\prime\prime}$. So $\mi{m}, \mi{m^{\prime}}$ are identified by the parity (even or odd) of the primes adorning $\mi{m}$. Such fussy ornamentation is necessary to maintain the integrity of einstein summation. This encumbrance applies to ordinal sets, not singleton values, so the many different prime decorations of $l$ \emph{always} indicate potentially different values.
 
     \subsection{First Moments} \label{sub:GPMom:First}
         The first moment of the GP for any $\mi{m}\subseteq\mi{M}$ is given by
@@ -484,7 +484,7 @@ The quantities to be calculated and their formal context are introduced in \cref
                 \te[l\x l^{\prime}]{\phi_{\mi{mm^{\prime}}}}
                 \deq \frac{\evt{\;\evt{\te[l\x l^{\prime}]{k\!\left(\te[\mi{M}]{\rv{x}},\te[\mi{M^{\prime}}]{\rv{x}}\right) \big\vert \te[\mi{m}]{z},\te[\mi{m^{\prime}}]{z}}}{\mi{M^{\prime}-m^{\prime}}}}{\mi{M-m}}}{\te[l\x l^{\prime}]{F}} \\
                 = \frac
-                {\modulus{\diag[l\x l^{\prime}\x\mi{M}^{2}]{\Lambda^{2}}}^{1/2} \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\te[l\x l^{\prime}\x\mi{m}^2]{\Upsilon}}\prob{\te[\mi{m^{\prime}}]{\rv{z}}}{\te[l\x l^{\prime}\x \mi{m^{\prime}}]{Z}}{\te[l\x l^{\prime}\x\mi{m^{\prime}}^{2}]{\Pi}}}
+                {\modulus{\diag[l\x l^{\prime}\x\mi{M}^{2}]{\Lambda^{2}}}^{1/2} \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\te[l\x l^{\prime}\x\mi{m}^2]{1-\Upsilon}}\prob{\te[\mi{m^{\prime}}]{\rv{z}}}{\te[l\x l^{\prime}\x \mi{m^{\prime}}]{Z}}{\te[l\x l^{\prime}\x\mi{m^{\prime}}^{2}]{\Pi}}}
                 {\modulus{\diag[l\x l^{\prime}\x\mi{M}^2]{\Lambda^{2}+2}}^{1/2}
                 \prob{\te[\mi{m}]{\rv{z}}}{\te[\mi{m}]{0}}{\diag[\mi{m}^{2}]{1}}\prob{\te[\mi{m^{\prime}}]{\rv{z}}}{\te[\mi{m^{\prime}}]{0}}{\diag[\mi{m^{\prime}}^{2}]{1}}}
             \end{multline*}
@@ -496,11 +496,12 @@ The quantities to be calculated and their formal context are introduced in \cref
                 \left(\te[\mi{L^{\prime}\x L^{\prime\prime}\x N^{\prime\prime}}]{g_{\mi{m^{\prime}}}}^{\dagger}
                     \te[\mi{L^{\prime\prime\prime}N^{\prime\prime\prime}}\x\mi{L^{\prime\prime}N^{\prime\prime}}]{K_{Y}}^{-1/2}\right)
             \end{multline*}
-            using the Cholesky decomposition $\tte[\mi{LN}\x\mi{LN}]{K_{Y}}^{1/2}$ and
+            using the lower triangular Cholesky decomposition $\tte[\mi{LN}\x\mi{LN}]{K_{Y}}^{1/2}$ and
             \begin{equation*}
                 \begin{aligned}
-                    \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Upsilon} &\deq \te[\mi{m}\x\mi{M}]{\Theta}
-                    \diag[\mi{M}\x\mi{M^{\prime}}]{\diag[l\x l^{\prime}]{\Lambda^{2}+1}\diag[l\x l^{\prime}]{\Lambda^{2}+2}^{-1}} \te[\mi{m^{\prime\prime}}\x\mi{M^{\prime}}]{\Theta}^{\intercal} \\
+                    \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Upsilon} &\deq 
+                    \te[l\x l^{\prime}\x\mi{m}\x\mi{M}]{\Phi}
+                    \diag[l\x l^{\prime}\x\mi{M}\x\mi{M^{\prime}}]{\Lambda^{2}+2}^{-1} \te[l\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{M^{\prime}}]{\Phi}^{\intercal} \\
                     \te[l\x l^{\prime}\x \mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{\Pi}^{-1} &\deq 
                     \diag[\mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{1} + \te[l\x l^{\prime}\x \mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{\Phi} + \\
                     &\phantom{\deq}\ \te[l\x l^{\prime}\x\mi{M^{\prime}\x\mi{m}}]{\Phi}
@@ -557,7 +558,7 @@ The quantities to be calculated and their formal context are introduced in \cref
             \evt{\;\evt{\te[\mi{L}^{2} \x \mi{L^{\prime}}^{2}]{\mu_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}}
         \end{equation*}
         in \cref{eq:GPMom:Second} the terms containing the ungovernable noise variance $\te[\mi{L}^2]{E}$ reduce to the same function of $g_{\mi{0}}$ by reduction formula \cref{eq:SPEstimates:reduction}, so these will obviously cancel across the four $A_{\mi{m m^{\prime}}}$ terms in \cref{eq:SPEst:W}. 
-        We may therefore assume $E=0$ in \cref{eq:GPMom:Second}. This leaves just two terms, which we report using superscript $^{*}$ to stand for four consecutive primes $^{\prime\prime\prime\prime}$. Firstly
+        We may therefore assume $E=0$ in \cref{eq:GPMom:Second}. This leaves just two terms, which we report again using superscript $^{*}$ to stand for four consecutive primes $^{\prime\prime\prime\prime}$. Firstly
         \begin{multline*}
             \evt{\;\evt{\te[]{\te[l]{\mu_{\mi{m}}} \otimes \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{\phi_{\mi{mm^{\prime}}}} \otimes \te[l^{\prime}]{\mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}}{\mi{m}} = \\
             \frac
@@ -566,9 +567,9 @@ The quantities to be calculated and their formal context are introduced in \cref
             \te[l\x\mi{L^{*}N^{*}}]{g_{\mi{0}}KY} \otimes
             \te[l^{\prime}\x\mi{L^{*\prime}N^{*\prime}}]{g_{\mi{0}}KY} \\
             \left\lbrack
-            \prob{\te[\mi{m}]{0}}{\te[l^{\prime\prime}\x l^{\prime\prime\prime}]{1-\Upsilon}^{1/2} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}} 
+            \prob{\te[\mi{m}]{0}}{\te[l^{\prime\prime}\x l^{\prime\prime\prime}]{\Upsilon}^{1/2} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}} 
             {\diag[]{1} -
-            \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{1-\Upsilon}^{1/2} \te[l\x \mi{L^{*}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime\prime\prime}]{1-\Upsilon}^{\intercal/2}} \phantom{\frac{_{\vert}^{\vert}}{_{\vert}^{\vert}}} \right.\\
+            \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{\Upsilon}^{1/2} \te[l\x \mi{L^{*}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime\prime\prime}]{\Upsilon}^{\intercal/2}} \phantom{\frac{_{\vert}^{\vert}}{_{\vert}^{\vert}}} \right.\\
             \left. \circ 
                 \frac{
                     \prob{\te[\mi{m^{\prime}}\x l^{\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}
@@ -576,10 +577,10 @@ The quantities to be calculated and their formal context are introduced in \cref
                     {\prob{\te[\mi{m^{\prime}}]{0}}{\te[\mi{m^{\prime}}\x l^{\prime}\x \mi{L^{*\prime}\x N^{*\prime}}]{G}}{\te[l^{\prime}\x \mi{L^{*\prime}}]{\Phi}}}
             \right\rbrack^{\dagger}
         \end{multline*}
-        using the Cholesky decomposition
+        using the lower triangular Cholesky decomposition
         \begin{equation*}
-            \diag[\mi{m}^{2}]{1} - \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}^{2}]{\Upsilon}
-            = \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{1-\Upsilon}^{1/2} \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{1-\Upsilon}^{\intercal/2}
+            \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}^{2}]{\Upsilon}
+            = \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{\Upsilon}^{1/2} \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{\Upsilon}^{\intercal/2}
         \end{equation*}
         and
         \begin{equation*}
@@ -589,17 +590,17 @@ The quantities to be calculated and their formal context are introduced in \cref
                 \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m^{\prime\prime\prime}}\x\mi{M}]{\Pi}
                 \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{M}\x\mi{m^{\prime\prime}}]{\Phi}
                 \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m^{\prime\prime}}\x\mi{m}]{\Gamma}^{-1} \\
-                \te[\mi{m^{\prime}}^{2}]{B} &\deq 
+                \te[\mi{m^{\prime}\x m^{\prime\prime\prime}}]{B} &\deq 
                 \te[l^{\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime}}]{\Gamma}
                 \te[l^{\prime}\x l^{*\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} + \\
                 &\phantom{\deq\ }\te[l^{\prime}\x l^{*\prime}\x\mi{m^{\prime}}\x\mi{m^{*\prime\prime\prime}}]{\Phi}
                 \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m^{*\prime\prime\prime}}\x\mi{m^{*\prime}}]{\Pi}
                 \te[l^{\prime}\x l^{*\prime}\x\mi{m^{*\prime}}\x\mi{m^{\prime\prime\prime}}]{\Phi} \\
-                \te[\mi{m}^{2}]{C} &\deq 
-                \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{*}}]{\Upsilon} \\
+                \te[\mi{m\x m^{\prime\prime}}]{C} &\deq 
+                \te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m}\x\mi{m^{*}}]{1-\Upsilon} \\
                 &\phantom{\deq\ }
-                \te[\mi{m^{*}}\x\mi{m^{*\prime\prime}}]{\te[]{\te[l\x l^{*}\x\mi{m^{**}}^{2}]{\Gamma}
-                + \te[l\x l^{*}\x\mi{m^{**}}\x\mi{m^{**\prime\prime}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m^{**\prime\prime}}\x\mi{m^{***}}]{\Upsilon}}^{-1}} \\
+                \te[\mi{m^{*}}\x\mi{m^{*\prime\prime}}]{\diag[]{1}
+                - \te[l\x l^{*}\x\mi{m^{**}}\x\mi{m^{**\prime\prime}}]{\Phi}\te[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{m^{**\prime\prime}}\x\mi{m^{***}}]{\Upsilon}}^{-1} \\
                 &\phantom{\deq\ }\te[l\x l^{*}\x\mi{m^{*\prime\prime}}\x\mi{m^{\prime\prime}}]{\Gamma}
             \end{aligned}
         \end{equation*}
@@ -631,7 +632,7 @@ The quantities to be calculated and their formal context are introduced in \cref
                 \te[l\x l^{*}\x\mi{m^{*}}\x\mi{m^{\prime\prime}}]{\Phi}
             \end{aligned}
         \end{equation*}
-        and $\te[l^{\prime}\x l^{\prime\prime\prime}\x \mi{L^{**}N^{**}}]{E_{\mi{m^{\prime}}}}$ substitutes $\mi{m}\mapsto\mi{m^{\prime}},\ l\mapsto l^{\prime},\ l^{\prime\prime}\mapsto l^{\prime\prime\prime}$ in these definitions. In other words, add a prime to every symbol which is not superscripted $^{**}$.
+        and $\te[l^{\prime}\x l^{\prime\prime\prime}\x \mi{L^{**}N^{**}}]{E_{\mi{m^{\prime}}}}$ substitutes $\mi{m}\mapsto\mi{m^{\prime}},\ l\mapsto l^{\prime},\ l^{\prime\prime}\mapsto l^{\prime\prime\prime}$ in these definitions. In other words, add a prime superscript to every symbol which is not superscripted $^{**}$.
 
         This completes the calculation of all quantities of interest.
 
@@ -643,17 +644,27 @@ The quantities to be calculated and their formal context are introduced in \cref
             l^{\prime\prime} = l \T{ ; } l^{\prime\prime\prime} = l^{\prime} \QT{throughout \cref{sub:GPEst:Expectation}.}  \\ 
             l^{\prime\prime\prime} = l^{\prime\prime} \T{ and } l^{*\prime\prime} = l^{\prime\prime} \T{ ; } l^{*} = l \T{ ; } l^{*\prime\prime\prime} = l^{\prime\prime\prime} \T{ ; } l^{*\prime} = l^{\prime} \QT{throughout \cref{sub:GPEst:Variance}.}
         \end{gather*}
-        This reduces the largest tensor $\tte[]{H_{\mi{m}}}$ needed to calculate a Sobol' index $S_{\mi{m}}$ from $L^{4}N^{2}$ dimensions to $L^{2}N^{2}$. The same reduction factor $L^{2}$ applies to the two largest terms needed to calculate the variance of a Sobol' index. Note that the noise variance $\te[\mi{L}^{2}]{E}$ need not be diagonal to achieve these reductions.
+        This reduces the largest tensor $\tte[]{H_{\mi{m}}}$ needed to calculate a Sobol' index $S_{\mi{m}}$ from $L^{4}N^{2}$ dimensions to $L^{2}N^{2}$. The same reduction factor $L^{2}$ applies to the two largest terms needed to calculate the variance $T_{\mi{m}}$. Note that the noise variance $\te[\mi{L}^{2}]{E}$ need not be diagonal to achieve these reductions.
 
         Secondly, to assess uncertainty we are only really interested in the variances of Sobol' indices, not the cross covariances between them. This means
         \begin{equation*}
             l^{\prime} = l \T{ ; } l^{\prime\prime\prime} = l^{\prime\prime} \QT{or} 
             l^{\prime} = l^{\prime\prime} \T{ ; } l^{\prime\prime\prime} = l \QT{throughout \cref{sub:GPEst:Variance}.}   
         \end{equation*}
-        This reduces the largest tensor in the uncertainty calculation from $L^{4}N^{3}$ dimensions to $L^{2}N^{3}$, or from $L^{2}N^{3}$ to $LN^{3}$.
+        This reduces the largest tensor in the calculation of $T_{\mi{m}}$ from $L^{4}N^{3}$ dimensions to $L^{2}N^{3}$, or from $L^{2}N^{3}$ to $LN^{3}$ if the first simplification has already been applied.
 
 
 \section{Conclusion}\label{sec:Conc}
+    In this paper, we transformed uniformly distributed inputs $u$ to normally distributed inputs $z$, and arbitrarily roated them, prior to fitting a Multi-Output Gaussian Process (MOGP). This is restricted to an anisotropic radial basis function (RBF/ARD) kernel, broadly applicable to smoothly varying outputs. Using this surrogate, analytic expressions for closed Sobol' indices $S_{\mi{m}}$ are given by \cref{def:COD:mean,eq:SPEst:V} and \cref{sub:GPEst:Expectation}. Analytic expressions for the variance of these estimates over ungovernable noise is given by \cref{def:COD:variance,eq:SPEst:A,eq:SPEst:W} and \cref{sub:GPEst:Variance}. Cheap simplifications of the results are described in \cref{sub:GPEst:Simp}.
+
+    The use of a surrogate should greatly ease data requirements, preliminary tests indicating that 100 datapoints is sufficient for Sobol' indices within $10\%$ accuracy, as opposed to 10,000+ datapoints for direct calculation. However, we would caution against allowing more than 15 inputs in any case, as all GPs are extremely susceptible to every aspect of the curse of dimensionality
+    Perhaps the most significant feature of this work is the natural cancellation of the regression noise $E$ from the calculation of Sobol' indices, and their variances.
+
+    This allows for an arbitrary rotation $\Theta$ of inputs, as normal variables are additive, whereas summing uniform inputs does not produce uniform inputs. If the goal is reducing inputs, rotating their basis first boosts the possibilities immensely \cite{Constantine2015}. It presents the possibilty of choosing $\Theta$ to maximise the closed Sobol' index of the first few inputs.
+
+    The quantities to be calculated and their formal context are introduced in \cref{sec:COD}. Our approach effectively regards a regression model furnishing an uncertainty measure with each prediction as just another name for a stochastic process. A great deal of progress is made in \cref{sec:SPEst} using general stochastic (not necessarily Gaussian) processes. This approach is analytically cleaner, as it is not obfuscated by the GP details. Furthermore, it turns out that the desirable properties of the Gaussian (lack of skew, simple kurtosis) are not actually helpful, as these terms cancel of their own accord. This development leaves just two terms to be calculated, which require the stochastic process to be specified. MOGPs with an RBF/ARD kernel are tersely developed and described in \cref{sec:GPR}, then used to calculate the two unknown terms in \cref{sec:GPMom,sec:GPEst}. Conclusions are drawn in \cref{sec:Conc}.
+
+    In order to further elucidate these estimates, we must fill in the details of the underlying stochastic processes, sufficiently identifying the regression $\rv{y}$ by its first two moments $\mu_{1}, \mu_{2}$. Then all the answers we desire are given by \cref{def:COD:mean,eq:SPEst:V}, and \cref{def:COD:variance,eq:SPEst:A,eq:SPEst:W}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
