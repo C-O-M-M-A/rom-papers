@@ -76,27 +76,27 @@
 \end{frontmatter}
 
 \section{Introduction}\label{sec:Intro}
-This paper is concerned with analysing the results of experiments or computer simulations in a design matrix of $M\geq 1$ input and $L\geq 1$ output columns, over $N$ rows (datapoints). Global Sensitivity Analysis \cite{Razavi2021} examines the relevance of the various inputs to the various outputs. When pursued via ANOVA decomposition, this leads naturally to the well known Sobol' indices, which have by now been applied across most fields of science and engineering \cite{Saltelli2019,Ghanem2017}. 
+    This paper is concerned with analysing the results of experiments or computer simulations in a design matrix of $M\geq 1$ input and $L\geq 1$ output columns, over $N$ rows (datapoints). Global Sensitivity Analysis \cite{Razavi2021} examines the relevance of the various inputs to the various outputs. When pursued via ANOVA decomposition, this leads naturally to the well known Sobol' indices, which have by now been applied across most fields of science and engineering \cite{Saltelli2019,Ghanem2017}. 
 
-The Sobol' decomposition apportions the variance of the outputs to sets of one or more inputs \cite{Sobol2001}. We shall use ordinal sets of inputs $\mi{m}\deq(0,\ldots ,m-1) \subseteq \mi{M}$, as tuples which are totally ordered sets. The maximal set $\mi{M}$ of all $M$ inputs explains everything explicable, so its Sobol' index is 1 by definition. The void set $\mi{0}$ explains nothing, so its Sobol' index is 0 by definition. 
-The influence of an isolated set of inputs $\mi{m}$ is measured by its closed Sobol' index $S_{\mi{m}} \in \lbrack 0,1\rbrack$. A first-order Sobol' index $S_{m^{\prime}}$ is simply the closed Sobol' index of a single input $m^{\prime}$.
-Because inputs in an isolated set may act in concert with each other, the influence of an isolated set often exceeds the sum of first-order contributions from its members, always obeying $S_{\mi{m}} \geq \sum_{m^{\prime} \in \mi{m}} S_{m^{\prime}}$.
+    The Sobol' decomposition apportions the variance of the outputs to sets of one or more inputs \cite{Sobol2001}. We shall use ordinal sets of inputs $\mi{m}\deq(0,\ldots ,m-1) \subseteq \mi{M}$, as tuples which are totally ordered sets. The maximal set $\mi{M}$ of all $M$ inputs explains everything explicable, so its Sobol' index is 1 by definition. The void set $\mi{0}$ explains nothing, so its Sobol' index is 0 by definition. 
+    The influence of an isolated set of inputs $\mi{m}$ is measured by its closed Sobol' index $S_{\mi{m}} \in \lbrack 0,1\rbrack$. A first-order Sobol' index $S_{m^{\prime}}$ is simply the closed Sobol' index of a single input $m^{\prime}$.
+    Because inputs in an isolated set may act in concert with each other, the influence of an isolated set often exceeds the sum of first-order contributions from its members, always obeying $S_{\mi{m}} \geq \sum_{m^{\prime} \in \mi{m}} S_{m^{\prime}}$.
 
-The total Sobol index $S^{T}_{\mi{M-m}} \geq 0$ of the set theoretic complement $\mi{M-m}$ is $1-S_{\mi{m}}$, which expresses the influence of non-isolated inputs $\mi{M-m}$ allowed to act in concert with each other \emph{and} isolated inputs $\mi{m}$. When speaking of irrelevant inputs $\mi{M-m}$, we mean that $S^{T}_{\mi{M-m}} \approx 0$. This is synonymous with the isolated set of inputs $\mi{m}$ explaining everything explicable $S_{\mi{m}}\approx 1$.
-It is apparent that we can readily obtain any Sobol' index of interest by ordering input dimensions appropriately and calculating the closed index $S_{\mi{m}}$ of some ordinal set $\mi{m}$.
+    The total Sobol index $S^{T}_{\mi{M-m}} \geq 0$ of the set theoretic complement $\mi{M-m}$ is $1-S_{\mi{m}}$, which expresses the influence of non-isolated inputs $\mi{M-m}$ allowed to act in concert with each other \emph{and} isolated inputs $\mi{m}$. When speaking of irrelevant inputs $\mi{M-m}$, we mean that $S^{T}_{\mi{M-m}} \approx 0$. This is synonymous with the isolated set of inputs $\mi{m}$ explaining everything explicable $S_{\mi{m}}\approx 1$.
+    It is apparent that we can readily obtain any Sobol' index of interest by ordering input dimensions appropriately and calculating the closed index $S_{\mi{m}}$ of some ordinal set $\mi{m}$.
 
-Apportioning variance is mathematically equivalent to squaring a correlation coefficient to produce a coefficient of determination $R^{2}$ \cite{Chicco2021}. A closed Sobol' index is thus a coefficient of determination between the predictions from a reduced model with $m\leq M$ inputs and predictions from the full model with $M$ inputs. Simplicity and economy (not least of calculation) motivate the adoption of a reduced model, a closed Sobol' index close to 1 permits it. Why on earth would one use the full model, when its predictions are almost identical to the reduced model?
+    Apportioning variance is mathematically equivalent to squaring a correlation coefficient to produce a coefficient of determination $R^{2}$ \cite{Chicco2021}. A closed Sobol' index is thus a coefficient of determination between the predictions from a reduced model with $m\leq M$ inputs and predictions from the full model with $M$ inputs. Simplicity and economy (not least of calculation) motivate the adoption of a reduced model, a closed Sobol' index close to 1 permits it. Why on earth would one use the full model, when its predictions are almost identical to the reduced model?
 
-With multiple outputs, the Sobol' decomposition apportions the covariance matrix of outputs \cite{Gamboa.etal2013}, rather than the variance of a single output. With $L$ outputs, the closed Sobol' index $S_{\mi{m}}$ is a symmetric $L\x L$ matrix. The diagonal elements express the relevance of inputs to the output variables themselves. The off-diagonal elements express relevance to the linkages between outputs. This may be of considerable interest when outputs are, for example, yield and purity of a product, or perhaps a single output measured at various times. The Sobol indices reveal (amongst other things) which inputs it is worthwhile varying in an effort to alter the linkages between outputs.
+    With multiple outputs, the Sobol' decomposition apportions the covariance matrix of outputs \cite{Gamboa.etal2013}, rather than the variance of a single output. With $L$ outputs, the closed Sobol' index $S_{\mi{m}}$ is a symmetric $L\x L$ matrix. The diagonal elements express the relevance of inputs to the output variables themselves. The off-diagonal elements express relevance to the linkages between outputs. This may be of considerable interest when outputs are, for example, yield and purity of a product, or perhaps a single output measured at various times. The Sobol indices reveal (amongst other things) which inputs it is worthwhile varying in an effort to alter the linkages between outputs.
 
-Accurate calculation of Sobol' indices even for a single output is computationally expensive and requires 10,000+ datapoints \cite{Lamoureux.etal2014}. A more efficient approach is calculation via a surrogate model, such as Polynomial Chaos Expansion \cite{Ghanem.Spanos1997,Xiu.Karniadakis2002,Xiu2010}, low-rank tensor approximation \cite{Chevreuil.etal2015,Konakli.Sudret2016}, and support vector regression \cite{Cortes.Vapnik1995}. As well as being efficient, surrogate models also smooth out noise in the outputs, which is often highly desirable in practice. This paper employs one of the most popular surrogates, the Gaussian Processes (GP) \cite{Sacks.etal1989, Rasmussen.Williams2005} as it is highly tractable. We shall follow the multi-output form (MOGP) described in \cite{Alvarez.etal2011}, in order to examine the linkages between outputs. 
+    Accurate calculation of Sobol' indices even for a single output is computationally expensive and requires 10,000+ datapoints \cite{Lamoureux.etal2014}. A more efficient approach is calculation via a surrogate model, such as Polynomial Chaos Expansion \cite{Ghanem.Spanos1997,Xiu.Karniadakis2002,Xiu2010}, low-rank tensor approximation \cite{Chevreuil.etal2015,Konakli.Sudret2016}, and support vector regression \cite{Cortes.Vapnik1995}. As well as being efficient, surrogate models also smooth out noise in the outputs, which is often highly desirable in practice. This paper employs one of the most popular surrogates, the Gaussian Processes (GP) \cite{Sacks.etal1989, Rasmussen.Williams2005} as it is highly tractable. We shall follow the multi-output form (MOGP) described in \cite{Alvarez.etal2011}, in order to examine the linkages between outputs. 
 
-Semi-analytic expressions for Sobol' indices have been provided in integral form by \cite{Oakley.OHagan2004} and alternatively by \cite{Chen.etal2005}. These approaches are implemented, examined and compared in \cite{Marrel.etal2009,Srivastava.etal2017}. Both \cite{Oakley.OHagan2004,Marrel.etal2009} estimate the errors on Sobol' indices in semi-analytic, integral form. Fully analytic, closed form expressions have been derived without error estimates for uniformly distributed inputs \cite{Wu.etal2016a} with an RBF kernel. There are currently no closed form expressions for MOGPs, or the errors on Sobol' indices, or any GPs for which inputs are not uniformly distributed. 
+    Semi-analytic expressions for Sobol' indices have been provided in integral form by \cite{Oakley.OHagan2004} and alternatively by \cite{Chen.etal2005}. These approaches are implemented, examined and compared in \cite{Marrel.etal2009,Srivastava.etal2017}. Both \cite{Oakley.OHagan2004,Marrel.etal2009} estimate the errors on Sobol' indices in semi-analytic, integral form. Fully analytic, closed form expressions have been derived without error estimates for uniformly distributed inputs \cite{Wu.etal2016a} with an RBF kernel. There are currently no closed form expressions for MOGPs, or the errors on Sobol' indices, or any GPs for which inputs are not uniformly distributed. 
 
-In this paper we provide explicit, closed-form analytic formulae for closed Sobol' indices and their errors, for a class of MOGP with an anisotropic radial basis function (RBF/ARD) kernel applicable to smoothly varying outputs. 
-We transform uniformly distributed inputs $u$ to normally distributed inputs $z$ prior to fitting a GP and performing analytic calculation of closd Sobol' indices. This leads to relatively concise expressions in terms of exponentials, and enables ready calculation of the errors (variances) of these expressions. It also allows for an arbitrary rotation $\Theta$ of inputs, as normal variables are additive, whereas summing uniform inputs does not produce uniform inputs. If the goal is reducing inputs, rotating their basis first boosts the possibilities immensely \cite{Constantine2015}. It presents the possibilty of choosing $\Theta$ to maximise the closed Sobol' index of the first few inputs.
+    In this paper we provide explicit, closed-form analytic formulae for closed Sobol' indices and their errors, for a class of MOGP with an anisotropic radial basis function (RBF/ARD) kernel applicable to smoothly varying outputs. 
+    We transform uniformly distributed inputs $u$ to normally distributed inputs $z$ prior to fitting a GP and performing analytic calculation of closd Sobol' indices. This leads to relatively concise expressions in terms of exponentials, and enables ready calculation of the errors (variances) of these expressions. It also allows for an arbitrary rotation $\Theta$ of inputs, as normal variables are additive, whereas summing uniform inputs does not produce uniform inputs. If the goal is reducing inputs, rotating their basis first boosts the possibilities immensely \cite{Constantine2015}. It presents the possibilty of choosing $\Theta$ to maximise the closed Sobol' index of the first few inputs.
 
-The quantities to be calculated and their formal context are introduced in \cref{sec:COD}. Our approach effectively regards a regression model furnishing an uncertainty measure with each prediction as just another name for a stochastic process. A great deal of progress is made in \cref{sec:SPEst} using general stochastic (not necessarily Gaussian) processes. This approach is analytically cleaner, as it is not obfuscated by the GP details. Furthermore, it turns out that the desirable properties of the Gaussian (lack of skew, simple kurtosis) are not actually helpful, as these terms cancel of their own accord. This development leaves just two terms to be calculated, which require the stochastic process to be specified. MOGPs with an RBF/ARD kernel are tersely developed and described in \cref{sec:GPR}, then used to calculate the two unknown terms in \cref{sec:GPMom,sec:GPEst}. Conclusions are drawn in \cref{sec:Conc}.
+    The quantities to be calculated and their formal context are introduced in \cref{sec:COD}. Our approach effectively regards a regression model furnishing an uncertainty measure with each prediction as just another name for a stochastic process. A great deal of progress is made in \cref{sec:SPEst} using general stochastic (not necessarily Gaussian) processes. This approach is analytically cleaner, as it is not obfuscated by the GP details. Furthermore, it turns out that the desirable properties of the Gaussian (lack of skew, simple kurtosis) are not actually helpful, as these terms cancel of their own accord. This development leaves just two terms to be calculated, which require the stochastic process to be specified. MOGPs with an RBF/ARD kernel are tersely developed and described in \cref{sec:GPR}, then used to calculate the two unknown terms in \cref{sec:GPMom,sec:GPEst}. Methods to reduce computational complexity are discussed in \cref{sec:Complexity}.Conclusions are drawn in \cref{sec:Conc}.
 
 
 \section{Coefficient of Determination}\label{sec:COD}
@@ -121,7 +121,7 @@ The quantities to be calculated and their formal context are introduced in \cref
     \begin{equation}\label{def:Theory:y_m}
         \te[\mi{L}]{\rv{y_m}} \deq \ev{y(\rv{u})}{\mi{M-m}} \deq \ev{y(\rv{u}) \big\vert \te[\mi{m}]{u}}{\mi{M-m}}
     \end{equation}
-    ranging from $\tte[\mi{L}]{\rv{y_0}}$ to $\tte[\mi{L}]{\rv{y_M}}$. Every SP depends stochastically on the ungovernable noise dimension $\tte[M]{\rv{u}} \perp \tte[\mi{M}]{\rv{u}}$ and deterministically on the first $m$ governed inputs $\te[\mi{m}]{u}$, marginalizing the remaining inputs $\tte[\mi{M-m}]{\rv{u}}$. 
+    ranging from $\tte[\mi{L}]{\rv{y_0}}$ to $\tte[\mi{L}]{\rv{y_M}}$. Every SP depends stochastically on the ungoverned noise dimension $\tte[M]{\rv{u}} \perp \tte[\mi{M}]{\rv{u}}$ and deterministically on the first $m$ governed inputs $\te[\mi{m}]{u}$, marginalizing the remaining inputs $\tte[\mi{M-m}]{\rv{u}}$. 
     Sans serif symbols such as $\rv{u,y}$ generally refer to RVs and SPs, italic $u,y$ being reserved for (tensor) functions and variables. Each SP is simply a regression model for $y$ on the first $m$ dimensions of $u$.
     
     Following the Kolmogorov extension theorem \cite{Rogers.Williams2000} pp.124 we may regard an SP as a random function, from which we shall freely extract finite dimensional distributions generated by a design matrix $\tte[\mi{M\x o}]{u}$ of $o \in \st{Z}^{+}$ input samples.
@@ -142,12 +142,12 @@ The quantities to be calculated and their formal context are introduced in \cref
     \begin{equation*}
         \te[\mi{L}^2]{\rv{S_m}} \deqr \te[\mi{L}^2]{1} - \te[\mi{L}^2]{\rv{S^{T}_{M-m}}}
     \end{equation*}
-    It has mean value over the ungovernable noise dimension of
+    It has mean value over the ungoverned noise dimension of
     \begin{align}\label{def:COD:mean}
         \te[\mi{L}^2]{S_{\mi{m}}} &\deq \evt{\te[]{\rv{S_m}}}{M} = \frac{V_{\mi{m}}}{V_{\mi{M}}} \\            
         \T{where }\te[\mi{L}^2]{V_{\mi{m}}} &\deq \evt{\; \cov{\rv{y_m}}{\mi{m}}}{M} \ \ \forall \mi{m}\subseteq \mi{M}
     \end{align}
-    and variance due to ungovernable noise of
+    and variance due to ungoverned noise of
     \begin{align}\label{def:COD:variance}
         \te[\mi{L}^4]{T_\mi{m}} &\deq 
         \cov{\rv{S_m}}{M} = \frac{V_{\mi{m}}^{2}}{V_{\mi{M}}^{2}} \circ
@@ -160,11 +160,18 @@ The quantities to be calculated and their formal context are introduced in \cref
     \end{align}
     In practice it is best to retain only the term in $W_{\mi{mm}}$, ignoring the uncertainty in $V_{\mi{M}}$ conveyed by $W_{\mi{Mm}},W_{\mi{MM}}$. This is because one is normally interested in adequate reduced models, for which $V_{\mi{m}} \approx V_{\mi{M}}$ implies $W_{\mi{mm}} - 2W_{\mi{Mm}} + W_{\mi{MM}} \approx 0$, yielding a drastically vanishing uncertainty in the Sobol' index.
 
-    The remainder of this paper is devoted to calculating these two quantities -- the coefficient of determination and its variance over ungovernable noise (i.e. measurement error, squared).
+    It should be noted that $\tte[l\x l^{\prime}]{S_{\mi{m}}},\tte[l\x l^{\prime}\x\mi{L}^{2}]{T_{\mi{m}}}$ are formally undefined whenever outputs are independent $\tte[l\x l^{\prime}]{V_{\mi{M}}} = 0$. This is naturally absurd, for we are comparing a reduced model of $0$ with a full model of $0$, according to Jensen's inequality \cite{Williams1991} pp.61
+    \begin{equation*}
+        0 \leq \te[l\x l^{\prime}]{V_{\mi{m}}} = \covt{\;\evt{\; \evt{\te[l\x l^{\prime}]{\rv{y_m}}}{M}}{\mi{M-m}}}{\mi{m}}
+        \leq \covt{\;\evt{\te[l\x l^{\prime}]{\rv{y_m}}}{M}}{\mi{M}} =  \te[l\x l^{\prime}]{V_{\mi{M}}} = 0
+    \end{equation*}
+    In practice, we recommend replacing every $0$ element in $\tte[\mi{L}^{2}]{V_{\mi{M}}}$ with 1. This sets all formally undefined elements of $\tte[l\x l^{\prime}]{S_{\mi{m}}},\tte[l\x l^{\prime}\x\mi{L}^{2}]{T_{\mi{m}}}$ to $0$, correctly indicating irrelevance. Unfortunately, the associated total Sobol' indices may be misleading, but this cannot be helped.
+
+    The remainder of this paper is devoted to calculating these two quantities -- the coefficient of determination and its variance over ungoverned noise (i.e. measurement error, squared).
 
 
 \section{Stochastic Process Estimates}\label{sec:SPEst}
-    The central problem in calculating errors on Sobol' indices is that they involve ineluctable covariances between differently marginalized SPs, via their moments over ungovernable noise. But marginalization and moment determination are both a matter of taking expectations. So the ineluctable can be avoided by reversing the order of expectations -- taking moments over ungovernable noise, then marginalizing.
+    The central problem in calculating errors on Sobol' indices is that they involve ineluctable covariances between differently marginalized SPs, via their moments over ungoverned noise. But marginalization and moment determination are both a matter of taking expectations. So the ineluctable can be avoided by reversing the order of expectations -- taking moments over ungoverned noise, then marginalizing.
     To this end, adopt as design matrix a triad of inputs to condition $\te[\mi{M+1\x 3}]{\rv{u}}$, eliciting the response
     \begin{equation}\label{def:SPEst:y}
         \te[\mi{L\x 3}]{\rv{y}} \deq 
@@ -172,7 +179,7 @@ The quantities to be calculated and their formal context are introduced in \cref
             \big\vert \te[]{\te[\mi{0}]{u}, \te[\mi{m^{\prime}}]{u}, \te[\mi{M^{\prime\prime}}]{u}}}{\mi{0^{\prime\prime}}}}
         {\mi{M^{\prime}-m^{\prime}}}}{\mi{M}}
     \end{equation}
-    Primes mark independent inputs, otherwise expectations are shared by all three members of the triad. It is not always obvious whether inputs are independent or shared by the triad, but this can be mechanically checked against the measure of integration behind an expectation. Repeated expectations over the same axis are rare here, usually indicating that apparent repetitions must be ``primed''. The purpose of the triad is to interrogate its response for moments in respect of ungovernable noise (which is shared by the triad members)
+    Primes mark independent inputs, otherwise expectations are shared by all three members of the triad. It is not always obvious whether inputs are independent or shared by the triad, but this can be mechanically checked against the measure of integration behind an expectation. Repeated expectations over the same axis are rare here, usually indicating that apparent repetitions must be ``primed''. The purpose of the triad is to interrogate its response for moments in respect of ungoverned noise (which is shared by the triad members)
     \begin{equation}\label{def:SPEst:mu}
             \te[(\mi{L\x 3})^{n}]{\mu_{n}} \deq \ev{\tte[\mi{L\x 3}]{\rv{y}}^{n}}{M} \ \ \forall n \in \st{Z}^{+}
     \end{equation}
@@ -268,7 +275,7 @@ The quantities to be calculated and their formal context are introduced in \cref
             &\deq \te[(l-1)\x\mi{o} \x (l^{\prime}-1)\x\mi{o}]{} \\
         \end{aligned}
     \end{equation*}
-    supporting the fundamental definition of the GP kernel, as a covariance (over ungovernable noise) between responses
+    supporting the fundamental definition of the GP kernel, as a covariance (over ungoverned noise) between responses
     \begin{equation*}
         \te[l\x o\x l^{\prime}\x o^{\prime}]{k_{\rv{y}}(x,x)} 
         \deq \cov[{\te[l^{\prime}\x o^{\prime}]{\rv{y_M}\vert x}}]{\te[l\x o]{\rv{y_M}\vert x}}{M}
@@ -300,7 +307,7 @@ The quantities to be calculated and their formal context are introduced in \cref
         This formula and the Gaussian tensors behind it will appear in a variety of guises.
 
     \subsection{Prior GP} \label{sub:GPR:Prior}
-        GP regression decomposes output $\te[\mi{L}]{\rv{y_M}}$ into signal GP $\te[\mi{L}]{\rv{f_M}}$, and independent noise GP $\te[\mi{L}]{\rv{e}_M}$ with homoskedastic noise covariance $\te[\mi{L}^2]{E}$
+        GP regression decomposes output $\te[\mi{L}]{\rv{y_M}}$ into signal GP $\te[\mi{L}]{\rv{f_M}}$, and independent noise GP $\te[\mi{L}]{\rv{e}_M}$ with homoskedastic noise (also known as likelihood) covariance $\te[\mi{L}^2]{E}$
         \begin{equation*}
             \begin{aligned}
                 \te[\mi{L}]{\rv{y_M}\vert E} 
@@ -333,7 +340,7 @@ The quantities to be calculated and their formal context are introduced in \cref
         \end{equation*}
         
     \subsection{Predictive GP} \label{sub:GPR:Predictive}
-        Bayesian inference for GP regression further conditions the hyper-parametrized GP $\rv{y} \vert E,F,\Lambda$ on the observed realization (over ungovernable noise) of the random variable $\te{\rv{y}\vert X}$
+        Bayesian inference for GP regression further conditions the hyper-parametrized GP $\rv{y} \vert E,F,\Lambda$ on the observed realization (over ungoverned noise) of the random variable $\te{\rv{y}\vert X}$
         \begin{equation*}
             \te[\mi{L} \x \mi{N}]{Y}^{\dagger} \deq \te{\te[\mi{L}]{\rv{y_M}\vert E,F,\Lambda} \big\vert \te[\mi{M}\x\mi{N}]{X}}^{\dagger}\!(\omega) \in \st{R}^{LN}
         \end{equation*}
@@ -413,7 +420,7 @@ The quantities to be calculated and their formal context are introduced in \cref
         \gauss{k(x,X) K_{Y}^{-1} Y^{\dagger}}{\ k(x,x) - \tte[\mi{Lo}]{K_{Y}^{-1/2} k(X,x)}^{2} + E^{\dagger}}
     \end{multline}
     using broadcast $\tte[\mi{L3\x L3}]{E^{\dagger}} \deq \tte[(\mi{L\x 3})^{2}]{\tte[(\mi{L}\x 1)^{2}]{E} \circ \tte[(1\x\mi{3})^{2}]{1}}^{\dagger}$. 
-    To bring the GP estimate fully under the umbrella of the SP estimate we should identify its ungovernable noise, and ascribe it to $\tte[M]{\rv{u}}$ of the SP.
+    To bring the GP estimate fully under the umbrella of the SP estimate we should identify its ungoverned noise, and ascribe it to $\tte[M]{\rv{u}}$ of the SP.
     Let $d\colon (0,1) \to (0,1)^{L}$ concatenate every $L^{\mathrm{th}}$ decimal place starting at $l$, for each output dimension $l\leq L$ of $(0,1)^{L}$, then \cref{eq:GPMom:yDist} can be written as
     \begin{multline}\label{eq:GPMom:yReveal}
         \te[\mi{L\x 3}]{y(\te[\mi{M+1\x 3}]{\rv{u}}) \big\vert \te[\mi{M\x 3}]{u}}^{\dagger} \\
@@ -557,7 +564,7 @@ The quantities to be calculated and their formal context are introduced in \cref
         \begin{equation*}
             \evt{\;\evt{\te[\mi{L}^{2} \x \mi{L^{\prime}}^{2}]{\mu_{\mi{m}} \otimes \mu_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}{\mi{m^{\prime}}}}{\mi{m}}
         \end{equation*}
-        in \cref{eq:GPMom:Second} the terms containing the ungovernable noise variance $\te[\mi{L}^2]{E}$ reduce to the same function of $g_{\mi{0}}$ by reduction formula \cref{eq:SPEstimates:reduction}, so these will obviously cancel across the four $A_{\mi{m m^{\prime}}}$ terms in \cref{eq:SPEst:W}. 
+        in \cref{eq:GPMom:Second} the terms containing the ungoverned noise variance $\te[\mi{L}^2]{E}$ reduce to the same function of $g_{\mi{0}}$ by reduction formula \cref{eq:SPEstimates:reduction}, so these will obviously cancel across the four $A_{\mi{m m^{\prime}}}$ terms in \cref{eq:SPEst:W}. 
         We may therefore assume $E=0$ in \cref{eq:GPMom:Second}. This leaves just two terms, which we report again using superscript $^{*}$ to stand for four consecutive primes $^{\prime\prime\prime\prime}$. Firstly
         \begin{multline*}
             \evt{\;\evt{\te[]{\te[l]{\mu_{\mi{m}}} \otimes \te[l^{\prime\prime}\x l^{\prime\prime\prime}]{\phi_{\mi{mm^{\prime}}}} \otimes \te[l^{\prime}]{\mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}}{\mi{m}} = \\
@@ -636,35 +643,74 @@ The quantities to be calculated and their formal context are introduced in \cref
 
         This completes the calculation of all quantities of interest.
 
-        \subsection{Simplifications}\label{sub:GPEst:Simp}
-        The tensors calculated in this Section have many dimensions, up to $L^{4}N^{3}$ each. For a medium-sized problem of 10 outputs and 1000 datapoints, this is $10^{13}$ dimensions, for larger problems this could easily breach $10^{20}$ dimensions. This will challenge the memory limitations of a CPU or GPU. However, there are two simplifications which substantially ease this burden.
+\section{Complexity and Simplifications}\label{sec:Complexity}
+    In this Section we highlight the computational cost of these calculations, assuming GP regression has already performed the Cholesky decomposition $\tte[\mi{(LN)}^{2}]{K_{Y}}^{1/2}$. GP regression typically requires this to be computed several times in optimizing the GP hyperparameters $E, F, \Lambda$. This optimization will always dominate compute time, in repeatedly calculating $\exp(\ldots)$ of $O(L^{2}N^{2}M)$ and the Cholesky decomposition of $O(L^{3}N^{3})$ \cite{Dai2022}. 
+    
+    We shall therefore concentrate on the memory demands of calculating $\tte[\mi{L^{2}}]{S_{\mi{m}}},\tte[\mi{L^{4}}]{T_{\mi{m}}}$, which are substantial. In all cases, we consider the largest two tensors occurring in an {\tt einsum} to be the effective memory requirement. All this assumes that the number of inputs is moderate $M<N$.
 
-        Firstly, if the signal covariance $\te[\mi{L}^{2}]{F}$ is diagonal (in which case the lengthscales tensor $\te[\mi{L}^{2}\x\mi{m}]{F}$ may as well be diagonal in $\mi{L}^{2}$) then
-        \begin{gather*}
-            l^{\prime\prime} = l \T{ ; } l^{\prime\prime\prime} = l^{\prime} \QT{throughout \cref{sub:GPEst:Expectation}.}  \\ 
-            l^{\prime\prime\prime} = l^{\prime\prime} \T{ and } l^{*\prime\prime} = l^{\prime\prime} \T{ ; } l^{*} = l \T{ ; } l^{*\prime\prime\prime} = l^{\prime\prime\prime} \T{ ; } l^{*\prime} = l^{\prime} \QT{throughout \cref{sub:GPEst:Variance}.}
-        \end{gather*}
-        This reduces the largest tensor $\tte[]{H_{\mi{m}}}$ needed to calculate a Sobol' index $S_{\mi{m}}$ from $L^{4}N^{2}$ dimensions to $L^{2}N^{2}$. The same reduction factor $L^{2}$ applies to the two largest terms needed to calculate the variance $T_{\mi{m}}$. Note that the noise variance $\te[\mi{L}^{2}]{E}$ need not be diagonal to achieve these reductions.
+    From \cref{sub:GPEst:Expectation} the memory required to compute a closed index $S_{\mi{m}}$ is
+    \begin{equation*}
+        \T{cost of }\evt{\te[]{\mu_{\mi{m}}}^{2}}{\mi{m}} = O(L^{6}N^{3})
+    \end{equation*}
+    From \cref{sub:GPEst:Variance} the memory required to compute an uncertainty $T_{\mi{m}}$ is
+    \begin{equation*}
+        \T{cost of }\evt{\;\evt{\te[]{\mu_{\mi{m}} \otimes \phi_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}{\mi{m}} = O(L^{8}N^{3})
+    \end{equation*}
+    For a medium-sized problem of 10 outputs and 1000 datapoints, this is $L^{6}N^{3}=10^{15}$, for larger problems this could swell to $10^{30}$. This will challenge the memory limitations of a CPU or GPU. However, there are two simplifications which substantially ease this burden.
 
-        Secondly, to assess uncertainty we are only really interested in the variances of Sobol' indices, not the cross covariances between them. This means
-        \begin{equation*}
-            l^{\prime} = l \T{ ; } l^{\prime\prime\prime} = l^{\prime\prime} \QT{or} 
-            l^{\prime} = l^{\prime\prime} \T{ ; } l^{\prime\prime\prime} = l \QT{throughout \cref{sub:GPEst:Variance}.}   
-        \end{equation*}
-        This reduces the largest tensor in the calculation of $T_{\mi{m}}$ from $L^{4}N^{3}$ dimensions to $L^{2}N^{3}$, or from $L^{2}N^{3}$ to $LN^{3}$ if the first simplification has already been applied.
+    \subsection{Independent Kernels}\label{sub:Complexity:Indep}
+    The first simplification is to restrict the GP to independent kernels, by constraining the signal covariance to be diagonal 
+    \begin{equation*}
+        \te[l\x l^{\prime\prime}]{F} = 0 \T{ unless } l^{\prime\prime} = l
+    \end{equation*}
+    In which case the off-diagonal elements $\tte[l\x l^{\prime\prime}\x\mi{M}]{\Lambda}$ of the lengthscales tensor are comletely irrelevant and need not be specified. Note, however, that the off-diagonal elements of ungovened noise (likelihood) covariance $\te[l\x l^{\prime\prime}]{E}$ are unconstrained, provided $\tte[\mi{L}^{2}]{E}$ is a covariance, and therefore symmetric positive definite.
 
+    Restricting $\tte[\mi{L}^{2}]{F}$ to be diagonal implies that
+    \begin{gather*}
+        l^{\prime\prime} = l \T{ ; } l^{\prime\prime\prime} = l^{\prime} \QT{throughout \cref{sub:GPEst:Expectation}.}  \\ 
+        l^{\prime\prime\prime} = l^{\prime\prime} \T{ and } l^{*\prime\prime} = l^{\prime\prime} \T{ ; } l^{*} = l \T{ ; } l^{*\prime\prime\prime} = l^{\prime\prime\prime} \T{ ; } l^{*\prime} = l^{\prime} \QT{throughout \cref{sub:GPEst:Variance}.}
+    \end{gather*}
+    This reduces the memory required to compute a closed index $S_{\mi{m}}$ by $O(L^3)$ to
+    \begin{equation*}
+        \T{cost of }\evt{\te[]{\mu_{\mi{m}}}^{2}}{\mi{m}} = O(L^{3}N^{3})
+    \end{equation*}
+    and the memory required to compute an uncertainty $T_{\mi{m}}$ by $O(L^4)$ to
+    \begin{equation*}
+        \T{cost of }\evt{\;\evt{\te[]{\mu_{\mi{m}} \otimes \phi_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}{\mi{m}} = O(L^{4}N^{3})
+    \end{equation*}
+
+    \subsection{Diagonal Uncertainty}\label{sub:Complexity:Diag}
+    The second simplification asserts that assessing uncertainty concerns the variances of Sobol' indices, not the cross covariances between them. As alluded to following \cref{eq:SPEst:A}, this means
+    \begin{equation*}
+        l^{\prime} = l \T{ ; } l^{\prime\prime\prime} = l^{\prime\prime} \QT{or} 
+        l^{\prime} = l^{\prime\prime} \T{ ; } l^{\prime\prime\prime} = l \QT{throughout \cref{sub:GPEst:Variance}.}   
+    \end{equation*}
+    The memory required to compute an uncertainty $T_{\mi{m}}$ is reduced by $O(L^2)$ to
+    \begin{equation*}
+        \T{cost of }\evt{\;\evt{\te[]{\mu_{\mi{m}} \otimes \phi_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}{\mi{m}} = O(L^{6}N^{3})
+    \end{equation*}
+    unless the independent kernels constraint of \cref{sub:Complexity:Indep} already applies, whence the reduction is by $O(L)$ to
+    \begin{equation*}
+        \T{cost of }\evt{\;\evt{\te[]{\mu_{\mi{m}} \otimes \phi_{\mi{mm^{\prime}}} \otimes \mu_{\mi{m^{\prime}}}}}}{\mi{m^{\prime}}}{\mi{m}} = O(L^{3}N^{3})
+    \end{equation*}
+    Obviously this simplification does not affect the memory required to compute a closed index $S_{\mi{m}}$.
 
 \section{Conclusion}\label{sec:Conc}
-    In this paper, we transformed uniformly distributed inputs $u$ to normally distributed inputs $z$, and arbitrarily roated them, prior to fitting a Multi-Output Gaussian Process (MOGP). This is restricted to an anisotropic radial basis function (RBF/ARD) kernel, broadly applicable to smoothly varying outputs. Using this surrogate, analytic expressions for closed Sobol' indices $S_{\mi{m}}$ are given by \cref{def:COD:mean,eq:SPEst:V} and \cref{sub:GPEst:Expectation}. Analytic expressions for the variance of these estimates over ungovernable noise is given by \cref{def:COD:variance,eq:SPEst:A,eq:SPEst:W} and \cref{sub:GPEst:Variance}. Cheap simplifications of the results are described in \cref{sub:GPEst:Simp}.
+    In this paper, we transformed uniformly distributed inputs $\rv{u}$ to normally distributed inputs $\rv{z}$, enabling an arbitrary rotation by $\Theta$ to inputs $\rv{x}$ which are still normal. We then preformed Multi-Output Gaussian Process (MOGP) regression with an anisotropic radial basis function (RBF/ARD) kernel on $\rv{x}$, broadly applicable to smoothly varying outputs. Using this surrogate, analytic expressions for closed Sobol' indices $S_{\mi{m}}$ are given by \cref{def:COD:mean,eq:SPEst:V} and \cref{sub:GPEst:Expectation}. Analytic expressions for the variance or uncertainty of these estimates over ungoverned noise is given by \cref{def:COD:variance,eq:SPEst:A,eq:SPEst:W} and \cref{sub:GPEst:Variance}. Reasonably cheap simplifications of the results are described in \cref{sec:Complexity}.
+    In conclusion, we shall assess the utility of these results, pointing to further research directions.
 
-    The use of a surrogate should greatly ease data requirements, preliminary tests indicating that 100 datapoints is sufficient for Sobol' indices within $10\%$ accuracy, as opposed to 10,000+ datapoints for direct calculation. However, we would caution against allowing more than 15 inputs in any case, as all GPs are extremely susceptible to every aspect of the curse of dimensionality
-    Perhaps the most significant feature of this work is the natural cancellation of the regression noise $E$ from the calculation of Sobol' indices, and their variances.
+    The value of these novel formulae is somewhat limited by their high computational expense. Although calculations can be performed in seconds, their memory demands are huge. \Cref{sec:Complexity} provides ways to ameliorate this. In addition, the MOGP regression required as precursor is far slower than the Sobol' index calculation, and may run into time constraints. Overall, the computational cost of a direct (presumably Monte Carlo) numerical evaluation of Sobol' indices is far lower.
 
-    This allows for an arbitrary rotation $\Theta$ of inputs, as normal variables are additive, whereas summing uniform inputs does not produce uniform inputs. If the goal is reducing inputs, rotating their basis first boosts the possibilities immensely \cite{Constantine2015}. It presents the possibilty of choosing $\Theta$ to maximise the closed Sobol' index of the first few inputs.
+    The technique we have developed here will be preferable, even indispensable, when training data is scarce or expensive. The use of a surrogate greatly eases data requirements, preliminary tests indicating that $N=100$ datapoints is more than sufficient for Sobol' indices within $10\%$ accuracy, as opposed to $N\geq 10,000$ datapoints for direct calculation. Furthermore, future research could implement our Sobol' index calculations using sparse GPs \cite{Snelson.Ghahramani2006,titsias2009,Hensman2013}, wherein $N$ training data are replicated by $N^{*} \ll N$ inducing points.
 
-    The quantities to be calculated and their formal context are introduced in \cref{sec:COD}. Our approach effectively regards a regression model furnishing an uncertainty measure with each prediction as just another name for a stochastic process. A great deal of progress is made in \cref{sec:SPEst} using general stochastic (not necessarily Gaussian) processes. This approach is analytically cleaner, as it is not obfuscated by the GP details. Furthermore, it turns out that the desirable properties of the Gaussian (lack of skew, simple kurtosis) are not actually helpful, as these terms cancel of their own accord. This development leaves just two terms to be calculated, which require the stochastic process to be specified. MOGPs with an RBF/ARD kernel are tersely developed and described in \cref{sec:GPR}, then used to calculate the two unknown terms in \cref{sec:GPMom,sec:GPEst}. Conclusions are drawn in \cref{sec:Conc}.
+    Perhaps related to the remarkably low data requirements for accuracy, it is highly significant that the regression noise $E$ cancels from the calculation of Sobol' indices, and their variances. This means that the accuracy of Sobol' estimates is largely unaffected by noise in the training data. Put another way, the Sobol' comparison between predictions relying on $M$ inputs and predictions only using $m \leq M$ inputs is indifferent to the absolute quality of those predictions. Two poor predictors are compared just as accurately as two good ones. Obviously this is extremely attractive whenever the output is inherently noisy, incorporating unavoidable random error. The Sobol' calculation is remarkably immune to this error.
 
-    In order to further elucidate these estimates, we must fill in the details of the underlying stochastic processes, sufficiently identifying the regression $\rv{y}$ by its first two moments $\mu_{1}, \mu_{2}$. Then all the answers we desire are given by \cref{def:COD:mean,eq:SPEst:V}, and \cref{def:COD:variance,eq:SPEst:A,eq:SPEst:W}.
+    A significant limitation is bound to be the number of inputs. All GPs are extremely susceptible to every aspect of the curse of dimensionality \cite{Bellman1966,Binois2021}. We would caution against allowing more than 15 inputs in any case, as every datapoint tends to the same Euclidean distance from every other, and lies close to the bounding hypersurface as the dimensionality of the input hyperspace increases.
+
+    This is where arbitrary rotation $\Theta$ of inputs comes into its own. If the goal is reducing input dimensionality, rotating their basis first boosts the possibilities immensely \cite{Constantine2015}. This presents the possibilty of choosing $\Theta$ to maximise the closed Sobol' index of the first few inputs, called the active subspace.
+    Exciting future work could thereby build the input space from the bottom up, as follows. From a large number of inputs, take 10 likely suspects, fit a GP and rotate to an active subspace of 5 inputs. Then fit a new GP to the active subspace plus 5 inputs previously ignored, and rotate to a new active subspace, again optimizing $\Theta$ to maximize the first 5 Sobol' indices. In this manner a high fidelity surrogate may be achieved without ever confronting the curse of dimensionality. Furthermore, the Sobol' calculations at every step will be accurate and robust, because the inputs ignored will manifest as noise in the output, to which our technique is immune. We can even allow this noise to be correlated between outputs -- as it no doubt will be, considering its source -- because $\tte[\mi{L}^{2}]{E}$ can be non-diagonal in our calculations, even when independent kernels (diagonal $\tte[\mi{L}^{2}]{F}$) are employed. In fact, this should only affect the fidelity of GP regression, as the Sobol' calculation is immune to $E$.
+
+    Finally, we should emphasise that that the fidelity and robustness of everything we have suggested is easily monitored because we provide uncertainty quantification in the form of variances of the Sobol' indices over ungoverned noise. Because of our MOGP approach, are suggestions apply not only to the outputs themselves, but equally to the linkages (covariance) between them.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
