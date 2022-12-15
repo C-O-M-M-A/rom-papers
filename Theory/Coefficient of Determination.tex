@@ -85,7 +85,8 @@
     The total Sobol index $S^{T}_{\mi{M-m}} \geq 0$ of the set theoretic complement $\mi{M-m}$ is $1-S_{\mi{m}}$, which expresses the influence of non-isolated inputs $\mi{M-m}$ allowed to act in concert with each other \emph{and} isolated inputs $\mi{m}$. When speaking of irrelevant inputs $\mi{M-m}$, we mean that $S^{T}_{\mi{M-m}} \approx 0$. This is synonymous with the isolated set of inputs $\mi{m}$ explaining everything explicable $S_{\mi{m}}\approx 1$.
     It is apparent that we can readily obtain any Sobol' index of interest by ordering input dimensions appropriately and calculating the closed index $S_{\mi{m}}$ of some ordinal set $\mi{m}$.
 
-    Apportioning variance is mathematically equivalent to squaring a correlation coefficient to produce a coefficient of determination $R^{2}$ \cite{Chicco2021}. A closed Sobol' index is thus a coefficient of determination between the predictions from a reduced model with $m\leq M$ inputs and predictions from the full model with $M$ inputs. Simplicity and economy (not least of calculation) motivate the adoption of a reduced model, a closed Sobol' index close to 1 permits it. Why on earth would one use the full model, when its predictions are almost identical to the reduced model?
+    Perhaps the most significant use of closed Sobol' indices is to help isolate a reduced model with $m\leq M$ inputs within a full model with $M$ inputs.
+    Apportioning variance is mathematically equivalent to squaring a correlation coefficient to produce a coefficient of determination $R^{2}$ \cite{Chicco2021}. A closed Sobol' index is thus a coefficient of determination between the predictions from the reduced model $\mi{m}$ and predictions from the full model $\mi{M}$. A closed Sobol' index close to 1 confirms that the two models make nearly identical predictions. Simplicity and economy (not least of calculation) motivate the adoption of a reduced model, a closed Sobol' index close to 1 permits it.
 
     With multiple outputs, the Sobol' decomposition apportions the covariance matrix of outputs \cite{Gamboa.etal2013}, rather than the variance of a single output. With $L$ outputs, the closed Sobol' index $S_{\mi{m}}$ is a symmetric $L\x L$ matrix. The diagonal elements express the relevance of inputs to the output variables themselves. The off-diagonal elements express relevance to the linkages between outputs. This may be of considerable interest when outputs are, for example, yield and purity of a product, or perhaps a single output measured at various times. The Sobol indices reveal (amongst other things) which inputs it is worthwhile varying in an effort to alter the linkages between outputs.
 
@@ -250,7 +251,7 @@
     \begin{equation*}
         \pi(\mi{L}^{2}) \deq \set{(\mi{L}\x\mi{L^{\prime\prime}}), (\mi{L^{\prime\prime}}\x\mi{L})} \QT{;} \pi(\mi{L^{\prime}}^{2}) \deq \set{(\mi{L^{\prime}}\x\mi{L^{\prime\prime\prime}}), (\mi{L^{\prime\prime\prime}}\x\mi{L^{\prime}})}
     \end{equation*}
-    Primes on constants are for bookeeping purposes only ($\mi{L}^{j\prime} = \mi{L}$ always), they do not change the value of the constant -- unlike primes on variables ($\mi{m}^{j\prime}$ need not equal $\mi{m}$ in general). One is normally only interested in variances (errors), constituted by the diagonal $\mi{L^{\prime}}^{2}=\mi{L}^{2}$, for which the summation in \cref{eq:SPEst:A} is over a pair of identical pairs.
+    Primes on constants are for bookeeping purposes only ($\mi{L}^{j\prime} = \mi{L}$ always), they do not change the value of the constant -- unlike primes on variables ($\mi{m}^{j\prime}$ need not equal $\mi{m}$ in general). One is normally only interested in variances (errors), constituted by the diagonal $\mi{L^{\prime}}^{2}=\mi{L}^{2}$, for which the summation in \cref{eq:SPEst:A} is over a pair of transposed pairs.
 
     In order to further elucidate these estimates, we must fill in the details of the underlying stochastic processes, sufficiently identifying the regression $\rv{y}$ by its first two moments $\mu_{1}, \mu_{2}$. Then all the answers we desire are given by \cref{def:COD:mean,eq:SPEst:V}, and \cref{def:COD:variance,eq:SPEst:A,eq:SPEst:W}.
 
@@ -507,8 +508,8 @@
             \begin{equation*}
                 \begin{aligned}
                     \te[l\x l^{\prime}\x\mi{m}\x\mi{m^{\prime\prime}}]{\Upsilon} &\deq 
-                    \te[l\x l^{\prime}\x\mi{m}\x\mi{M}]{\Phi}
-                    \diag[l\x l^{\prime}\x\mi{M}\x\mi{M^{\prime}}]{\Lambda^{2}+2}^{-1} \te[l\x l^{\prime}\x\mi{m^{\prime\prime}}\x\mi{M^{\prime}}]{\Phi}^{\intercal} \\
+                    \te[\mi{m}\x\mi{M}]{\Theta}
+                    \diag[l\x l^{\prime}\x\mi{M}\x\mi{M^{\prime}}]{\Lambda^{2}+2}^{-1} \te[\mi{m^{\prime\prime}}\x\mi{M^{\prime}}]{\Theta}^{\intercal} \\
                     \te[l\x l^{\prime}\x \mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{\Pi}^{-1} &\deq 
                     \diag[\mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{1} + \te[l\x l^{\prime}\x \mi{M^{\prime}}\x\mi{M^{\prime\prime\prime}}]{\Phi} + \\
                     &\phantom{\deq}\ \te[l\x l^{\prime}\x\mi{M^{\prime}\x\mi{m}}]{\Phi}
@@ -571,8 +572,8 @@
             \frac
             {\modulus{\diag[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{M}^{2}]{\Lambda^{2}}}^{1/2}(2\pi)^{m/2}}
             {\modulus{\diag[l^{\prime\prime}\x l^{\prime\prime\prime}\x\mi{M}^2]{\Lambda^{2}+2}}^{1/2}}
-            \te[l\x\mi{L^{*}N^{*}}]{g_{\mi{0}}KY} \otimes
-            \te[l^{\prime}\x\mi{L^{*\prime}N^{*\prime}}]{g_{\mi{0}}KY} \\
+            \te[l\x\mi{L^{*}N^{*}}]{g_{\mi{0}}KY}^{\dagger} \otimes
+            \te[l^{\prime}\x\mi{L^{*\prime}N^{*\prime}}]{g_{\mi{0}}KY}^{\dagger} \\
             \left\lbrack
             \prob{\te[\mi{m}]{0}}{\te[l^{\prime\prime}\x l^{\prime\prime\prime}]{\Upsilon}^{1/2} \te[\mi{m}\x l\x \mi{L^{*}\x N^{*}}]{G}} 
             {\diag[]{1} -
@@ -705,12 +706,12 @@
 
     Perhaps related to the remarkably low data requirements for accuracy, it is highly significant that the regression noise $E$ cancels from the calculation of Sobol' indices, and their variances. This means that the accuracy of Sobol' estimates is largely unaffected by noise in the training data. Put another way, the Sobol' comparison between predictions relying on $M$ inputs and predictions only using $m \leq M$ inputs is indifferent to the absolute quality of those predictions. Two poor predictors are compared just as accurately as two good ones. Obviously this is extremely attractive whenever the output is inherently noisy, incorporating unavoidable random error. The Sobol' calculation is remarkably immune to this error.
 
-    A significant limitation is bound to be the number of inputs. All GPs are extremely susceptible to every aspect of the curse of dimensionality \cite{Bellman1966,Binois2021}. We would caution against allowing more than 15 inputs in any case, as every datapoint tends to the same Euclidean distance from every other, and lies close to the bounding hypersurface as the dimensionality of the input hyperspace increases.
+    A significant limitation is bound to be the number of inputs $M$. All GPs are extremely susceptible to every aspect of the curse of dimensionality \cite{Bellman1966,Binois2021}. Every datapoint tends to the same Euclidean distance from every other, and inevitably lies adjacent to the bounding hypersurface as the dimensionality of the input hyperspace increases. We would caution against allowing more than $M=15$ inputs in any case.
 
-    This is where arbitrary rotation $\Theta$ of inputs comes into its own. If the goal is reducing input dimensionality, rotating their basis first boosts the possibilities immensely \cite{Constantine2015}. This presents the possibilty of choosing $\Theta$ to maximise the closed Sobol' index of the first few inputs, called the active subspace.
+    This is where arbitrary rotation $\Theta$ of inputs comes into its own. If the goal is reducing inputs, rotating their basis first boosts the possibilities immensely \cite{Constantine2015}. This presents the possibilty of choosing $\Theta$ to maximise the closed Sobol' index of the first few inputs, called the active subspace.
     Exciting future work could thereby build the input space from the bottom up, as follows. From a large number of inputs, take 10 likely suspects, fit a GP and rotate to an active subspace of 5 inputs. Then fit a new GP to the active subspace plus 5 inputs previously ignored, and rotate to a new active subspace, again optimizing $\Theta$ to maximize the first 5 Sobol' indices. In this manner a high fidelity surrogate may be achieved without ever confronting the curse of dimensionality. Furthermore, the Sobol' calculations at every step will be accurate and robust, because the inputs ignored will manifest as noise in the output, to which our technique is immune. We can even allow this noise to be correlated between outputs -- as it no doubt will be, considering its source -- because $\tte[\mi{L}^{2}]{E}$ can be non-diagonal in our calculations, even when independent kernels (diagonal $\tte[\mi{L}^{2}]{F}$) are employed. In fact, this should only affect the fidelity of GP regression, as the Sobol' calculation is immune to $E$.
 
-    Finally, we should emphasise that that the fidelity and robustness of everything we have suggested is easily monitored because we provide uncertainty quantification in the form of variances of the Sobol' indices over ungoverned noise. Because of our MOGP approach, are suggestions apply not only to the outputs themselves, but equally to the linkages (covariance) between them.
+    Finally, we should emphasise that that the fidelity and robustness of everything we have suggested is easily monitored because we provide uncertainty quantification in the form of variances of the Sobol' indices over ungoverned noise. Because of our MOGP approach, all our results and suggestions apply not only to the outputs themselves, but equally to the linkages (covariance) between them.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
