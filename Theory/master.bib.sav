@@ -1677,16 +1677,15 @@
 }
 
 @Article{Chicco2021,
-  author    = {Davide Chicco and Matthijs J. Warrens and Giuseppe Jurman},
-  journal   = {{PeerJ} Computer Science},
-  title     = {The coefficient of determination R-squared is more informative than {SMAPE}, {MAE}, {MAPE}, {MSE} and {RMSE} in regression analysis evaluation},
-  year      = {2021-07},
-  number    = {1},
-  pages     = {e623},
-  volume    = {7},
-  doi       = {10.7717/peerj-cs.623},
-  file      = {:C\:/Users/fc1ram/Documents/User/fc1ram/lib/Maths/GSA/The_coefficient_of_determination_R-squared_is_more.pdf:PDF},
-  publisher = {{PeerJ}},
+  author       = {Davide Chicco and Matthijs J. Warrens and Giuseppe Jurman},
+  year         = {2021-07},
+  journal = {{PeerJ} Computer Science},
+  title        = {The coefficient of determination R-squared is more informative than {SMAPE}, {MAE}, {MAPE}, {MSE} and {RMSE} in regression analysis evaluation},
+  doi          = {10.7717/peerj-cs.623},
+  pages        = {e623},
+  volume       = {7},
+  number       = {1},
+  publisher    = {{PeerJ}},
 }
 
 @Article{Harris2020,
