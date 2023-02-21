@@ -1953,7 +1953,7 @@
 
 @Article{Sudret2008,
   author    = {Bruno Sudret},
-  journal   = {Reliability Engineering {\&}amp$\mathsemicolon$ System Safety},
+  journal   = {Reliability Engineering {\&} System Safety},
   title     = {Global sensitivity analysis using polynomial chaos expansions},
   year      = {2008},
   month     = {jul},
@@ -1964,6 +1964,12 @@
   file      = {:C\:/Users/fc1ram/Documents/User/fc1ram/lib/Maths/GSA/1-s2.0-S0951832014000064-main.pdf:PDF},
   keywords  = {Sobol Analytic},
   publisher = {Elsevier {BV}},
+}
+
+@Misc{Javier,
+  author   = {Javier, @ and Longworth, Joseph and James, David and Lawrence, Neil},
+  title    = {Bayesian Optimization for Synthetic Gene Design},
+  keywords = {Word Problem},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
