@@ -11,3 +11,5 @@
 *.fdb_latexmk
 *.fls
 *.spl
+archive/
+explanations/
