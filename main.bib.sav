@@ -1978,20 +1978,6 @@
   url       = {https://arxiv.org/abs/1505.01627},
 }
 
-@Article{Liu2021,
-  author    = {Qiming Liu and Nichen Tong and Xu Han},
-  journal   = {International Journal of Computational Methods},
-  title     = {A Global Sensitivity Analysis Method for Multi-Input Multi-Output System and its Application in Structural Design},
-  year      = {2021},
-  month     = {mar},
-  number    = {06},
-  volume    = {19},
-  doi       = {10.1142/s021987622141005x},
-  file      = {:C\:/Users/fc1ram/Documents/User/fc1ram/lib/Maths/GSA/Sobol/s021987622141005x.pdf:PDF},
-  keywords  = {Sobol},
-  publisher = {World Scientific Pub Co Pte Ltd},
-}
-
 @Comment{jabref-meta: databaseType:bibtex;}
 
 @Comment{jabref-meta: grouping:

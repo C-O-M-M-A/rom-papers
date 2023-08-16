@@ -89,7 +89,7 @@
     It is apparent that we can readily obtain any Sobol' index of interest by ordering input dimensions appropriately and calculating the closed index $S_{\mi{m}}$ of some ordinal set $\mi{m}$.
 
     Perhaps the most significant use of closed Sobol' indices is to identify a representative reduced model of $m\leq M$ inputs within the full model $\mi{M}$.
-    Apportioning variance is mathematically equivalent to squaring a correlation coefficient to produce a coefficient of determination $R^{2}$ \cite{Chicco2021}. A closed Sobol' index is thus a coefficient of determination between the predictions from the reduced model $\mi{m}$ and predictions from the full model $\mi{M}$. A closed Sobol' index close to 1 confirms that the two models make nearly identical predictions. Simplicity and economy (not least of calculation) motivate the adoption of a reduced model, a closed Sobol' index close to 1 permits it.
+    Apportioning variance is mathematically equivalent to squaring a correlation coefficient to produce a coefficient of determination $R^{2}$ \cite{Chicco2021}. A closed Sobol' index is thus a coefficient of determination between the predictions from the reduced model $\mi{m}$ and predictions from the full model $\mi{M}$. A closed Sobol' index close to 1 confirms that the two models make nearly identical predictions. Simplicity and economy (not least of calculation) motivate the adoption of a reduced model, a closed Sobol' index close to 1 is what permits it.
 
     The discussion thus far, and almost all prior GSA, has dealt with a single (i.e scalar) output. With multiple (i.e vector) outputs, the Sobol' decomposition apportions the covariance matrix of outputs rather than the variance of a single output. With $L$ outputs, the closed Sobol' index $S_{\mi{m}}$ is generally a symmetric $\mi{L}\x \mi{L}$ matrix. The diagonal elements express the relevance of inputs to the output variables themselves. The off-diagonal elements express relevance to the linkages between outputs. This may be of considerable interest when outputs are, for example, yield and purity of a product, or perhaps a single output measured at various times. The Sobol indices reveal (amongst other things) which inputs it is worthwhile varying in an effort to alter the linkages between outputs. Prior work on Sobol' indices with multiple outputs \cite{Gamboa.etal2013,Xiao2017,GarciaCabrejo2014} has settled ultimately on just the diagonal elements of the covariance matrix, so this linkage remains unexamined. Although output covariance has been incoroporated indirectly in prior studies by performing principal component analysis (PCA) on ouputs prior to GSA on the (diagonal) variances of the resulting output basis \cite{Campbell2006}. This has been used in particular to study synthetic ``multi-outputs'' which are actually the dynamic response of a single output over time \cite{Lamboni2011, Zhang2020}.
 
@@ -758,6 +758,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \bibliographystyle{elsarticle-num} 
-\bibliography{../master}
+\bibliography{../main}
 \end{document}
 \endinput
