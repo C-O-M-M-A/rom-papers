@@ -39,6 +39,7 @@
 \newcommand*{\set}[1]{\M{\left\lbrace{#1}\right\rbrace}} 
 \newcommand*{\setbuilder}[2]{\M{\left\lbrace{#1}\: \big\vert \:{#2}\right\rbrace}}
 \newcommand*{\uniti}{\lbrack 0,1\rbrack}
+\newcommand*{\unitia}{\lbrack -0.001,1.001\rbrack}
 \DeclareMathOperator*{\abs}{abs}
 \DeclareMathOperator*{\trace}{tr\!}
 \DeclareMathOperator*{\ish}{ish}
@@ -80,7 +81,7 @@
 
 % REQUIRED
 \begin{abstract}
-  Variance based global sensitivity analysis measures the relevance of inputs to a single output using Sobol' indices. This paper extends the definition in a natural way to multiple outputs, directly measuring the relevance of inputs to the linkages between outputs in a correlation-like matrix of indices. The usual Sobol' indices constitute the diagonal of this matrix. Existence, uniqueness and uncertainty quantification are established by developing the indices from a putative multi-output model with quantifed uncertainty. Sobol' matrices their standard errors are related to the moments of the multi-output model, to enable calculation. These are benchmarked numerically against test functions (with and without added noise) whose Sobol' matrices are calculated analytically.
+  Variance based global sensitivity analysis measures the relevance of inputs to a single output using Sobol' indices. This paper extends the definition in a natural way to multiple outputs, directly measuring the relevance of inputs to the linkages between outputs in a correlation-like matrix of indices. The usual Sobol' indices constitute the diagonal of this matrix. Existence, uniqueness and uncertainty quantification are established by developing the indices from a putative multi-output model with quantified uncertainty. Sobol' matrices and their standard errors are related to the moments of the multi-output model, to enable calculation. These are benchmarked numerically against test functions (with added noise) whose Sobol' matrices are calculated analytically.
 \end{abstract}
 
 % REQUIRED
@@ -94,22 +95,22 @@
 \end{MSCcodes}
 
 \section{Introduction}\label{sec:Intro}
-    This paper is concerned with analysing the results of experiments or computer simulations in a design matrix of $M\geq 1$ input axes (columns) and $L\geq 1$ output axes (columns) over $N$ samples (rows). Global Sensitivity Analysis (GSA) \cite{Razavi2021} examines the relevance of the various inputs to the various outputs. When pursued via ANOVA decomposition of a single output, this leads naturally to the well known Sobol' indices, which have by now been applied across most fields of science and engineering \cite{Saltelli2019,Ghanem2017}. This paper extends the definition in a natural way to multiple outputs $L\geq 1$. 
+    This paper is concerned with analyzing the results of experiments or computer simulations in a design matrix of $M\geq 1$ input axes (columns) and $L\geq 1$ output axes (columns) over $N$ samples (rows). Global Sensitivity Analysis (GSA) \cite{Razavi2021} examines the relevance of the various inputs to the various outputs. When pursued via ANOVA decomposition of a single output, this leads naturally to the well known Sobol' indices, which have by now been applied across most fields of science and engineering \cite{Saltelli2019,Ghanem2017}. This paper extends the definition in a natural way to multiple outputs $L\geq 1$. 
 
-    Sobol' indices apportion the variance of a scalar output to the influence of various inputs. There is no generally accepted extension of Sobol' indices to multiple outputs $L>1$. 
+    Sobol' indices apportion the variance of a scalar output to the influence of various inputs. There is no generally accepted extension of Sobol' indices to multi-outputs $L>1$. 
     The Sobol' matrices developed in the present article apportion the correlation matrix of outputs -- rather than the variance of a single output -- to the influence of various inputs. The diagonal elements are identically the classical Sobol' indices, expressing the relevance of inputs to the output variables themselves. The off-diagonal elements express the relevance of inputs to the correlation between outputs. This may be of vital interest when outputs are, for example, yield and purity of a product, cost and efficacy of a process, or perhaps a single output measured at various times. The Sobol matrices reveal (amongst other things) which inputs it is worthwhile varying in an effort to alter the linkage between outputs.
     
-    Prior work on Sobol' indices with multiple outputs \cite{Gamboa.etal2013,GarciaCabrejo2014,Xiao2017,Cheng2019} has settled ultimately on just the diagonal elements of the covariance matrix, so covariance between outputs remains unexamined. Output covariance has been tackled in previous studies by performing principal component analysis (PCA) on outputs prior to performing GSA on the resulting diagonal covariance matrix of outputs \cite{Campbell2006}. This has been used in particular to study synthetic ``multi-outputs'' which are actually the dynamic response of a single output over time \cite{Lamboni2011,Zhang2020}. Hierarchical sensitivity analysis \cite{Xu2020} employs prior mapping to independent subsystems. In all these cases, output covariance is essentially removed prior to GSA. Only very recently has GSA attempted to incorporate output covariance at all \cite{Liu2021}, as an ingredient in a total fluctuation. The present article is the first to attempt GSA directly on output covariance itself. This direct approach is deliberately and explicitly motivated by the straightforward desire to examine the influence of inputs on the correlation between outputs.
+    Prior work on Sobol' indices with multiple outputs \cite{Gamboa.etal2013,GarciaCabrejo2014,Xiao2017,Cheng2019} has settled ultimately on just the diagonal elements of the covariance matrix, so covariance between outputs remains unexamined. Output covariance has been tackled in previous studies by performing principal component analysis (PCA) on outputs prior to performing GSA on the resulting diagonal covariance matrix of outputs \cite{Campbell2006}. This has been used in particular to study synthetic multi-outputs which are actually the dynamic response of a single output over time \cite{Lamboni2011,Zhang2020}. Hierarchical sensitivity analysis \cite{Xu2020} employs prior mapping to independent subsystems. In all these cases, output covariance is essentially removed prior to GSA. Only very recently has GSA attempted to incorporate output covariance at all \cite{Liu2021}, as an ingredient in a total fluctuation. The present article is the first to attempt GSA directly on output covariance itself. This direct approach is deliberately and explicitly motivated by the straightforward desire to examine the influence of inputs on the correlation between outputs.
 
-    Accurate calculation of Sobol' indices for a single output is computationally expensive and may require 10,000+ datapoints \cite{Lamoureux.etal2014, Oakley.OHagan2004}. A (sometimes) more efficient approach is calculation via a surrogate model, such as a Gaussian Process (GP) \cite{Sacks.etal1989, Rasmussen.Williams2005}, Polynomial Chaos Expansion (PCE) \cite{Ghanem.Spanos1997,Xiu.Karniadakis2002,Xiu2010}, low-rank tensor approximation \cite{Chevreuil.etal2015,Konakli.Sudret2016}, or support vector regression \cite{Cortes.Vapnik1995,Cheng2019}. Semi-analytic expressions for Sobol' indices are available for scalar PCEs \cite{Sudret2008}, and the diagonal elements of multi-output PCEs \cite{GarciaCabrejo2014}.
+    Accurate calculation of Sobol' indices for a single output is computationally expensive and may require 10,000+ samples \cite{Lamoureux.etal2014, Oakley.OHagan2004}. A (sometimes) more efficient approach is calculation via a surrogate model, such as a Gaussian Process (GP) \cite{Sacks.etal1989, Rasmussen.Williams2005}, Polynomial Chaos Expansion (PCE) \cite{Ghanem.Spanos1997,Xiu.Karniadakis2002,Xiu2010}, low-rank tensor approximation \cite{Chevreuil.etal2015,Konakli.Sudret2016}, or support vector regression \cite{Cortes.Vapnik1995,Cheng2019}. Semi-analytic expressions for Sobol' indices are available for scalar PCEs \cite{Sudret2008}, and the diagonal elements of multi-output PCEs \cite{GarciaCabrejo2014}.
     Semi-analytic expressions for Sobol' indices of GPs have been provided in integral form by \cite{Oakley.OHagan2004} and alternatively by \cite{Chen.etal2005}. These approaches are implemented, examined and compared in \cite{Marrel.etal2009,Srivastava.etal2017}. Both \cite{Oakley.OHagan2004,Marrel.etal2009} estimate the errors on Sobol' indices in semi-analytic, integral form. Fully analytic, closed form expressions have been derived without error estimates for uniformly distributed inputs \cite{Wu.etal2016a} using a GP with a radial basis function kernel.
 
-    In this paper we develop Sobol' matrices and their error estimates in a general setting, then relate these to the moments of a surrogate model. This is to facilitate efficient calculation with limited data, when some form of surrogate is really indispensable. The resulting analytic formulae have been implemented for a multi-output Gaussian process (MOGP), allowing us to benchmark implementation against test functions with known Sobol' matrices. This is important, because practitioners are rarely privileged with an exact and reliable exogenous model linking outputs to inputs. Rather, GSA is a preliminary stage in reducing empirical observations to a tractable, analysable representation. For example, it is frequently used to guide model reduction and the design of experiments, as well as or as part of optimisation and risk assessment. Under these circumstances, the GSA itself must be robust and reliable, providing well benchmarked measures of its own uncertainty and domain of validity.
+    In this paper we develop Sobol' matrices and their error estimates in a general setting, then relate these to the moments of a surrogate model. This is to facilitate efficient calculation with limited data, when some form of surrogate is really indispensable. The resulting analytic formulae have been implemented for a multi-output Gaussian process (MOGP), allowing us to benchmark implementation against test functions with known Sobol' matrices. This is important, because practitioners are rarely privileged with an exact and reliable exogenous model linking outputs to inputs. Rather, GSA is a preliminary stage in reducing empirical observations to a tractable, analyzable representation. For example, it is frequently used to guide model reduction and the design of experiments, as well as or as part of optimization and risk assessment. Under these circumstances, the GSA itself must be robust and reliable, providing well benchmarked measures of its own uncertainty and domain of validity.
 
-    The contents of this paper are as follows. The next section introduces multi-output models with quantified uncertainty (MQUs) as a context which embraces any explicit or black-box function (simulation, experiment), surrogate (emulator, response suface, meta-model) or regression which supplies a probability distribution on its outputs. This encompasses multi-output models with no uncertainty (MNUs) as MQUs with zero variance.
-    \Cref{sec:GSAI,sec:GSAM} define Sobol' indices for MQUs, then extend them to Sobol' matrices. The development is leisurely and deliberate in order to make our viewpoint clear. In particular we seek to emphasise that this work is the natural -- arguably unique -- extension of the \emph{definition} of a Sobol' index. Otherwise it may seem that the classical Sobol' indices occupying the diagonal could be extended to a full correlation matrix in a multitude of arbitrary ways. \Cref{sec:GSAS,sec:Mom} derive mean and standard error estimates on the Sobol' matrices of an MQU, then expresses them via the moments of the MQU. The latter is the key step towards implementation. The perspective throughout is essentially Bayesian, regarding uncertainty as undetermined or ubobserved input(s).
+    The contents of this paper are as follows. The next section introduces multi-output models with quantified uncertainty (MQUs) as a context which embraces any explicit or black-box function (simulation, experiment), surrogate (emulator, response surface, meta-model) or regression which supplies a probability distribution on its outputs. This encompasses multi-output models with no uncertainty (MNUs) as MQUs with zero variance.
+    \Cref{sec:GSAI,sec:GSAM} define Sobol' indices for MQUs, then extend them to Sobol' matrices. The development is leisurely and deliberate in order to make our viewpoint clear. In particular we seek to emphasise that this work is the natural -- arguably unique -- extension of the \emph{definition} of a Sobol' index. Otherwise it may seem that the classical Sobol' indices occupying the diagonal could be extended to a full correlation matrix in a multitude of arbitrary ways. \Cref{sec:GSAS,sec:Mom} derive mean and standard error estimates on the Sobol' matrices of an MQU, then expresses them via the moments of the MQU. The latter is the key step towards implementation. The perspective throughout is essentially Bayesian, regarding uncertainty as undetermined or unobserved input(s).
 
-    \Cref{sec:Func} introduces a $L=9$ output MNU composed of known test functions, and examines its Sobol' matrices. Test MQUs consisting of the test MNU plus Gaussian noise are used to benchmark a GP implementation of Sobol' matrices in \Cref{sec:Benchmarks}. This highlights some advantages and limitations of the GP implementation. Conclusions are drawn in \cref{sec:Conc}.
+    \Cref{sec:Func} introduces a $L=9$ output MNU composed of known test functions, and examines its Sobol' matrices. Test MQUs consisting of the test MNU plus Gaussian noise are used to benchmark a GP implementation of Sobol' matrices in \cref{sec:Benchmarks}. This highlights some advantages and limitations of the GP implementation. Conclusions are drawn in \cref{sec:Conc}.
 
 
 \section{Multi-output models with quantified uncertainty}\label{sec:MQU}
@@ -123,7 +124,7 @@
             \mi{M-m} &\deq \setbuilder{m^{\prime} \in \mi{M}}{m^{\prime} \notin \mi{m}} = (m, \ldots, M-1)
         \end{aligned}
     \end{equation*}
-    GSA decomposes input space by sets of axes, and this notation facilitates that. It does assume that input axes are expediently ordered already, which might impair convenience but not generality. Conventional indexing of components is permitted under this scheme, by allowing singleton axes to be written in italic without parentheses.
+    GSA decomposes input space by families of axes, and this notation facilitates that. It does assume that input axes are expediently ordered already, which might impair convenience but not generality. Conventional indexing of components is permitted under this scheme, by allowing singleton axes to be written in italic without parentheses.
 
     From a Bayesian perspective a determined tensor is a function of determined input(s), a random variable (RV) a function of undetermined input, and a stochastic process (SP) a function of both determined and undetermined inputs. In any case, all sources of (sans-serif) uncertainty may be gathered in a single input $\tte[M]{\rv{u}}$, final to the definition of input space:
     \begin{equation} \label{def:MQU:input}
@@ -157,7 +158,7 @@
             y \colon \uniti^{M+1} \rightarrow \st{R}^{L} \QT{such that} \\ \covt{\evt{\te[l]{y(\te[\mi{M+1}]{\rv{u}})}}{M}}{\mi{M}} > \evt{\evt{\te[l]{y(\te[\mi{M+1}]{\rv{u}})}}{M}}{\mi{M}} = 0 \quad \forall l\in\mi{L}            
         \end{gathered}
     \end{equation}
-    To avoid division by zero in GSA, every output component $l\in\mi{L}$ must depend on at least one determined input: constant functions and pure noise are not allowed.
+    This forces every output component $l\in\mi{L}$ to depend on at least one determined input: constant functions and pure noise are not allowed, to avoid division by zero in GSA.
     Without loss of generality we have also offset the model to have zero mean $\tte[\mi{L}]{0}$. This is formally unnecessary, but it can be crucial to the numerical accuracy of computations.
     % We ascertain no advantage, however, in enforcing the customary and cogent principle of unbiased output uncertainty (noise)
     % \begin{equation*}
@@ -190,7 +191,7 @@
     Following the Kolmogorov extension theorem \cite[pp.124]{Rogers.Williams2000}, the meaning of an MQU is nothing other than an SP. This includes zero variance SPs -- fully determined multi-output models of no uncertainty (MNUs) -- as MQUs $y(\tte[\mi{M+1}]{\rv{u}})$ which do not depend on the final, undetermined input $\tte[M]{\rv{u}}$. Kolmogorov's extension theorem formally identifies an SP -- a collection $y(\tte[\mi{M+1}]{\rv{u}}) = \setbuilder{y(\tte[\mi{M+1}]{\rv{u}})}{\tte[\mi{M}]{\rv{u}}=\tte[\mi{M}]{u}}$ of RVs indexed by determined inputs $\tte[\mi{M}]{u}$ -- with all its finite dimensional distributions $\setbuilder{y(\tte[\mi{M+1\x N}]{\rv{u}})}{\tte[\mi{M\x N}]{\rv{u}}=\tte[\mi{M\x N}]{u}}$. The latter viewpoint is the formal version of the random field \cite{Khoshnevisan2002} or random function interpretation of SPs \cite[pp.42]{Skorokhod2005} frequently alluded to in machine learning \cite{Rasmussen.Williams2005}.
     It can be a helpful perspective on the objects appearing in this work.
 
-    In conception MQUs include any simulation, surrogate or regression which supplies a probability distribution (even a zero variance one) on its outputs. In practice, such an MQU is usually inferred from a design of experiments (DOE) which samples the determined inputs $\tte[\mi{M}]{u}$ from $\uni{0}{1}^{M}$. This is not restrictive, a preferred set of determined inputs $\tte[\mi{M}]{x}$ may have any sampling distribution whatsoever, so long as it is continuous and its $\mi{M}$ axes mutually independent. Simply take the CDF $\tte[\mi{M}]{\rv{u}} = \mathrm{P}(\tte[\mi{M}]{\rv{x}})$ before beginning, and apply the quantile function $\tte[\mi{M}]{\rv{x}}=\mathrm{P}^{-1}(\tte[\mi{M}]{\rv{u}})$ described above and in \cite{Angus1994} after finishing. In general and in summary, simply treat any $\tilde{y}(\tte[\mi{M+1}]{\rv{x}})$ as the pullback of an MQU by the CDF of $\tte[\mi{M+1}]{\rv{x}}$.
+    In conception MQUs include any simulation, surrogate or regression which supplies a probability distribution (even a zero variance one) on its outputs. In practice, such an MQU is usually inferred from a design of experiments (DoE) which samples the determined inputs $\tte[\mi{M}]{u}$ from $\uni{0}{1}^{M}$. This is not restrictive, a preferred set of determined inputs $\tte[\mi{M}]{x}$ may have any sampling distribution whatsoever, so long as it is continuous and its $\mi{M}$ axes mutually independent. Simply take the CDF $\tte[\mi{M}]{\rv{u}} = \mathrm{P}(\tte[\mi{M}]{\rv{x}})$ before beginning, and apply the quantile function $\tte[\mi{M}]{\rv{x}}=\mathrm{P}^{-1}(\tte[\mi{M}]{\rv{u}})$ described above and in \cite{Angus1994} after finishing. In general and in summary, simply treat any $\tilde{y}(\tte[\mi{M+1}]{\rv{x}})$ as the pullback of an MQU by the CDF of $\tte[\mi{M+1}]{\rv{x}}$.
 
     To close this Section we shall formally secure the construction which follows.
     An MQU $y$ is Lebesgue integrable by definition \cref{def:MQU:y}, so it must be measurable. All measures throughout this work are finite (probability measures, in fact), so integrability of $y$ implies integrability of $y^n$ for all $n \in \st{Z}^{+}$ \cite{Villani1985}.
@@ -214,7 +215,7 @@
     \begin{equation}\label{def:GSAI:V_m}
         \cov{\rv{y}_{\mi{m}}}{\mi{m}}_{\mi{L\x L}} \deq \cov{\te[\mi{L}]{\rv{y}_{\mi{m}}}}{\mi{m}} 
     \end{equation}
-    It is -- for all realisations $\te[M]{\rv{u}}$=$\te[M]{u}$ -- a symmetric tensor by definition and positive semi-definite by Jensen's inequality. We may therefore define a vector RV which is the square root of its diagonal, namely the standard deviation $\dev{\rv{y}_{\mi{m}}}{\mi{m}}_{\mi{L}}$
+    It is -- for all realizations $\te[M]{\rv{u}}$=$\te[M]{u}$ -- a symmetric tensor by definition and positive semi-definite by Jensen's inequality. We may therefore define a vector RV which is the square root of its diagonal, namely the standard deviation $\dev{\rv{y}_{\mi{m}}}{\mi{m}}_{\mi{L}}$
     \begin{equation}\label{def:GSAI:D_m}
         \dev{\rv{y}_{\mi{m}}}{\mi{m}}_{l} \deq \sqrt{\cov{\rv{y}_{\mi{m}}}{\mi{m}}_{lxl}} \quad > 0 \qquad \forall l \in \mi{L}
     \end{equation}
@@ -231,7 +232,7 @@
         \te[l]{\rv{S}^{T}_\mi{M-m}} \deq 1 - \te[l]{\rv{S}_\mi{m}}
     \end{equation}
 
-    Sobol' indices are readily intepreted, given that codependent inputs (reviewed in \cite{PWiederkehrThesis}) are beyond the scope of this work. By Definition \cref{def:GSAI:S_m} a closed index $S_{\mi{m}} \in \uniti$ measures the proportion of output variance captured by the reduced model $\rv{y}_{\mi{m}}$. This, in turn, indicates the influence or relevance of input axes $\mi{m}$. The full model $\rv{y}_\mi{M}$ explains everything explicable, so its Sobol' index is $\tte[l]{\rv{S}_{\mi{M}}}=\tte[l]{\rv{S}^{T}_{\mi{M}}}=1$. The void model $\rv{y}_\mi{0}$ is just the mean output -- an RV depending only on undetermined noise $\te[M]{\rv{u}}$ -- which explains nothing, so its Sobol' index is $\tte[l]{\rv{S}_{\mi{0}}}=\tte[l]{\rv{S}^{T}_{\mi{0}}}=0$.
+    Sobol' indices are readily interpreted, given that codependent inputs (reviewed in \cite{PWiederkehrThesis}) are beyond the scope of this work. By Definition \cref{def:GSAI:S_m} a closed index $S_{\mi{m}} \in \uniti$ measures the proportion of output variance captured by the reduced model $\rv{y}_{\mi{m}}$. This, in turn, indicates the influence or relevance of input axes $\mi{m}$. The full model $\rv{y}_\mi{M}$ explains everything explicable, so its Sobol' index is $\tte[l]{\rv{S}_{\mi{M}}}=\tte[l]{\rv{S}^{T}_{\mi{M}}}=1$. The void model $\rv{y}_\mi{0}$ is just the mean output -- an RV depending only on undetermined noise $\te[M]{\rv{u}}$ -- which explains nothing, so its Sobol' index is $\tte[l]{\rv{S}_{\mi{0}}}=\tte[l]{\rv{S}^{T}_{\mi{0}}}=0$.
 
     The closed index with respect to a single input axis $m\in \mi{M}$ is called a first-order index
     \begin{equation}\label{def:GSAI:S_mp}
@@ -264,7 +265,7 @@
     A closed index close to 1 confirms that the two models make nearly identical predictions. Simplicity and economy (not least of calculation) motivate the adoption of a reduced model, a closed Sobol' index close to 1 is what justifies it. This is precisely equivalent to screening out (obscuring) $\mi{M-m}$ input axes on the grounds that their influence on $\tte[l]{\rv{y}_{\mi{M}}}$ -- measured by their total index $\te[l]{S^{T}_\mi{M-m}}$ -- is close to 0.
 
 
-\section{Sobol' Matrices}\label{sec:GSAM}
+\section{Sobol' matrices}\label{sec:GSAM}
     This Section introduces a tensor RV called the Sobol' matrix of an mQU. This is defined by tensorizing the definitions of the previous Section, replacing $l$ for a scalar output with $\mi{L\x L}$ for a vector output. All division is performed elementwise, inverting Hadamard multiplication $\circ$
     \begin{equation}\label{def:GSAM:div}
         \te[\square]{*} = \frac{\te[\square]{\bullet}}{\te[\square]{\star}} \quad \Longleftrightarrow
@@ -365,7 +366,7 @@
     \end{equation*}
     In our toy example, the most interesting information -- the off-diagonal indices for two important reduced models -- is undefined and completely lost by this definition.
 
-    We close this section by considering how a Sobol' matrix may be summarised in a single number. This is often desired to present ``the'' sensitivity of the vector output to a reduced set of inputs $\mi{m}$. The simple answer is to define a seminorm (like a norm, only positive semidefinite instead of definite) on the Sobol' matrix \cite[pp.314]{Schechter1997}. The seminorm should be chosen according to one's interest in the outputs. For example, one could use the determinant $\modulus{\tte[\mi{l\x l}]{\rv{S}_{\mi{m}}}}$ (modulus in case $\mi{l}$ is singleton) of a chosen submatrix $\mi{l}\subseteq\mi{L}$. The Sobol' matrix provides a platform for investigating a variety of such measures. However, all matrices and measures remain RVs at this point, and the next two sections are devoted to extracting statistics -- i.e. determined quantities -- from these.
+    We close this section by considering how a Sobol' matrix may be summarized in a single number. This is often desired to present ``the'' sensitivity of multi-output to a reduced set of inputs $\mi{m}$. The simple answer is to define a seminorm (like a norm, only positive semi-definite instead of definite) on the Sobol' matrix \cite[pp.314]{Schechter1997}. The seminorm should be chosen according to one's interest in the multi-output. For example, one could use the determinant $\modulus{\tte[\mi{l\x l}]{\rv{S}_{\mi{m}}}}$ (modulus in case $\mi{l}$ is singleton) of a chosen submatrix $\mi{l}\subseteq\mi{L}$. The Sobol' matrix provides a platform for investigating a variety of such measures. However, all matrices and measures remain RVs at this point, and the next two sections are devoted to extracting statistics -- i.e. determined quantities -- from these.
 
 
 \section{Sobol matrix statistics}\label{sec:GSAS}
@@ -539,6 +540,8 @@
         \pi(\mi{L}^{2}) \deq \set{(\mi{L}\x\mi{L^{\prime\prime}}), (\mi{L^{\prime\prime}}\x\mi{L})} \QT{;} \pi(\mi{L^{\prime}}^{2}) \deq \set{(\mi{L^{\prime}}\x\mi{L^{\prime\prime\prime}}), (\mi{L^{\prime\prime\prime}}\x\mi{L^{\prime}})}
     \end{equation*}
     Substituting \cref{eq:Mom:W} in \cref{def:GSAS:Q,def:GSAS:TTT} determines the closed and total Sobol' matrix errors in terms of marginalized MQU moments.
+
+    \Cref{eq:Mom:W} has an important property. Any constant term $E$ added to the MQU variance $\mu_{\mi{mm^{\prime}}}\mapsto \mu_{\mi{mm^{\prime}}}+E$ adds nothing to $W_\mi{mm^{\prime}}$ by reduction \cref{eq:Mom:reduction}. Perhaps, surprisingly, adding homoskedastic noise to an MQU directly affects neither $S_\mi{m}$ nor $T_\mi{m}$.
     
     So Sobol' matrices may be calculated from the first MQU moment alone. Their standard errors may be calculated from the first two MQU moments alone.
     The first MQU moment $\tte[\mi{L}]{\mu_{\mi{M}}}$ is simply the mean prediction of the MQU, a function of $\tte[\mi{M}]{u}$. The second MQU moment $\tte[\mi{L}^{2}]{\mu_{\mi{MM}}}$ is known as the covariance function or kernel of an SP
@@ -547,6 +550,8 @@
     \cov[{\te[\mi{L^{\prime}}]{y(\te[\mi{M^{\prime}+1}]{\rv{u}^{\prime}})}}]{\te[\mi{L}]{y(\te[\mi{M+1}]{\rv{u}})}}{M}
     \end{equation}
     It expresses the linkage between MQU predictions at two determined inputs, and is central to the theory and implementation of GPs \cite{Rasmussen.Williams2005}.
+
+    Analytic expressions for Sobol' matrices and their standard errors are given in \cite{MiltonRobert.etal.2024} for GPs with a Radial Basis Function (RBF) kernel \cite{Rasmussen.Williams2005}. These have been implemented in Python as the rom-comma package \cite{RomComma2024}, which is used in the next two sections to benchmark the calculation of Sobol' matrices and their standard errors from MQU moments.
 
 
 \section{Test functions}\label{sec:Func}
@@ -623,139 +628,181 @@
     \end{equation}
     The correlation matrix of this MNU is
     \begin{equation*}
-        {S_{\mi{5}}} = \left\lbrack
-            \begin{array}{rrrrrrrrr}
-                1.000 & 0.896 & 0.560 & -0.073 & -0.078 & -0.131 & 0.254 & 0.125 & -0.159 \\
+        {S_{\mi{5}}} = \left\lbrack\begin{array}{rrrrrrrrr}
+            1.000 & 0.896 & 0.560 & -0.073 & -0.078 & -0.131 & 0.254 & 0.125 & -0.159 \\
+            0.896 & 1.000 & 0.593 & -0.032 & -0.034 & -0.057 & 0.268 & 0.146 & -0.161 \\
+            0.560 & 0.593 & 1.000 & 0.000 & 0.000 & 0.000 & 0.453 & 0.264 & -0.264 \\
+            -0.073 & -0.032 & 0.000 & 1.000 & 0.944 & 0.825 & 0.000 & 0.251 & 0.136 \\
+            -0.078 & -0.034 & 0.000 & 0.944 & 1.000 & 0.926 & 0.000 & 0.232 & 0.137 \\
+            -0.131 & -0.057 & 0.000 & 0.825 & 0.926 & 1.000 & 0.000 & 0.197 & 0.116 \\
+            0.254 & 0.268 & 0.453 & 0.000 & 0.000 & 0.000 & 1.000 & 0.582 & -0.582 \\
+            0.125 & 0.146 & 0.264 & 0.251 & 0.232 & 0.197 & 0.582 & 1.000 & 0.206 \\
+            -0.159 & -0.161 & -0.264 & 0.136 & 0.137 & 0.116 & -0.582 & 0.206 & 1.000 \\
+        \end{array}\right\rbrack
+    \end{equation*}
+    The Sobol' G functions $\tte[3]{f},\tte[4]{f},\tte[5]{f}$ are invariant under the transformation $\tte[m]{u} \mapsto \tte[m]{1-u}$ -- they possess the reflection symmetries of an even function. The sine function $\tte[2]{f}$ and the linear function $\tte[6]{f}$ preserve magnitude and change sign under the transformation $\tte[m]{u} \mapsto \tte[m]{1-u}$ -- they possess rotational symmetries of an odd function. As a result, the correlation matrix contains a central rectangle of three Sobol' G functions bordered by zero correlations.
+
+    The remaining closed Sobol' matrices of the test MNU are as follows
+    \begin{equation*}
+        {S_{\mi{4}}} = \left\lbrack\begin{array}{rrrrrrrrr}
+            1.000 & 0.896 & 0.560 & -0.073 & -0.078 & -0.131 & 0.254 & 0.125 & -0.159 \\
                 0.896 & 1.000 & 0.593 & -0.032 & -0.034 & -0.057 & 0.268 & 0.146 & -0.161 \\
                 0.560 & 0.593 & 1.000 & 0.000 & 0.000 & 0.000 & 0.453 & 0.264 & -0.264 \\
-                -0.073 & -0.032 & 0.000 & 1.000 & 0.944 & 0.825 & 0.000 & 0.251 & 0.136 \\
-                -0.078 & -0.034 & 0.000 & 0.944 & 1.000 & 0.926 & 0.000 & 0.232 & 0.137 \\
-                -0.131 & -0.057 & 0.000 & 0.825 & 0.926 & 1.000 & 0.000 & 0.197 & 0.116 \\
-                0.254 & 0.268 & 0.453 & 0.000 & 0.000 & 0.000 & 1.000 & 0.582 & -0.582 \\
-                0.125 & 0.146 & 0.264 & 0.251 & 0.232 & 0.197 & 0.582 & 1.000 & 0.206 \\
-                -0.159 & -0.161 & -0.264 & 0.136 & 0.137 & 0.116 & -0.582 & 0.206 & 1.000 \\
-            \end{array}
-            \right\rbrack
+                -0.073 & -0.032 & 0.000 & 0.986 & 0.929 & 0.811 & 0.000 & 0.247 & 0.116 \\
+                -0.078 & -0.034 & 0.000 & 0.929 & 0.979 & 0.904 & 0.000 & 0.229 & 0.118 \\
+                -0.131 & -0.057 & 0.000 & 0.811 & 0.904 & 0.970 & 0.000 & 0.194 & 0.100 \\
+                0.254 & 0.268 & 0.453 & 0.000 & 0.000 & 0.000 & 0.916 & 0.533 & -0.533 \\
+                0.125 & 0.146 & 0.264 & 0.247 & 0.229 & 0.194 & 0.533 & 0.839 & 0.031 \\
+                -0.159 & -0.161 & -0.264 & 0.116 & 0.118 & 0.100 & -0.533 & 0.031 & 0.591 \\
+        \end{array}\right\rbrack
     \end{equation*}
-    
     \begin{equation*}
-        {S_{\mi{1}}} = \left(
-            \begin{array}{rrrrrrrrr}
-                0.314 & 0.332 & 0.560 & 0.000 & 0.000 & 0.000 & 0.254 & 0.148 & -0.148\\
-                0.332 & 0.351 & 0.593 & 0.000 & 0.000 & 0.000 & 0.268 & 0.156 & -0.156\\
-                0.560 & 0.593 & 1.000 & 0.000 & 0.000 & 0.000 & 0.453 & 0.264 & -0.264\\
-                0.000 & 0.000 & 0.000 & 0.632 & 0.515 & 0.438 & 0.000 & 0.139 & 0.028\\
-                0.000 & 0.000 & 0.000 & 0.515 & 0.420 & 0.357 & 0.000 & 0.113 & 0.023\\
-                0.000 & 0.000 & 0.000 & 0.438 & 0.357 & 0.331 & 0.000 & 0.096 & 0.019\\
-                0.254 & 0.268 & 0.453 & 0.000 & 0.000 & 0.000 & 0.337 & 0.196 & -0.196\\
-                0.148 & 0.156 & 0.264 & 0.139 & 0.113 & 0.096 & 0.196 & 0.145 & -0.108\\
-                -0.148 & -0.156 & -0.264 & 0.028 & 0.023 & 0.019 & -0.196 & -0.108 & 0.115\\
-            \end{array}
-            \right)
+        {S_{\mi{3}}} = \left\lbrack\begin{array}{rrrrrrrrr}
+            1.000 & 0.896 & 0.560 & -0.073 & -0.078 & -0.131 & 0.254 & 0.125 & -0.159 \\
+                0.896 & 1.000 & 0.593 & -0.032 & -0.034 & -0.057 & 0.268 & 0.146 & -0.161 \\
+                0.560 & 0.593 & 1.000 & 0.000 & 0.000 & 0.000 & 0.453 & 0.264 & -0.264 \\
+                -0.073 & -0.032 & 0.000 & 0.956 & 0.889 & 0.774 & 0.000 & 0.235 & 0.093 \\
+                -0.078 & -0.034 & 0.000 & 0.889 & 0.912 & 0.833 & 0.000 & 0.215 & 0.091 \\
+                -0.131 & -0.057 & 0.000 & 0.774 & 0.833 & 0.877 & 0.000 & 0.183 & 0.077 \\
+                0.254 & 0.268 & 0.453 & 0.000 & 0.000 & 0.000 & 0.784 & 0.457 & -0.457 \\
+                0.125 & 0.146 & 0.264 & 0.235 & 0.215 & 0.183 & 0.457 & 0.622 & -0.096 \\
+                -0.159 & -0.161 & -0.264 & 0.093 & 0.091 & 0.077 & -0.457 & -0.096 & 0.359 \\
+        \end{array}\right\rbrack
     \end{equation*}
+    \begin{equation*}
+        {S_{\mi{2}}} = \left\lbrack\begin{array}{rrrrrrrrr}
+            0.756 & 0.525 & 0.560 & -0.073 & -0.078 & -0.131 & 0.254 & 0.125 & -0.159 \\
+                0.525 & 0.435 & 0.593 & -0.032 & -0.034 & -0.057 & 0.268 & 0.146 & -0.161 \\
+                0.560 & 0.593 & 1.000 & 0.000 & 0.000 & 0.000 & 0.453 & 0.264 & -0.264 \\
+                -0.073 & -0.032 & 0.000 & 0.848 & 0.765 & 0.661 & 0.000 & 0.202 & 0.059 \\
+                -0.078 & -0.034 & 0.000 & 0.765 & 0.741 & 0.660 & 0.000 & 0.181 & 0.057 \\
+                -0.131 & -0.057 & 0.000 & 0.661 & 0.660 & 0.664 & 0.000 & 0.154 & 0.048 \\
+                0.254 & 0.268 & 0.453 & 0.000 & 0.000 & 0.000 & 0.595 & 0.346 & -0.346 \\
+                0.125 & 0.146 & 0.264 & 0.202 & 0.181 & 0.154 & 0.346 & 0.375 & -0.145 \\
+                -0.159 & -0.161 & -0.264 & 0.059 & 0.057 & 0.048 & -0.346 & -0.145 & 0.221 \\
+        \end{array}\right\rbrack
+    \end{equation*}
+    \begin{equation*}
+        {S_{\mi{1}}} = \left\lbrack\begin{array}{rrrrrrrrr}
+            0.314 & 0.332 & 0.560 & 0.000 & 0.000 & 0.000 & 0.254 & 0.148 & -0.148 \\
+                0.332 & 0.351 & 0.593 & 0.000 & 0.000 & 0.000 & 0.268 & 0.156 & -0.156 \\
+                0.560 & 0.593 & 1.000 & 0.000 & 0.000 & 0.000 & 0.453 & 0.264 & -0.264 \\
+                0.000 & 0.000 & 0.000 & 0.632 & 0.515 & 0.438 & 0.000 & 0.139 & 0.028 \\
+                0.000 & 0.000 & 0.000 & 0.515 & 0.420 & 0.357 & 0.000 & 0.113 & 0.023 \\
+                0.000 & 0.000 & 0.000 & 0.438 & 0.357 & 0.331 & 0.000 & 0.096 & 0.019 \\
+                0.254 & 0.268 & 0.453 & 0.000 & 0.000 & 0.000 & 0.337 & 0.196 & -0.196 \\
+                0.148 & 0.156 & 0.264 & 0.139 & 0.113 & 0.096 & 0.196 & 0.145 & -0.108 \\
+                -0.148 & -0.156 & -0.264 & 0.028 & 0.023 & 0.019 & -0.196 & -0.108 & 0.115 \\
+        \end{array}\right\rbrack
+    \end{equation*}
+    Additional input dimensions do not affect test MNU evaluation, so obviously
+    \begin{equation*}
+        {S_{\mi{m}}}={S_{\mi{5}}} \quad \forall m\geq 5
+    \end{equation*}
+    Histograms of Sobol' index values across the test MNU are shown in \cref{fig:Func:S}. The benchmarking of first order indices will reveal superb agreement, but this could merely indicate the benchmarking calculation is biased toward zero, because the first order indices almost all have small magnitudes. The closed indices have a much more reasonable spread of values and are therefore suitable for benchmarking.
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[scale=0.7]{figures/histogram.closed.png}\hspace{1cm}
+        \includegraphics[scale=0.7]{figures/histogram.first_order.png}
+        \caption{Frequency of closed and first order Sobol' index values across 9 outputs and 5 inputs.} \label{fig:Func:S}
+    \end{figure}
+          
+    Uncertainty is manufactured by adding iid (independent, identically distributed) Gaussian noise of magnitude $E$ to the normalized MNU using the identity matrix $\diag[]{1}$ to define
+    \begin{subequations} \label{def:Func:y}
+        \begin{align}
+            \te[l\x \mi{N}]{y(\tte[\mi{M\x N}]{u})} &\deq (1+E^{2})^{-1/2} \left(\te[l\x \mi{N}]{\bar{f}(\tte[\mi{M\x N}]{u})} + E \te[\mi{(l+1) N - l N}]{\rv{e}}\right) \\
+            \te[l\x \mi{N}]{\bar{f}(\tte[\mi{M\x N}]{u})} &\deq \left(\te[l\x \mi{N}]{f(\tte[\mi{M\x N}]{u})}-\evt{\te[l]{f(\tte[\mi{M\x N}]{u})}}{\mi{N}}\right) / \;\devt{\te[l]{f(\tte[\mi{M\x N}]{u})}}{\mi{N}}\label{def:Func:fbar}\\
+            \te[\mi{L N}]{\rv{e}} &\phantom{:}\sim \gauss{\tte[\mi{LN}]{0}}{\diag[\mi{LN\x LN}]{1}}
+        \end{align}            
+    \end{subequations}
+    Test MQUs are constructed by fitting a GP with an RBF kernel \cite{Rasmussen.Williams2005} to $\tte[l\x \mi{N}]{y(\tte[\mi{M\x N}]{u})}$. The suite of test MQUs exhaustively encompasses
+    \begin{align*}
+        M \in \{&5,7\} \QT{;} L=9 \\
+        N \in \{&30,   50,   70,   90,  110,  130,  150,  170,  190,  210,  230,
+        260,  290,  320,  360,  400,  440,  480,  525,  575, \\ 
+         &630,  690,
+        755,  825,  900,  980, 1065, 1105, 1200, 1300, 1410, 1530, 1660,
+       1800, 1950, 2110, \\
+       &2280, 2460, 2710, 2930, 3170, 3430, 3710, 4000,
+       4300, 4600, 4920\}\\
+       E \in \{&0.0025, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, \\
+       &1.0, 1.2, 1.5, 2.0, 5.0\}
+    \end{align*}
+    There are 47 values for $N$, the number of regression (training) samples. A GP regressed over 5 or 7 inputs using less than 100 samples cannot be expected to perform well.
+    There are 20 values for $E$, the noise to signal ratio of the test MQU. Where $E > 1$, Gaussian noise dominates the output and GP regression cannot be expected to perform well.
 
-    \pagebreak
-    \begin{equation*}
-        {S_{\mi{1}}} = \left(
-            \begin{array}{rrrrrrrrr}
-                0.314 & 0.332 & 0.560 & 0.000 & 0.000 & 0.000 & 0.254 & 0.148 & -0.148\\
-                0.332 & 0.351 & 0.593 & 0.000 & 0.000 & 0.000 & 0.268 & 0.156 & -0.156\\
-                0.560 & 0.593 & 1.000 & 0.000 & 0.000 & 0.000 & 0.453 & 0.264 & -0.264\\
-                0.000 & 0.000 & 0.000 & 0.632 & 0.515 & 0.438 & 0.000 & 0.139 & 0.028\\
-                0.000 & 0.000 & 0.000 & 0.515 & 0.420 & 0.357 & 0.000 & 0.113 & 0.023\\
-                0.000 & 0.000 & 0.000 & 0.438 & 0.357 & 0.331 & 0.000 & 0.096 & 0.019\\
-                0.254 & 0.268 & 0.453 & 0.000 & 0.000 & 0.000 & 0.337 & 0.196 & -0.196\\
-                0.148 & 0.156 & 0.264 & 0.139 & 0.113 & 0.096 & 0.196 & 0.145 & -0.108\\
-                -0.148 & -0.156 & -0.264 & 0.028 & 0.023 & 0.019 & -0.196 & -0.108 & 0.115\\
-            \end{array}
-            \right)
-    \end{equation*}
-    \begin{equation*}
-        {S_{\mi{1}}} = \left(
-            \begin{array}{rrrrrrrrr}
-                0.314 & 0.332 & 0.560 & 0.000 & 0.000 & 0.000 & 0.254 & 0.148 & -0.148\\
-                0.332 & 0.351 & 0.593 & 0.000 & 0.000 & 0.000 & 0.268 & 0.156 & -0.156\\
-                0.560 & 0.593 & 1.000 & 0.000 & 0.000 & 0.000 & 0.453 & 0.264 & -0.264\\
-                0.000 & 0.000 & 0.000 & 0.632 & 0.515 & 0.438 & 0.000 & 0.139 & 0.028\\
-                0.000 & 0.000 & 0.000 & 0.515 & 0.420 & 0.357 & 0.000 & 0.113 & 0.023\\
-                0.000 & 0.000 & 0.000 & 0.438 & 0.357 & 0.331 & 0.000 & 0.096 & 0.019\\
-                0.254 & 0.268 & 0.453 & 0.000 & 0.000 & 0.000 & 0.337 & 0.196 & -0.196\\
-                0.148 & 0.156 & 0.264 & 0.139 & 0.113 & 0.096 & 0.196 & 0.145 & -0.108\\
-                -0.148 & -0.156 & -0.264 & 0.028 & 0.023 & 0.019 & -0.196 & -0.108 & 0.115\\
-            \end{array}
-            \right)
-    \end{equation*}
-    \begin{equation*}
-        {S_{\mi{1}}} = \left(
-            \begin{array}{rrrrrrrrr}
-                0.314 & 0.332 & 0.560 & 0.000 & 0.000 & 0.000 & 0.254 & 0.148 & -0.148\\
-                0.332 & 0.351 & 0.593 & 0.000 & 0.000 & 0.000 & 0.268 & 0.156 & -0.156\\
-                0.560 & 0.593 & 1.000 & 0.000 & 0.000 & 0.000 & 0.453 & 0.264 & -0.264\\
-                0.000 & 0.000 & 0.000 & 0.632 & 0.515 & 0.438 & 0.000 & 0.139 & 0.028\\
-                0.000 & 0.000 & 0.000 & 0.515 & 0.420 & 0.357 & 0.000 & 0.113 & 0.023\\
-                0.000 & 0.000 & 0.000 & 0.438 & 0.357 & 0.331 & 0.000 & 0.096 & 0.019\\
-                0.254 & 0.268 & 0.453 & 0.000 & 0.000 & 0.000 & 0.337 & 0.196 & -0.196\\
-                0.148 & 0.156 & 0.264 & 0.139 & 0.113 & 0.096 & 0.196 & 0.145 & -0.108\\
-                -0.148 & -0.156 & -0.264 & 0.028 & 0.023 & 0.019 & -0.196 & -0.108 & 0.115\\
-            \end{array}
-            \right)
-    \end{equation*}
+    The quality of regression was monitored by 2-fold sampling, wherein a latin hypercube of $2N$ MQU samples is randomly split in half. One half is used for regression (training) and the other for validation (testing) in the first fold, the roles reversed in the second fold. This makes a total of nearly 17k MQU individual outputs, for just over 1.8m closed Sobol' indices over $M\in\set{5,7}$. Although the results are somewhat similar, $M=5$ gives a nice spread of Sobol' matrix element magnitudes, whereas $M=7$ invites the curse of dimensionality \cite{Altman.Krzywinski.2018,Binois2021} by incorporating irrelevant input dimensions. The Sobol' matrices for these irrelevant dimensions is of particular interest, as it enables dimension reduction via GSA.
+
 
 \section{Benchmarking}\label{sec:Benchmarks}
+    The suite of test functions has been implemented as a Python script using the rom-comma package \cite{RomComma2024}, to perform benchmarking of Sobol' matrix calculations and their errors. This section describes the key results. A more detailed presentation, including GP calculation details, is given in \cite{MiltonRobert.etal.2024}.
+
+    The first task is to assess the reliability of the GP regression used to construct the test MQU, particularly given the extreme cases we have included. \Cref{fig:Bench:SD} shows the standard deviation of prediction, \cref{fig:Bench:RMSE} the Root Mean Square Error from 2-fold validation. The former indicates how accurate the GP thinks its predictions are, the latter how good they actually are against independent test data. The two measures agree quite well, although the GP slightly overestimates its own accuracy. 
+    
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[scale=0.65]{figures/Mean.SD.5.png}\hspace{0.5cm}
+        \includegraphics[scale=0.65]{figures/Mean.SD.7.png}
+        \caption{The Standard Deviation (SD) of prediction for the benchmark GPs. Each plot point is the mean over 2 folds and 9 outputs.} \label{fig:Bench:SD}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[scale=0.65]{figures/Mean.RMSE.5.png}\hspace{0.5cm}
+        \includegraphics[scale=0.65]{figures/Mean.RMSE.7.png}
+        \caption{The Mean Root Mean Square Error (RMSE) of prediction for the benchmark GPs, obtained from 2-fold validation. Each plot point is the mean over 2 folds and 9 outputs.} \label{fig:Bench:RMSE}
+    \end{figure}
+
+    Recall from \cref{def:Func:y} that each underlying MQU (GP) has been scaled to a total variation over training data of $\devt{\te[l]{y(\tte[\mi{M\x N}]{u})}}{\mi{N}}=1$. Therefore, predictions with an RMSE$\geq 1$ are uninformative, even overfit: the mean of the training data is a better predictor than the GP. The figures show this occurring for $E>10^{0.5}$. There is very marked and consistent deterioration in predictive GP performance with increasing $E$, decreasing $N$ and increasing $M$. The mean prediction error is 30\% or more whenever $E>20\%$ or $N<100$. This description is largely valid for each GP, even though the results are displayed as mean values so that extreme outliers are visible.
+    Severe outliers are numerically unstable GPs, appearing as blemishes in \cref{fig:Bench:SD}. Numerical instability results from overfitting, and is a well-understood pitfall of GP regression, which is highly susceptible to the curse of dimensionality \cite{Altman.Krzywinski.2018,Binois2021}, readily diagnosed and sometimes remediable. Given $k$-fold validation, one would normally remove these GPs, or try alternative optimizations to obtain a reliable GP regression.
+
+    In order to assess the performance of GSA, we have not removed numerically unstable, overfit GPs using $k$-fold validation as should be done in practice. Instead, the results are cleaned similarly by filtering out numerically impossible GSA results. Any Sobol' index $\tte[l\x l]{S_{\mi{m}}}\not\in \unitia$ or Sobol' matrix standard error $\tte[l\x l^{\prime}]{T_{\mi{m}}}\not\in \unitia$ prompts us to remove $\tte[l]{y},\tte[l^{\prime}]{y}$ entirely from that fold $(k,M,N,E)$. If needed, such filtering should be applied in practice.
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[scale=0.65]{figures/m5/fullT/closed.A.90ile.png}\hspace{0.5cm}
+        \includegraphics[scale=0.65]{figures/m7/fullT/closed.A.90ile.png}\\
+        \vspace{0.2cm}
+        \includegraphics[scale=0.65]{figures/m5/fullT/closed.A.50ile.png}\hspace{0.5cm}
+        \includegraphics[scale=0.65]{figures/m7/fullT/closed.A.50ile.png}
+        \caption{The absolute error $\tte[l\x l^{\prime}]{A_{\mi{m}}}$ of the closed Sobol' matrix element $\tte[l\x l^{\prime}]{S_{\mi{m}}}$ calculated from MQU moments. Ground truth is the MNU closed Sobol' matrix reported in \cref{sec:Func}. Each plot point is the 90\% quantile (top row) or median (bottom row) $A$ over 2 folds, $L^{2}=81$ matrix elements and $M\in\set{5,7}$ closed matrices.}\label{fig:Bench:A}
+    \end{figure}
+
+    \cref{fig:Bench:A} shows the absolute error in Sobol' matrix elements calculated from MQU (i.e. GP) moments. The accuracy is far greater than predictive accuracy: GPs whose prediction accuracy is much worse than 30\% generate median Sobol' matrices to an accuracy of 0.05-0.10. Provided $E\leq 50\%$ and $N\geq 100$, one can confidently expect 90\% of Sobol' matrices to be accurate within 0.15, and most Sobol' matrices (the median) to be good to within 0.02-0.04. $N=500$ samples nearly always provide Sobol' matrices to within 0.01 of the true value. In line with GP prediction accuracy, the estimates deteriorate with decreasing $N$ and increasing $M$, as expected. However, deterioration with increasing $E$ is much less apparent: increasing noise has little effect on GSA via MQU moments. This behaviour was predicted immediately following \cref{eq:Mom:W}, and should apply widely.
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[scale=0.65]{figures/m7/fullT/closed.A.50ilemm.7.png}
+        \includegraphics[scale=0.65]{figures/m7/fullT/closed.A.50ilemm.5.png}\\
+        \vspace{0.2cm}
+        \includegraphics[scale=0.65]{figures/m7/fullT/closed.A.50ilemm.1.png}
+        \includegraphics[scale=0.65]{figures/m7/fullT/closed.A.50ilemm.3.png}
+        \caption{The absolute error $\tte[l\x l^{\prime}]{A^{T}_{\mi{M-m}}}$ of the total Sobol' matrix element $\tte[l\x l^{\prime}]{S^{T}_{\mi{M-m}}}$ calculated from MQU moments. Ground truth is $S_{\mi{M}}-S_{\mi{m}}$ calculated from the MNU closed Sobol' matrix reported in \cref{sec:Func}. Each plot point is the median $A^{T}$ over 2 folds, $L^{2}=81$ matrix elements and one or two total matrices. Only MQUs with $M=7$ have been used.}\label{fig:Bench:Am}
+    \end{figure}
+
+    One would like to know how the accuracy is affected by which Sobol' matrix is being measured. For the purposes of dimension reduction, inputs axes $\mi{m}$ whose complementary total Sobol' matrix $S^{T}_\mi{M-m}$ is small are irrelevant, and may be ignored. The test MNU has been arranged such that input relevance mostly decreases as $m$ increases, and must be zero for $m>5$. \cref{fig:Bench:Am} shows the median absolute error in $S^{T}_\mi{M-m}$ as input axes are removed one or two at a time. There is remarkable stability and consistency: the accuracy of the total index shows little or no dependence on $\mi{m}$, even though its value $S^{T}_\mi{M-m}$ actually follows a strong trend.
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[scale=0.65]{figures/m5/fullT/closed.Z.90ile.png}\hspace{0.5cm}
+        \includegraphics[scale=0.65]{figures/m7/fullT/closed.Z.90ile.png}\\
+        \vspace{0.2cm}
+        \includegraphics[scale=0.65]{figures/m5/fullT/closed.Z.50ile.png}\hspace{0.5cm}
+        \includegraphics[scale=0.65]{figures/m7/fullT/closed.Z.50ile.png}
+        \caption{The standardized score $\tte[l\x l^{\prime}]{A_{\mi{m}}}/\tte[l\x l^{\prime}]{T_{\mi{m}}}$ of the closed Sobol' matrix element $\tte[l\x l^{\prime}]{S_{\mi{m}}}$ with standard error $\tte[l\x l^{\prime}]{T_{\mi{m}}}$ calculated from MQU moments. Ground truth is the MNU Sobol' matrix reported in \cref{sec:Func}. Each plot point is the 90\% quantile (top row) or median (bottom row) $A/T$ over 2 folds, $L^{2}=81$ matrix elements and $M\in\set{5,7}$ closed matrices.}\label{fig:Bench:Z}
+    \end{figure}
+
+    MQU moments provide standard errors $\tte[l\x l^{\prime}]{T_{\mi{m}}}$ on Sobol' matrix elements in \cref{sec:GSAS}. Normalizing the results depicted in \cref{fig:Bench:A} by these standard errors produces the standardized score for the closed Sobol' matrix element $\tte[l\x l^{\prime}]{S_{\mi{m}}}$ shown in \cref{fig:Bench:Z}. One does not expect $\tte[l\x l^{\prime}]{\rv{S}_{\mi{m}}}$ to be normally distributed, so standardized scores values are not expected to follow rules such as 95\% of results score 2 or less. Rather, one is looking for stable and consistent scores over any choice of $E,N,M$. This means that the standard error $\tte[l\x l^{\prime}]{T_{\mi{m}}}$ has a meaning which is largely independent of context, and provides a consistent guide to the accuracy of $\tte[l\x l^{\prime}]{S_{\mi{m}}}$. Looking at \cref{fig:Bench:Z}, one sees a median standardized score consistently less than 2. The 90\% quantile shows less consistency as $M$ increases, growing from $\approx 3.5$ for $M=5$ to $\approx 5.0$ for $M=7$. The reliability -- but not necessarily the value -- of standard errors on Sobol' matrices computed from GP moments are very susceptible to the curse of dimensionality. We regard them as the natural extension of the Sobol' index definition to multi-output systems.
 
 
 \section{Conclusions}\label{sec:Conc}
-There is no generally accepted extension of Sobol' indices to multiple outputs $L>1$. 
-Almost all prior GSA has dealt with a single (i.e scalar) output. The Sobol' matrices presented in this paper apportion the correlation matrix of outputs rather than the variance of a single output. The diagonal elements express the relevance of inputs to the output variables themselves. The off-diagonal elements express relevance to the linkages between outputs. This may be of considerable interest when outputs are, for example, yield and purity of a product, or perhaps a single output measured at various times. The Sobol indices reveal (amongst other things) which inputs it is worthwhile varying in an effort to alter the linkages between outputs. Prior work on Sobol' indices with multiple outputs \cite{Gamboa.etal2013,Xiao2017,GarciaCabrejo2014} has settled ultimately on just the diagonal elements of the covariance matrix, so this linkage remains unexamined. Although output covariance has been incoroporated indirectly in prior studies by performing principal component analysis (PCA) on ouputs prior to GSA on the (diagonal) variances of the resulting output basis \cite{Campbell2006}. This has been used in particular to study synthetic ``multi-outputs'' which are actually the dynamic response of a single output over time \cite{Lamboni2011, Zhang2020}.
+    In this paper we have presented the theory and implementation of Sobol' indices extended to multi-outputs in the form of Sobol' matrices. These essentially ascribe the correlation between output components to the influence of various inputs. The diagonal elements of the Sobol' matrix are precisely the Sobol' indices of the output components, and the closed Sobol' matrix $\rv{S}_{\mi{M}}$ considering all inputs is just the multi-output correlation matrix. This is deliberately intended to provide insights into the influence of inputs on the linkages (correlations) between output components. Every element of a Sobol matrix lies within $\uniti$.
+    
+    The formal development assumes a multi-output model with quantified uncertainty (MQU) which is essentially a stochastic process (SP). The Sobol' matrix and its standard error have been expressed in terms of the first two moments of this SP. When benchmarked using GPs regressed to standard test functions with noise, the calculation is remarkably accurate up to $M=7$ input dimensions. Sobol' matrices of 0.02 accuracy are usually obtained with just 300 samples, and even 90 samples will usually provide estimates accurate to within 0.08 of the true value. Sobol' matrices and their uncertainties are not directly affected by homoskedastic uncertainty or noise in an MQU. When the noise to signal ratio exceeds 1 accuracy is indirectly impaired by the woeful performance of the MQU as a predictor. The accuracy of total Sobol' matrices also appears hardly affected by the number of relevant inputs or irrelevant inputs included up $M=7$. The standard error of Sobol' matrices indicate that most Sobol' matrices are accurate to within 2 standard errors. It should be ascertained whether these observations persist with more input dimensions $M>7$. This would be very useful for reducing high dimensional systems to their relevant inputs.
 
-Accurate calculation of Sobol' indices even for a single output is computationally expensive and requires 10,000+ datapoints \cite{Lamoureux.etal2014}. A (sometimes) more efficient approach is calculation via a surrogate model, such as Polynomial Chaos Expansion (PCE) \cite{Ghanem.Spanos1997,Xiu.Karniadakis2002,Xiu2010}, low-rank tensor approximation \cite{Chevreuil.etal2015,Konakli.Sudret2016}, and support vector regression \cite{Cortes.Vapnik1995}. As well as being efficient, surrogate models also smooth out noise in the output, which is often highly desirable in practice. This paper employs one of the most popular surrogates, the Gaussian Processes (GP) \cite{Sacks.etal1989, Rasmussen.Williams2005} as it is highly tractable. We shall follow the multi-output form (MOGP) described in \cite{Alvarez.etal2011}, in order to examine the linkages between outputs.
-This paper deals exclusively with the anisotropic Radial Basis Function kernel, known as RBF/ARD, which is widely accepted as the kernel of choice for smooth outputs \cite{Rasmussen2016}. This uses the classic Gaussian bell curve to express the proximity of two input points, described in detail in \cref{sub:GPR:Tensor,sub:GPR:Prior}.
+    Clearly the MQU moment method of GSA developed here looks very powerful when input dimensionality is moderate and data is scarce, or noisy, or both. It does not scale well with the number of outputs or samples: if data is abundant, other methods may be preferable. In any case, if one wishes to study the influence of various inputs on the correlations between outputs, Sobol' matrices provide a coherent framework for doing so.
 
-Semi-analytic expressions for Sobol' indices are available for scalar PCEs \cite{Sudret2008}, and the diagonal elements of multi-output PCEs \cite{GarciaCabrejo2014}.
-Semi-analytic expressions for Sobol' indices of GPs have been provided in integral form by \cite{Oakley.OHagan2004} and alternatively by \cite{Chen.etal2005}. These approaches are implemented, examined and compared in \cite{Marrel.etal2009,Srivastava.etal2017}. Both \cite{Oakley.OHagan2004,Marrel.etal2009} estimate the errors on Sobol' indices in semi-analytic, integral form. Fully analytic, closed form expressions have been derived without error estimates for uniformly distributed inputs \cite{Wu.etal2016a} with an RBF kernel. There are currently no closed form expressions for MOGPs, or the errors on Sobol' indices, or any GPs for which inputs are not uniformly distributed. 
 
-In this paper we provide explicit, closed-form analytic formulae for the $\mi{L}\x \mi{L}$ matrices of closed Sobol' indices and their errors, for a class of MOGP with an RBF/ARD kernel applicable to smoothly varying outputs. 
-We transform uniformly distributed inputs $\rv{u}$ to normally distributed inputs $\rv{z}$ prior to fitting a GP and performing analytic calculation of closed Sobol' indices. This leads to relatively concise expressions in terms of exponentials, and enables ready calculation of the errors (variances) of these expressions. It also allows for an arbitrary rotation $\Theta$ of inputs, as normal variables are additive, whereas summing uniform inputs does not produce uniform inputs. If the goal is reducing inputs, rotating their basis first boosts the possibilities immensely \cite{Constantine2015}. It presents the possibilty of choosing $\Theta$ to maximise the closed Sobol' index of the first few inputs.
-
-The covariance function or kernel \cite{Rasmussen.Williams2005} of an MQU measures the similarity between the output generated by two determined inputs $\tte[\mi{M}]{u},\tte[\mi{M^{\prime}}]{u^{\prime}}$ as
-\begin{equation}
-    \te[\mi{L\x L^{\prime}}]{k(\tte[\mi{M}]{u},\tte[\mi{M^{\prime}}]{u^{\prime}})} \deq 
-\cov[{\te[\mi{L^{\prime}}]{y(\te[\mi{M^{\prime}}]{u^{\prime}})}}]{\te[\mi{L}]{y(\te[\mi{M}]{u})}}{M}
-\end{equation}
-Throughout this work, primes on uppercase constants are for bookkeeping only, they do not affect the value $\mi{M}^{n\prime}\deq \mi{M};\ \mi{L}^{n\prime}\deq \mi{L}$. Primes on lowercase variables do affect the value, so it may or may not be the case that $\mi{m}^{n\prime}=\mi{m};\  \mi{l}^{n\prime}=\mi{l}$. All one needs to secure a covariance function is the ability to calculate the finite-dimensional distribution
-\begin{equation*}
-    \prob{-\begin{bmatrix} \tte[\mi{L}]{E} \\ \tte[\mi{L^{\prime}}]{E^{\prime}} \end{bmatrix} \leq y(\te[\mi{M+1\x 2}]{\rv{u}})- \begin{bmatrix} \tte[\mi{L}]{Y} \\ \tte[\mi{L^{\prime}}]{Y^{\prime}} \end{bmatrix} \leq \begin{bmatrix} \tte[\mi{L}]{E} \\ \tte[\mi{L^{\prime}}]{E^{\prime}} \end{bmatrix}}{\te[\mi{M\x 2}]{\rv{u}}= \begin{bmatrix} \tte[\mi{M}]{u} \\ \tte[\mi{M^{\prime}}]{u^{\prime}} \end{bmatrix}}
-\end{equation*}
-where $E,E^{\prime}\geq 0$ for the design matrix
-\begin{equation*}
-    \begin{array}{lllll}
-        \te[0]{u} & \cdots & \te[M-1]{u} \\
-        \te[0]{u^{\prime}} & \cdots & \te[M^{\prime}-1]{u^{\prime}}
-    \end{array}
-    \begin{array}{lllll}
-        \te[0]{Y} & \cdots & \te[L]{Y} \\
-        \te[0]{Y^{\prime}} & \cdots & \te[L^{\prime}]{Y^{\prime}}
-    \end{array}
-\end{equation*}
-This is the sole purpose of an MQU, as discussed in \cref{sec:MQU}. 
-
-Using this finite-dimensional distribution one can always calculate the non-centralized mQU moments
-\begin{equation}\label{eq:Mom:mum}
-            \te[\mi{L}]{\mu_{\mi{m}}}
-            = \evt{\evt{\te[\mi{L}]{y(\te[\mi{M}]{\rv{u}})}}{M}}{\mi{M-m}}                
-\end{equation}
-\begin{equation}\label{eq:Mom:mumm}
-    \begin{aligned}
-        \te[\mi{L\x L^{\prime}}]{\mu_{\mi{mm^{\prime}}}} &= \evt{\evt{\ev{\te[\mi{L^{\prime}}]{y(\tte[\mi{M^{\prime}}]{u^{\prime}})} \otimes \te[\mi{L}]{y(\tte[\mi{M}]{u})}}{M}}}{\mi{M^{\prime}-m^{\prime}}}{\mi{M-m}} \\
-        &= \evt{\evt{{\cov{\te[\mi{L\x L^{\prime}}]{k(\tte[\mi{M}]{\rv{u}},\tte[\mi{M^{\prime}}]{\rv{u}^{\prime}})}}{M}}}{\mi{M^{\prime}-m^{\prime}}}}{\mi{M-m}} + \te[\mi{L}]{\mu_{\mi{m}}} \otimes \te[\mi{L^{\prime}}]{\mu_{\mi{m^{\prime}}}}                
-    \end{aligned}
-\end{equation}
-This is how to calculate mQU moments, it is not how to define them.
-
-In order to calculate the Sobol' matrix error, let us define the mQU moments as
-\begin{equation}
-    \te[\mi{L}^{n}]{\mu_{\mi{m \ldots m}^{(n-1)\prime}}} \deq \ev{\tte[\mi{L}]{\rv{y}_{\mi{m}}}\otimes\cdots\otimes\tte[\mi{L}]{\rv{y}_{\mi{m}^{(n-1)\prime}}}}{M}
-\end{equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \bibliographystyle{siamplain}
