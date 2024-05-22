@@ -140,7 +140,7 @@
         \mathrm{P}^{-1}(\tte[M]{u}) \deq \inf \setbuilder{\tte[M]{x}}{\mathrm{P}(\tte[M]{x}) \geq \tte[M]{u}}        
     \end{equation*}
     This mapping $\mathrm{P}^{-1} \colon \tte[M]{\rv{u}} \mapsto \tte[M]{\rv{x}}$ is the quantile function of $\tte[M]{\rv{x}}$ on $\uniti$, and embedding it in an output model $y$ can express any continuous RV at a given determined input $\tte[\mi{M}]{u}$. In other words, the output model could be any continuous SP.
-    The amenity of \Cref{def:MQU:input} is that each input $\te[m]{\rv{u}}$ is automatically a probability measure, for any $m\in\mi{M}$.
+    An amenity of \Cref{def:MQU:input} is that each input $\te[m]{\rv{u}}$ is automatically a probability measure, for any $m\in\mi{M}$.
 
     Throughout this work, expectations are subscripted by the input axes marginalized
     \begin{equation*}
@@ -301,7 +301,7 @@
     \begin{equation}\label[definition]{def:GSAM:R_mmp}
         \te[\mi{L\x L^{\prime}}]{\rv{R}_{\mi{mm^{\prime}}}} 
         \deq \frac{\cov[\rv{y}_{\mi{m}^{\prime}}]{\rv{y}_{\mi{m}}}{\mi{m}}_{\mi{L\x L^{\prime}}}}{\dev{\rv{y}_{\mi{m}}}{\mi{m}}_{\mi{L}} \otimes \dev{\rv{y}_{\mi{m^{\prime}}}}{\mi{m^{\prime}}}_{\mi{L^{\prime}}}}
-        \qquad \forall \mi{m},\mi{m^{\prime}} \in \mi{M}
+        \qquad \mi{L^{\prime}}\deq \mi{L} \quad \forall \mi{m},\mi{m^{\prime}} \in \mi{M}
     \end{equation}
     In terms of which
     \begin{equation}\label[definition]{def:GSAM:S_R}
@@ -321,7 +321,7 @@
     \end{subequations}
     So the void model $\tte[\mi{L}]{\rv{y}_{\mi{0}}}$ still explains nothing, the full model $\tte[\mi{L}]{\rv{y}_{\mi{M}}}$ still explains everything explicable, and every other mQU lies somewhere in between. The last inequality shows that inputs can only influence the correlation between two outputs they are relevant to.
 
-    Let us pursue an informative toy example to illustrate these definitions. Take some even $M$ and define
+    Let us pursue an illuminating toy example to illustrate these definitions. Take some even $M$ and define
     \begin{equation*}
             w \colon \uniti^{M/2} \to \st{R} \QT{such that} \ev{w}{\mi{M/2}} = 0 \QT{and} \cov{w}{\mi{M/2}} = 1
     \end{equation*}
@@ -709,9 +709,9 @@
 
     The most pertinent GSA features of the test MNU have just been described, and most other interesting GSA information can be inferred from them. Benchmarking consists of discovering this information as if we did not already know it. The discovered information is then compared with the ground truth just described. Effective benchmarking is stringent about this: the test MNU should be obscured in realistic ways until its Sobol' matrices are no longer discernible. Obscurity in real-world GSA almost always concerns data quantity and/or quality. 
     
-    Data quantity is benchmarked by $N$, the number of samples in the design matrix being benchmarked. The samples are arranged in a space-filling latin hypercube design \cite{Viana2015,Saltelli2008} over $M$ dimensional input space. 
+    Data quantity is benchmarked by $N$, the number of samples in the design matrix being benchmarked. The $N$ samples are always arranged in a space-filling latin hypercube design \cite{Viana2015,Saltelli2008} over $M$ dimensional input space. 
     
-    Data quality is impaired by adding iid (independent, identically distributed) Gaussian noise of magnitude $E$ to the normalized MNU, using the identity matrix $\diag[]{1}$ to define
+    Data quality is impaired by adding iid (independent, identically distributed) Gaussian noise $E\rv{e}$ of magnitude $E$ to the normalized MNU, using the identity matrix $\diag[]{1}$ to define
     \begin{subequations} \label[definition]{def:Func:y}
         \begin{align}
             \te[l\x \mi{N}]{y(\tte[\mi{M\x N}]{u})} &\deq (1+E^{2})^{-1/2} \left(\te[l\x \mi{N}]{\bar{f}(\tte[\mi{M\x N}]{u})} + E \te[\mi{(l+1) N - l N}]{\rv{e}}\right) \\
@@ -739,7 +739,9 @@
 
     The quality of regression is monitored by 2-fold sampling, wherein a latin hypercube of $2N$ MQU samples is randomly split in half. One half is used for regression (training) and the other for validation (testing) in the first fold, the roles reversed in the second fold. 
     
-    This makes a total of nearly 2 thousand $L=9$ test MQUs, embodying nearly 17 thousand individual outputs and just over 1.8 million closed Sobol' matrix elements over $M\in\set{5,7}$. Although the results are somewhat similar, $M=5$ gives a nice spread of Sobol' matrix element magnitudes, whereas $M=7$ invites the curse of dimensionality \cite{Altman.Krzywinski.2018,Binois2021} by incorporating irrelevant input dimensions. The Sobol' matrices for these irrelevant dimensions is of particular interest, as it enables dimension reduction via GSA. The rom-comma package \cite{RomComma2024} was used to implement this suite of test MQUs in a Python script to benchmark Sobol' matrix calculations and their errors. 
+    This makes a total of nearly two thousand $L=9$ test MQUs, embodying nearly seventeen thousand individual outputs and just over 1.8 million closed Sobol' matrix elements over $M\in\set{5,7}$. Although the results are somewhat similar, $M=5$ gives a nice spread of Sobol' matrix element magnitudes, whereas $M=7$ invites the curse of dimensionality \cite{Altman.Krzywinski.2018,Binois2021} by incorporating irrelevant input dimensions. The Sobol' matrices for these irrelevant dimensions is of particular interest, as it enables dimension reduction via GSA. 
+    
+    The rom-comma package \cite{RomComma2024} was used to implement this suite of test MQUs in a Python script to benchmark Sobol' matrix calculations and their errors. 
 
 
 \section{Benchmarking}\label{sec:Benchmarks}
@@ -768,7 +770,7 @@
     Numerical instability results from extreme overfitting, and is a well understood, readily diagnosed and sometimes remediable pitfall of GP regression. It is highly susceptible to the curse of dimensionality \cite{Altman.Krzywinski.2018,Binois2021}. Given $k$-fold validation, one would normally remove these GPs, or try alternative fit optimizations to obtain a reliable GP regression.
 
     The remainder of this Section presents GSA benchmark results for Sobol' matrices calculated from the moments of the GPs just described.
-    In order to assess the performance of GSA, we have not removed numerically unstable GPs using $k$-fold validation as should be done in practice. Instead, the results have been cleaned by filtering out numerically impossible GSA results. Any Sobol' index $\tte[l\x l]{S_{\mi{m}}}\not\in \unitia$ or Sobol' matrix standard error $\tte[l\x l^{\prime}]{T_{\mi{m}}}\not\in \unitia$ prompts us to remove $\tte[l]{y},\tte[l^{\prime}]{y}$ entirely from that fold $(k,M,N,E)$. If needed, such filtering should be applied in practice.
+    In order to assess the performance of GSA, we have not removed numerically unstable GPs using $k$-fold validation as should be done in practice. Instead, the results have been cleaned by filtering out numerically impossible GSA results. Any Sobol' index $\tte[l\x l]{S_{\mi{m}}}\not\in \unitia$ or Sobol' matrix standard error $\tte[l\x l^{\prime}]{T_{\mi{m}}}\not\in \unitia$ prompts us to remove $\tte[l]{y},\tte[l^{\prime}]{y}$ entirely from that fold $(k,M,N,E)$. If needed, such filtering should be applied in practice. On the whole, it seems that the Sobol' matrix error is a most sensitive indicator of a numerically unstable GP.
 
     \begin{figure}[htbp]
         \centering
@@ -789,7 +791,7 @@
         \vspace{0.2cm}
         \includegraphics[scale=0.65]{figures/m7/fullT/closed.A.50ile.mm.1.png}
         \includegraphics[scale=0.65]{figures/m7/fullT/closed.A.50ile.mm.3.png}
-        \caption{The absolute error $\tte[l\x l^{\prime}]{A^{T}_{\mi{M-m}}}$ of the total Sobol' matrix element $\tte[l\x l^{\prime}]{S^{T}_{\mi{M-m}}}$ calculated from MQU moments. Ground truth is $S_{\mi{M}}-S_{\mi{m}}$ calculated from the MNU closed Sobol' matrix reported in \Cref{sec:Func}. Each plot point is the median $A^{T}$ over 2 folds, $L^{2}=81$ matrix elements and one or two total matrices. Only MQUs with $M=7$ have been used.}\label{fig:Bench:Am}
+        \caption{The absolute error $\tte[l\x l^{\prime}]{A^{T}_{\mi{M-m}}}$ of the total Sobol' matrix element $\tte[l\x l^{\prime}]{S^{T}_{\mi{M-m}}}$ calculated from MQU moments. Ground truth is $S_{\mi{M}}-S_{\mi{m}}$ calculated from the MNU closed Sobol' matrices reported in \Cref{sec:Func}. Each plot point is the median $A^{T}$ over 2 folds, $L^{2}=81$ matrix elements and one or two total matrices. Only MQUs with $M=7$ have been used.}\label{fig:Bench:Am}
     \end{figure}
 
     Next we examine how the accuracy and reliability of GSA is affected by the input axes marginalized. For the purposes of dimension reduction, inputs axes $\mi{m}$ whose complementary total Sobol' matrix $S^{T}_\mi{M-m}$ is small are irrelevant, and may be ignored. The test MNU has been arranged such that input relevance mostly decreases as $m$ increases, and must be zero for $m>5$. \Cref{fig:Bench:Am} shows the median absolute error in $S^{T}_\mi{M-m}$ as input axes are removed one or two at a time. There is remarkable stability and consistency: the accuracy of the total index shows little or no dependence on $\mi{m}$, even though its value $S^{T}_\mi{M-m}$ actually follows a strong trend.
