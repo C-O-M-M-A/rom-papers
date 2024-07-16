@@ -1,0 +1,225 @@
+% SIAM Article Template
+\documentclass[review,onefignum,onetabnum]{siamonline220329}
+
+\usepackage{amsfonts} 
+\usepackage{xspace} 
+\usepackage{ifthen} 
+\usepackage{csvsimple}
+\usepackage{todonotes}
+\usepackage{float}
+\newcommand*{\M}[1]{\ensuremath{#1}\xspace} 
+\newcommand*{\tr}[1]{\M{#1}}
+\newcommand*{\x}{\times}
+\newcommand*{\mi}[1]{\mathbf{#1}} 
+\newcommand*{\st}[1]{\mathbb{#1}} 
+\newcommand*{\rv}[1]{\mathsf{#1}} 
+\newcommand*{\te}[2][]{\left\lbrack{#2}\right\rbrack_{#1}}
+\newcommand*{\tte}[2][]{\lbrack{#2}\rbrack_{#1}}
+\newcommand*{\tse}[2][]{\mi{\lbrack#2\rbrack}_{#1}}
+\newcommand*{\tme}[3][]{\lbrack{#3}\rbrack_{\tse[#1]{#2}}}
+\newcommand*{\diag}[2][]{\left\langle{#2}\right\rangle_{#1}}
+\newcommand*{\prob}[2]{\M{\mathbb{P}\!\left\lbrack\left.{#1}\;\right\vert\;{#2}\right\rbrack}} 
+\newcommand*{\deq}{\M{\mathrel{\mathop:}=}} 
+\newcommand*{\deqr}{\M{=\mathrel{\mathop:}}} 
+\newcommand{\T}[1]{\text{#1}} 
+\newcommand*{\QT}[2][]{\M{\quad\T{#2}\ifthenelse{\equal{#1}{}}{\quad}{#1}}} 
+\newcommand*{\ev}[3][]{\mathbb{E}_{#3}^{#1}\!\left\lbrack{#2}\right\rbrack}
+\newcommand*{\evt}[3][]{\mathbb{E}_{#3}^{#1}#2}
+\newcommand*{\cov}[3][]{\ifthenelse{\equal{#1}{}}{\mathbb{V}_{#3}\!\left\lbrack{#2}\right\rbrack}{\mathbb{V}_{#3}\!\left\lbrack{#2,#1}\right\rbrack}}
+\newcommand*{\dev}[3][]{\ifthenelse{\equal{#1}{}}{\mathbb{D}_{#3}\!\left\lbrack{#2}\right\rbrack}{\mathbb{D}_{#3}\!\left\lbrack{#2,#1}\right\rbrack}}
+\newcommand*{\covt}[2]{\mathbb{V}_{#2}{#1}}
+\newcommand*{\devt}[2]{\mathbb{D}_{#2}{#1}}
+\newcommand*{\gauss}[2]{\mathcal{N}\!\left({#1,#2}\right)}
+\newcommand*{\uni}[2]{\mathcal{U}\!\left({#1,#2}\right)}
+\newcommand*{\tgauss}[2]{\mathcal{N}({#1,#2})}
+\newcommand*{\gaussd}[2]{\mathcal{N}^{\dagger}\!\left({#1,#2}\right)}
+\newcommand*{\modulus}[1]{\M{\left\lvert{#1}\right\rvert}} 
+\newcommand*{\norm}[1]{\M{\left\lVert{#1}\right\rVert}} 
+\newcommand*{\ceil}[1]{\M{\left\lceil{#1}\right\rceil}} 
+\newcommand*{\set}[1]{\M{\left\lbrace{#1}\right\rbrace}} 
+\newcommand*{\setbuilder}[2]{\M{\left\lbrace{#1}\: \big\vert \:{#2}\right\rbrace}}
+\newcommand*{\uniti}{\lbrack 0,1\rbrack}
+\newcommand*{\infti}{(-\infty,\infty)}
+\newcommand*{\unitia}{\lbrack -0.001,1.001\rbrack}
+\newcommand*{\gdf}[3]{\M{\mathrm{p}\!\left(\left.{#1}\right\vert{#2,#3}\right)}} 
+\newcommand*{\gcf}[3]{\M{\mathrm{P}\!\left(\left.{#1}\right\vert{#2,#3}\right)}} 
+\DeclareMathOperator*{\abs}{abs}
+\DeclareMathOperator*{\trace}{tr\!}
+\DeclareMathOperator*{\ish}{ish}
+\DeclareMathOperator*{\sob}{sob}
+\DeclareMathOperator*{\oak}{oak}
+
+% FundRef data to be entered by SIAM
+%<funding-group specific-use="FundRef">
+%<award-group>
+%<funding-source>
+%<named-content content-type="funder-name"> 
+%</named-content> 
+%<named-content content-type="funder-identifier"> 
+%</named-content>
+%</funding-source>
+%<award-id> </award-id>
+%</award-group>
+%</funding-group>
+
+% Sets running headers as well as PDF title and authors
+\headers{Sobol' Matrices for MOGPs}{R. A. Milton and S. F. Brown}
+
+% Title. If the supplement option is on, then "Supplementary Material"
+% is automatically inserted before the title.
+\title{Sobol' Matrices for Multi-Output Gaussian Processes\thanks{Submitted to the editors DATE.
+\funding{This work was funded by the EPSRC under grant reference EP/V051458/1.}}}
+
+% Authors: full names plus addresses.
+\author{Robert A. Milton\thanks{Department of Chemical, Materials and Biological Engineering, University of Sheffield, Sheffield, S1 3JD, United Kingdom (\email{r.a.milton@sheffield.ac.uk}, \url{https://www.browngroupsheffield.com/}).}
+\and Solomon F. Brown\thanks{Department of Chemical, Materials and Biological Engineering, University of Sheffield, Sheffield, S1 3JD, United Kingdom (\email{s.f.brown@sheffield.ac.uk}, \url{https://www.browngroupsheffield.com/}).}}
+
+\begin{document}
+
+\maketitle
+
+% REQUIRED
+\begin{abstract}
+    Variance based global sensitivity analysis measures the relevance of inputs to a single output using Sobol' indices. A recent paper [R. A. Milton, A. S. Yeardley, and S. F. Brown, \emph{Submitted to SIAM/ASA Journal on Uncertainty Quantification}, 2024] extended the definition in a natural way to multiple outputs, directly measuring the relevance of inputs to the linkages between outputs in a correlation-like matrix of indices. Sobol' matrices and their standard errors were related to the moments of the multi-output model, to enable calculation. The present work carries through the explicit, analytic calculation of Sobol' matrices for the widely applicable, concrete case of multi-output Gaussian processes with an anisotropic radial basis function kernel. The calculations are extensively are benchmarked numerically against test functions (with added noise), whose Sobol' matrices are calculated analytically.
+\end{abstract}
+
+% REQUIRED
+\begin{keywords}
+    Global Sensitivity Analysis, Sobol' Index, Surrogate Model, Multi-Output, Gaussian Process, Uncertainty Quantification
+\end{keywords}
+
+% REQUIRED
+\begin{MSCcodes}
+    60G07,60G15,62J10, 62H99
+\end{MSCcodes}
+
+\section{Introduction}\label{sec:Intro}
+    This paper is concerned with analyzing the results of experiments or computer simulations in a design matrix of $M\geq 1$ input axes (columns) and $L\geq 1$ output axes (columns) over $N$ samples (rows). Global Sensitivity Analysis (GSA) \cite{Razavi2021} examines the relevance of the various inputs to the various outputs. When pursued via ANOVA decomposition of a single output, this leads naturally to the well known Sobol' indices, which have by now been applied across most fields of science and engineering \cite{Saltelli2019,Ghanem2017}. A recent paper \cite{Milton.etal.2024a} extended the definition in a natural way to multiple outputs $L\geq 1$. This work implements the extended definition for the widely applicable, concrete case of Multi-Output Gaussian Processes (MOGPs) with an anisotropic Radial Basis Function (RBF) kernel.
+
+    Sobol' indices apportion the variance of a scalar output to the influence of various inputs. There is no generally accepted extension of Sobol' indices to multi-outputs $L>1$. 
+    The Sobol' matrices developed in \cite{Milton.etal.2024a} apportion the correlation matrix of outputs -- rather than the variance of a single output -- to the influence of various inputs. The diagonal elements are identically the classical Sobol' indices, expressing the relevance of inputs to the output variables themselves. The off-diagonal elements express the relevance of inputs to the correlation between outputs. This may be of vital interest when outputs are, for example, yield and purity of a product, cost and efficacy of a process, or perhaps a single output measured at various times. The Sobol matrices reveal (amongst other things) which inputs it is worthwhile varying in an effort to alter the linkage between outputs.
+    
+    Prior work on Sobol' indices with multiple outputs \cite{Gamboa.etal2013,GarciaCabrejo2014,Xiao2017,Cheng2019} has settled ultimately on just the diagonal elements of the covariance matrix, so covariance between outputs remains unexamined. Previous studies have performed principal component analysis (PCA) on outputs prior to performing GSA on the resulting principal component outputs \cite{Campbell2006}. This has been used in particular to study synthetic multi-outputs which are actually the dynamic response of a single output over time \cite{Lamboni2011,Zhang2020}. Hierarchical sensitivity analysis \cite{Xu2020} employs prior mapping to independent subsystems. In all these cases, output covariance is essentially removed prior to GSA. Only very recently has GSA attempted to incorporate output covariance at all \cite{Liu2021}, as an ingredient in a total fluctuation. The Sobol' matrices \cite{Milton.etal.2024a} pursued in the present work constitute the first GSA performed directly on output covariance, in order to examine the influence of various inputs on the correlation between outputs.
+
+    Accurate calculation of Sobol' indices for a single output is computationally expensive and may require 10,000+ samples \cite{Lamoureux.etal2014, Oakley.OHagan2004}. A (potentially) more efficient approach is calculation via a surrogate model, such as a Gaussian Process (GP) \cite{Sacks.etal1989, Rasmussen.Williams2005}, Polynomial Chaos Expansion (PCE) \cite{Ghanem.Spanos1997,Xiu.Karniadakis2002,Xiu2010}, low-rank tensor approximation \cite{Chevreuil.etal2015,Konakli.Sudret2016}, or support vector regression \cite{Cortes.Vapnik1995,Cheng2019}. Semi-analytic expressions for Sobol' indices are available for scalar PCEs \cite{Sudret2008}, and the diagonal elements of multi-output PCEs \cite{GarciaCabrejo2014}.
+    Semi-analytic expressions for Sobol' indices of GPs have been provided in integral form by \cite{Oakley.OHagan2004} and alternatively by \cite{Chen.etal2005}. These approaches are implemented, examined and compared in \cite{Marrel.etal2009,Srivastava.etal2017}. Both \cite{Oakley.OHagan2004,Marrel.etal2009} estimate the errors on Sobol' indices in semi-analytic, integral form. Fully analytic, closed form expressions have been derived without error estimates for uniformly distributed inputs \cite{Wu.etal2016a} using a GP with an RBF kernel. The present work performs the calculation of full Sobol' matrices and their standard errors for MOGPs with normally distributed inputs. This enhances analytical elegance and computational efficiency, and allows for rotation of the input basis. After all, an arbitrarily rotated multivariate normal distribution is still a multivariate normal distribution, whereas a multivariate uniform distribution can only be rotated by right angles if it is to remain uniform.
+
+    When data is limited, some form of surrogate is really indispensable to perform GSA. Accordingly
+    Sobol' matrices and their error estimates are related to the moments of a surrogate model in \cite{Milton.etal.2024a}. From this starting point, the present work develops explicit, analytic formulae for Sobol' matrices and their standard errors from MOGP moments. An anisotropic RBF kernel is assumed, appropriate to outputs which vary smoothly over continuous inputs. The analytic formulae have implemented as an open source Python library \cite{RomComma2024}. This allows us to benchmark implementation against test functions with known Sobol' matrices. This is important, because practitioners are rarely privileged with an exact and reliable exogenous model linking outputs to inputs. Rather, GSA is a preliminary stage in reducing empirical observations to a tractable, analyzable representation. For example, it is frequently used to guide model reduction and the design of experiments, as well as or as part of optimization and risk assessment. Under these circumstances, the GSA itself must be robust and reliable, providing well benchmarked measures of its own uncertainty and domain of validity.
+
+    The contents of this paper are as follows. \Cref{} introduces the notation and context for performing GSA in \cite{Milton.etal.2024a}.
+
+
+\section{Multi-output models with quantified uncertainty (MQUs)}\label{sec:GSA}
+    The purpose of this Section is to set the scene for this study and serve as a glossary of notation. The notation is not quite standard, but is preferred for lightness and fluency once grasped. Regarding notation and other topics, the intention is to facilitate computation by combining efficient, tensorized operations such as {\tt einsum} \cite{Numpy2023,PyTorch2023,Tensorflow2023} into numerically stable calculations. As such, the devices employed herein should be familiar to practitioners of machine learning.
+
+    The preference throughout this paper is for uppercase constants and lowercase variables.
+    Square bracketed quantities such as $\tte[\mi{M\x N}]{u}$ are tensors subscripted by (the cartesian product of) their ranks, for bookkeeping. Each rank is expressed as an ordinal of axes, a tuple which is conveniently also a naive set and may be subtracted from others as such
+    \begin{equation*} \label[definition]{def:MQU:m}
+        \begin{aligned}
+            \mi{0} \deq () \subseteq{} \mi{m}&\deq (0,\ldots ,m-1) \subseteq \mi{M} \deq (0,\ldots ,M-1) \\   
+            \mi{M-m} &\deq \setbuilder{m^{\prime} \in \mi{M}}{m^{\prime} \notin \mi{m}} = (m, \ldots, M-1)
+        \end{aligned}
+    \end{equation*}
+    GSA decomposes input space by families of axes, and this notation facilitates that. It does assume that input axes are expediently ordered already, which might impair convenience but not generality. Conventional indexing of components is permitted under this scheme, by allowing singleton axes to be written in italic without parentheses.
+
+    From a Bayesian perspective a determined tensor is a function of determined input(s), a random variable (RV) a function of undetermined input, and a stochastic process (SP) a function of both determined and undetermined inputs. In any case, all sources of (sans-serif) uncertainty may be gathered in a single input $\tte[M]{\rv{u}}$, final to the definition of input space:
+    \begin{equation} \label[definition]{def:MQU:input}
+        \begin{aligned}
+            \mi{M} &\deq (0,\ldots,M-1) \QT{determined inputs on the unit interval} &\te[\mi{M}]{u}\in \uniti^{M} \\
+            M &\deqr \mi{M+1-M} \quad\QT{an undetermined input on the unit interval} &\te[M]{\rv{u}} \sim \uni{0}{1}
+        \end{aligned}   
+    \end{equation}
+    Exponentiation is always categorical -- repeated cartesian $\x$ or tensor $\otimes$ -- unless stated otherwise.
+    It is crucial to this work that all $\mi{M+1}$ inputs vary completely independently of each other -- they are in no way codependent or correlated.
+    Uncertainty is distributed uniformly $\tte[M]{\rv{u}} \sim \uni{0}{1}$ in \cite{Milton.etal.2024a} to exploit the ``universality of the uniform'' \cite[pp.224]{Blitzstein2019}, better known as the inverse probability integral transform \cite{Angus1994}. Let us take immediate advantage by defining
+    \begin{equation} \label[definition]{def:MQU:input}
+        \begin{aligned}
+            \te[\mi{M}]{z} & \gcf{\te[\mi{M+1}]{u}}{}{} \sim \gauss{\te[\mi{M+1}]{0}}{} \\
+            M &\deqr \mi{M+1-M} \quad\QT{an undetermined input on the unit interval} &\te[M]{\rv{u}} \sim \uni{0}{1}
+        \end{aligned}   
+    \end{equation}
+
+    Throughout this work, expectations are subscripted by the input axes marginalized
+    \begin{equation*}
+        \ev{\bullet }{\#} \deq \int_{\te[\#]{0}}^{\te[\#]{1}} \te{\bullet} \, \mathrm{d}\te[\#]{u} \qquad \forall \# \subseteq \mi{M+1} \T{ or } \# \in \mi{M+1}
+    \end{equation*}
+    Covariances invoke the tensor product (summing the ranks of the arguments), and carry the subscript of their underlying expectation
+    \begin{equation*}
+        \cov[\te{*}]{\te{\bullet}}{\#} \deq \ev{\te{\bullet}\otimes\te{*}}{\#} - \ev{\bullet}{\#} \otimes \ev{*}{\#} \qquad \forall \# \subseteq \mi{M+1} \T{ or } \# \in \mi{M+1}
+    \end{equation*}
+    The covariance of anything with itself is expressed with a single argument $\cov{\bullet}{\mi{\#}} \deq \cov[\bullet]{\bullet}{\mi{\#}}$, as is customary.
+
+    A multi-output model with quantified uncertainty (MQU) is defined as any Lebesgue integrable function on input space \Cref{def:MQU:input} obeying
+    \begin{equation} \label[definition]{def:MQU:y}
+        \begin{gathered}
+            y \colon \uniti^{M+1} \rightarrow \st{R}^{L} \QT{such that} \\ \covt{\evt{\te[l]{y(\te[\mi{M+1}]{\rv{u}})}}{M}}{\mi{M}} > \evt{\evt{\te[l]{y(\te[\mi{M+1}]{\rv{u}})}}{M}}{\mi{M}} = 0 \quad \forall l\in\mi{L}            
+        \end{gathered}
+    \end{equation}
+    This forces every output component $l\in\mi{L}$ to depend on at least one determined input: constant functions and pure noise are not allowed, to avoid division by zero in GSA.
+    Without loss of generality we have also offset the output  $\tte[\mi{L}]{y}$ to have mean $\tte[\mi{L}]{0}$. This is formally unnecessary, but it can be crucial to the numerical accuracy of computations.
+
+    Our notation will reflect machine learning practice \cite{Numpy2023,PyTorch2023,Tensorflow2023} which facilitates parallel computation by tensorizing function application over batch dimensions such as $\mi{N}$ according to
+    \begin{equation*}
+        \te[\mi{L}\x n]{y(\te[\mi{M+1\x N}]{\rv{u}})} \deq y(\te[\mi{M+1}\x n]{\rv{u}}) \qquad \forall n \in \mi{N}
+    \end{equation*}
+
+    To elucidate the meaning and purpose of an MQU, and set the stage for GSA, consider a design matrix of $\tte[\mi{M\x N}]{u}$ inputs alongside $\tte[\mi{L\x N}]{Y}$ outputs:
+    \begin{equation*}
+        \begin{array}{lllll}
+            \te[0\x 0]{u} & \cdots & \te[M-1\x 0]{u} \\
+            \phantom{t}\vdots & \ddots & \phantom{t}\vdots \\
+            \te[0\x N-1]{u} & \cdots & \te[M-1\x N-1]{u} \\
+        \end{array}
+        \begin{array}{lllll}
+            \te[0\x 0]{Y} & \cdots & \te[L-1\x 0]{Y} \\
+            \phantom{t}\vdots & \ddots & \phantom{t}\vdots \\
+            \te[0\x N-1]{Y} & \cdots & \te[L-1\x N-1]{Y} \\
+        \end{array}
+    \end{equation*}
+    The sole purpose of an MQU is actually to provide a single number for any such design matrix of $N\in\st{Z}^{+}$ samples (rows): namely, the probability that the output samples result from the input samples, to within any given uncertainty $\te[\mi{L\x N}]{E} \geq \te[\mi{L\x N}]{0}$
+    \begin{equation*}
+        \prob{\te[\mi{L\x N}]{E} \geq {y(\te[\mi{M+1\x N}]{\rv{u}})-\te[\mi{L\x N}]{Y}} \geq -\te[\mi{L\x N}]{E}}{\te[\mi{M\x N}]{\rv{u}}=\te[\mi{M\x N}]{u}}
+    \end{equation*}
+    % This is what it means to generate $L$ quantifiably uncertain outputs from $M$ determined inputs.
+    % Following the Kolmogorov extension theorem \cite[pp.124]{Rogers.Williams2000}, the meaning of an MQU is nothing other than an SP. This includes zero variance SPs -- fully determined multi-output models of no uncertainty (MNUs) -- as MQUs $y(\tte[\mi{M+1}]{\rv{u}})$ which do not depend on the final, undetermined input $\tte[M]{\rv{u}}$. Kolmogorov's extension theorem formally identifies an SP -- a collection $y(\tte[\mi{M+1}]{\rv{u}}) = \setbuilder{y(\tte[\mi{M+1}]{\rv{u}})}{\tte[\mi{M}]{\rv{u}}=\tte[\mi{M}]{u}}$ of RVs indexed by determined inputs $\tte[\mi{M}]{u}$ -- with all its finite dimensional distributions $\setbuilder{y(\tte[\mi{M+1\x N}]{\rv{u}})}{\tte[\mi{M\x N}]{\rv{u}}=\tte[\mi{M\x N}]{u}}$. The latter viewpoint is the formal version of the random field \cite{Khoshnevisan2002} or random function interpretation of SPs \cite[pp.42]{Skorokhod2005} frequently alluded to in machine learning \cite{Rasmussen.Williams2005}.
+    % It can be a helpful perspective on the objects appearing in this work.
+
+    % In conception MQUs include any simulation, surrogate or regression which supplies a probability distribution (even a zero variance one) on its outputs. In practice, such an MQU is usually inferred from a design of experiments (DoE) which samples the determined inputs $\tte[\mi{M}]{u}$ from $\uni{0}{1}^{M}$. This is not restrictive, a preferred set of determined inputs $\tte[\mi{M}]{x}$ may have any sampling distribution whatsoever, so long as it is continuous and its $\mi{M}$ axes mutually independent. Simply take the CDF $\tte[\mi{M}]{\rv{u}} = \mathrm{P}(\tte[\mi{M}]{\rv{x}})$ before beginning, and apply the quantile function $\tte[\mi{M}]{\rv{x}}=\mathrm{P}^{-1}(\tte[\mi{M}]{\rv{u}})$ described above and in \cite{Angus1994} after finishing. In general and in summary, simply treat any $\tilde{y}(\tte[\mi{M+1}]{\rv{x}})$ as the pullback of an MQU by the CDF of $\tte[\mi{M+1}]{\rv{x}}$.
+
+    % To close this Section we shall formally secure the construction which follows.
+    % An MQU $y$ is Lebesgue integrable by \Cref{def:MQU:y}, so it must be measurable. All measures throughout this work are finite (probability measures, in fact), so integrability of $y$ implies integrability of $y^n$ for all $n \in \st{Z}^{+}$ \cite{Villani1985}.
+    % Therefore, Fubini's theorem \cite[pp.77]{Williams1991} allows all expectations to be taken in any order, which will be crucial later. We can thus safely construct any SP which is polynomial in $y$ and its marginals; and freely extract finite dimensional distributions from it by the Kolmogorov extension theorem \cite[pp.124]{Rogers.Williams2000}. This guarantees existence and uniqueness of every device in this paper.
+
+
+\section{Sobol' matrices}\label{sec:GSA}
+
+
+\section{GP regression}\label{sec:GPR}
+
+
+\section{GP moments}\label{sec:GPM}
+
+
+\section{GP estimates}\label{sec:GPE}
+
+
+\section{Mitigating computational cost}\label{sec:cost}
+
+
+\section{Test functions}\label{sec:func}
+
+
+\section{Benchmarking}\label{sec:bench}
+
+
+\section{Conclusions}\label{sec:conc}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\bibliographystyle{siamplain}
+\bibliography{../main}
+
+\end{document}
