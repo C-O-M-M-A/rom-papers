@@ -42,7 +42,7 @@
 \newcommand*{\infti}{(-\infty,\infty)}
 \newcommand*{\unitia}{\lbrack -0.001,1.001\rbrack}
 \newcommand*{\gdf}[3]{\M{\mathrm{p}\!\left(\left.{#1}\right\vert{#2,#3}\right)}} 
-\newcommand*{\gcf}[3]{\M{\mathrm{P}\!\left(\left.{#1}\right\vert{#2,#3}\right)}} 
+\newcommand*{\gcf}[4][]{\M{\mathrm{P}^{#1}\!\left(\left.{#2}\right\vert{#3,#4}\right)}} 
 \DeclareMathOperator*{\abs}{abs}
 \DeclareMathOperator*{\trace}{tr\!}
 \DeclareMathOperator*{\ish}{ish}
@@ -107,10 +107,10 @@
     When data is limited, some form of surrogate is really indispensable to perform GSA. Accordingly
     Sobol' matrices and their error estimates are related to the moments of a surrogate model in \cite{Milton.etal.2024a}. From this starting point, the present work develops explicit, analytic formulae for Sobol' matrices and their standard errors from MOGP moments. An anisotropic RBF kernel is assumed, appropriate to outputs which vary smoothly over continuous inputs. The analytic formulae have implemented as an open source Python library \cite{RomComma2024}. This allows us to benchmark implementation against test functions with known Sobol' matrices. This is important, because practitioners are rarely privileged with an exact and reliable exogenous model linking outputs to inputs. Rather, GSA is a preliminary stage in reducing empirical observations to a tractable, analyzable representation. For example, it is frequently used to guide model reduction and the design of experiments, as well as or as part of optimization and risk assessment. Under these circumstances, the GSA itself must be robust and reliable, providing well benchmarked measures of its own uncertainty and domain of validity.
 
-    The contents of this paper are as follows. \Cref{} introduces the notation and context for performing GSA in \cite{Milton.etal.2024a}.
+    The contents of this paper are as follows. introduces the notation and context for performing GSA in \cite{Milton.etal.2024a}.
 
 
-\section{Multi-output models with quantified uncertainty (MQUs)}\label{sec:GSA}
+\section{Multi-output models with quantified uncertainty (MQUs)}\label{sec:MQU}
     The purpose of this Section is to set the scene for this study and serve as a glossary of notation. The notation is not quite standard, but is preferred for lightness and fluency once grasped. Regarding notation and other topics, the intention is to facilitate computation by combining efficient, tensorized operations such as {\tt einsum} \cite{Numpy2023,PyTorch2023,Tensorflow2023} into numerically stable calculations. As such, the devices employed herein should be familiar to practitioners of machine learning.
 
     The preference throughout this paper is for uppercase constants and lowercase variables.
@@ -133,13 +133,13 @@
     Exponentiation is always categorical -- repeated cartesian $\x$ or tensor $\otimes$ -- unless stated otherwise.
     It is crucial to this work that all $\mi{M+1}$ inputs vary completely independently of each other -- they are in no way codependent or correlated.
     Uncertainty is distributed uniformly $\tte[M]{\rv{u}} \sim \uni{0}{1}$ in \cite{Milton.etal.2024a} to exploit the ``universality of the uniform'' \cite[pp.224]{Blitzstein2019}, better known as the inverse probability integral transform \cite{Angus1994}. Let us take immediate advantage by defining
-    \begin{equation} \label[definition]{def:MQU:input}
-        \begin{aligned}
-            \te[\mi{M}]{z} & \gcf{\te[\mi{M+1}]{u}}{}{} \sim \gauss{\te[\mi{M+1}]{0}}{} \\
-            M &\deqr \mi{M+1-M} \quad\QT{an undetermined input on the unit interval} &\te[M]{\rv{u}} \sim \uni{0}{1}
-        \end{aligned}   
+    \begin{equation} \label[definition]{def:MQU:z}
+        \te[\mi{M+1}]{z} \deq \gcf[-1]{\te[\mi{M+1}]{u}}{\te[\mi{M+1}]{0}}{\diag[\mi{M+1}^{2}]{1}} \sim \gauss{\te[\mi{M+1}]{0}}{\diag[\mi{M+1}^{2}]{1}}
     \end{equation}
-
+    where $\gauss{\te[\mi{M+1}]{0}}{\diag[\mi{M+1}^{2}]{1}}$ is the $\mi{M+1}$ dimensional standard normal distribution with mean $\te[\mi{M+1}]{0}$ and variance $\diag[\mi{M+1}^{2}]{1}$, and $\gcf[-1]{\te[\mi{M+1}]{u}}{\te[\mi{M+1}]{0}}{\diag[\mi{M+1}^{2}]{1}}$ is its quantile function, or inverse CDF. Henceforth, angle brackets always denote a diagonal tensor, identically 0 off the leading diagonal of the final two axes. The advantage of normally 
+    \begin{equation} \label[definition]{def:MQU:z}
+        \te[\mi{M+1}]{z} \deq \gcf[-1]{\te[\mi{M+1}]{u}}{\te[\mi{M+1}]{0}}{\diag[\mi{M+1}^{2}]{1}} \sim \gauss{\te[\mi{M+1}]{0}}{\diag[\mi{M+1}^{2}]{1}}
+    \end{equation}
     Throughout this work, expectations are subscripted by the input axes marginalized
     \begin{equation*}
         \ev{\bullet }{\#} \deq \int_{\te[\#]{0}}^{\te[\#]{1}} \te{\bullet} \, \mathrm{d}\te[\#]{u} \qquad \forall \# \subseteq \mi{M+1} \T{ or } \# \in \mi{M+1}
@@ -150,37 +150,37 @@
     \end{equation*}
     The covariance of anything with itself is expressed with a single argument $\cov{\bullet}{\mi{\#}} \deq \cov[\bullet]{\bullet}{\mi{\#}}$, as is customary.
 
-    A multi-output model with quantified uncertainty (MQU) is defined as any Lebesgue integrable function on input space \Cref{def:MQU:input} obeying
-    \begin{equation} \label[definition]{def:MQU:y}
-        \begin{gathered}
-            y \colon \uniti^{M+1} \rightarrow \st{R}^{L} \QT{such that} \\ \covt{\evt{\te[l]{y(\te[\mi{M+1}]{\rv{u}})}}{M}}{\mi{M}} > \evt{\evt{\te[l]{y(\te[\mi{M+1}]{\rv{u}})}}{M}}{\mi{M}} = 0 \quad \forall l\in\mi{L}            
-        \end{gathered}
-    \end{equation}
-    This forces every output component $l\in\mi{L}$ to depend on at least one determined input: constant functions and pure noise are not allowed, to avoid division by zero in GSA.
-    Without loss of generality we have also offset the output  $\tte[\mi{L}]{y}$ to have mean $\tte[\mi{L}]{0}$. This is formally unnecessary, but it can be crucial to the numerical accuracy of computations.
+    % A multi-output model with quantified uncertainty (MQU) is defined as any Lebesgue integrable function on input space \Cref{def:MQU:input} obeying
+    % \begin{equation} \label[definition]{def:MQU:y}
+    %     \begin{gathered}
+    %         y \colon \uniti^{M+1} \rightarrow \st{R}^{L} \QT{such that} \\ \covt{\evt{\te[l]{y(\te[\mi{M+1}]{\rv{u}})}}{M}}{\mi{M}} > \evt{\evt{\te[l]{y(\te[\mi{M+1}]{\rv{u}})}}{M}}{\mi{M}} = 0 \quad \forall l\in\mi{L}            
+    %     \end{gathered}
+    % \end{equation}
+    % This forces every output component $l\in\mi{L}$ to depend on at least one determined input: constant functions and pure noise are not allowed, to avoid division by zero in GSA.
+    % Without loss of generality we have also offset the output  $\tte[\mi{L}]{y}$ to have mean $\tte[\mi{L}]{0}$. This is formally unnecessary, but it can be crucial to the numerical accuracy of computations.
 
-    Our notation will reflect machine learning practice \cite{Numpy2023,PyTorch2023,Tensorflow2023} which facilitates parallel computation by tensorizing function application over batch dimensions such as $\mi{N}$ according to
-    \begin{equation*}
-        \te[\mi{L}\x n]{y(\te[\mi{M+1\x N}]{\rv{u}})} \deq y(\te[\mi{M+1}\x n]{\rv{u}}) \qquad \forall n \in \mi{N}
-    \end{equation*}
+    % Our notation will reflect machine learning practice \cite{Numpy2023,PyTorch2023,Tensorflow2023} which facilitates parallel computation by tensorizing function application over batch dimensions such as $\mi{N}$ according to
+    % \begin{equation*}
+    %     \te[\mi{L}\x n]{y(\te[\mi{M+1\x N}]{\rv{u}})} \deq y(\te[\mi{M+1}\x n]{\rv{u}}) \qquad \forall n \in \mi{N}
+    % \end{equation*}
 
-    To elucidate the meaning and purpose of an MQU, and set the stage for GSA, consider a design matrix of $\tte[\mi{M\x N}]{u}$ inputs alongside $\tte[\mi{L\x N}]{Y}$ outputs:
-    \begin{equation*}
-        \begin{array}{lllll}
-            \te[0\x 0]{u} & \cdots & \te[M-1\x 0]{u} \\
-            \phantom{t}\vdots & \ddots & \phantom{t}\vdots \\
-            \te[0\x N-1]{u} & \cdots & \te[M-1\x N-1]{u} \\
-        \end{array}
-        \begin{array}{lllll}
-            \te[0\x 0]{Y} & \cdots & \te[L-1\x 0]{Y} \\
-            \phantom{t}\vdots & \ddots & \phantom{t}\vdots \\
-            \te[0\x N-1]{Y} & \cdots & \te[L-1\x N-1]{Y} \\
-        \end{array}
-    \end{equation*}
-    The sole purpose of an MQU is actually to provide a single number for any such design matrix of $N\in\st{Z}^{+}$ samples (rows): namely, the probability that the output samples result from the input samples, to within any given uncertainty $\te[\mi{L\x N}]{E} \geq \te[\mi{L\x N}]{0}$
-    \begin{equation*}
-        \prob{\te[\mi{L\x N}]{E} \geq {y(\te[\mi{M+1\x N}]{\rv{u}})-\te[\mi{L\x N}]{Y}} \geq -\te[\mi{L\x N}]{E}}{\te[\mi{M\x N}]{\rv{u}}=\te[\mi{M\x N}]{u}}
-    \end{equation*}
+    % To elucidate the meaning and purpose of an MQU, and set the stage for GSA, consider a design matrix of $\tte[\mi{M\x N}]{u}$ inputs alongside $\tte[\mi{L\x N}]{Y}$ outputs:
+    % \begin{equation*}
+    %     \begin{array}{lllll}
+    %         \te[0\x 0]{u} & \cdots & \te[M-1\x 0]{u} \\
+    %         \phantom{t}\vdots & \ddots & \phantom{t}\vdots \\
+    %         \te[0\x N-1]{u} & \cdots & \te[M-1\x N-1]{u} \\
+    %     \end{array}
+    %     \begin{array}{lllll}
+    %         \te[0\x 0]{Y} & \cdots & \te[L-1\x 0]{Y} \\
+    %         \phantom{t}\vdots & \ddots & \phantom{t}\vdots \\
+    %         \te[0\x N-1]{Y} & \cdots & \te[L-1\x N-1]{Y} \\
+    %     \end{array}
+    % \end{equation*}
+    % The sole purpose of an MQU is actually to provide a single number for any such design matrix of $N\in\st{Z}^{+}$ samples (rows): namely, the probability that the output samples result from the input samples, to within any given uncertainty $\te[\mi{L\x N}]{E} \geq \te[\mi{L\x N}]{0}$
+    % \begin{equation*}
+    %     \prob{\te[\mi{L\x N}]{E} \geq {y(\te[\mi{M+1\x N}]{\rv{u}})-\te[\mi{L\x N}]{Y}} \geq -\te[\mi{L\x N}]{E}}{\te[\mi{M\x N}]{\rv{u}}=\te[\mi{M\x N}]{u}}
+    % \end{equation*}
     % This is what it means to generate $L$ quantifiably uncertain outputs from $M$ determined inputs.
     % Following the Kolmogorov extension theorem \cite[pp.124]{Rogers.Williams2000}, the meaning of an MQU is nothing other than an SP. This includes zero variance SPs -- fully determined multi-output models of no uncertainty (MNUs) -- as MQUs $y(\tte[\mi{M+1}]{\rv{u}})$ which do not depend on the final, undetermined input $\tte[M]{\rv{u}}$. Kolmogorov's extension theorem formally identifies an SP -- a collection $y(\tte[\mi{M+1}]{\rv{u}}) = \setbuilder{y(\tte[\mi{M+1}]{\rv{u}})}{\tte[\mi{M}]{\rv{u}}=\tte[\mi{M}]{u}}$ of RVs indexed by determined inputs $\tte[\mi{M}]{u}$ -- with all its finite dimensional distributions $\setbuilder{y(\tte[\mi{M+1\x N}]{\rv{u}})}{\tte[\mi{M\x N}]{\rv{u}}=\tte[\mi{M\x N}]{u}}$. The latter viewpoint is the formal version of the random field \cite{Khoshnevisan2002} or random function interpretation of SPs \cite[pp.42]{Skorokhod2005} frequently alluded to in machine learning \cite{Rasmussen.Williams2005}.
     % It can be a helpful perspective on the objects appearing in this work.
